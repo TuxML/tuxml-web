@@ -24,4 +24,4 @@ def hello():
 
 if __name__ == "__main__":
 	from waitress import serve
-	serve(app, host="148.60.11.219", port=80)
+	serve(app, host="127.0.0.1", port=8000)

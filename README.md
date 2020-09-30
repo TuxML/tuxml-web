@@ -7,6 +7,7 @@ You will need the following packages :
 sudo apt install python3-flask
 sudo pip3 install mysql-connector-python
 sudo pip3 install waitress
+pip3 install sshtunnel
 ```
 
 You can now start the server !

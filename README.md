@@ -14,6 +14,8 @@ You can now start the server !
 python3 server.py
 ```
 
+(if you are not on the Istic network you will not be able to connect to the database)
+
 ## how to connect to the virtual machine
 
 The key file permissions must be "-r--------"

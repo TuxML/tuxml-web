@@ -46,6 +46,10 @@ def hello_world():
 	return render_template('base.html', count=nbcompil)
 
 
+@app.route('/stats')
+def stats():
+	return render_template('stats.html')
+
 @app.route('/test1')
 def hello():
 	return 'Hello, World!'

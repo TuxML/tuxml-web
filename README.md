@@ -17,7 +17,7 @@ python3 server.py
 
 (if you are not on the Istic network you will not be able to connect to the database)
 
-## how to connect to the virtual machine
+## how to connect to the virtual machine website host
 
 The key file permissions must be "-r--------"
 
@@ -30,4 +30,21 @@ You can disconnect with :
 ```
 logout
 ```
+## how to connect to the virtual machine database host
+
+```
+ssh root@148.60.11.195
+```
+
+Now you can connect to the database :
+
+```
+mysql -u 'web' -p
+show databases;
+use IrmaDB_result;
+show tables;
+DESCRIBE compilations;
+```
+
+
 

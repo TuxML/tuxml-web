@@ -5,8 +5,6 @@ import mysql.connector
 from sshtunnel import SSHTunnelForwarder
 import socket
 
-bdip = '148.60.11.195'
-
 tuxmlDB = None
 
 if(socket.gethostname() != 'tuxmlweb'):
@@ -15,19 +13,20 @@ if(socket.gethostname() != 'tuxmlweb'):
 			('tuxmlweb.istic.univ-rennes1.fr', 22),
 			ssh_username='zprojet',
 			ssh_pkey='../keys/cle',
-			remote_bind_address=(bdip, 3306))
+			remote_bind_address=('148.60.11.195', 3306))
 	tunn.start()
 	print("Connecté au serveur web (SSH), connexion à la BDD")
 	tuxmlDB = mysql.connector.connect(
-		host=tunn.local_bind_host,
-		port=tunn.local_bind_port,
+		host='148.60.11.195',
+		port=3306,
 		user='web',
 		password='df54ZR459',
 		database='IrmaDB_result')
 else:
 	print("Connexion directe à la BDD")
 	tuxmlDB = mysql.connector.connect(
-		host=bdip,
+		host='148.60.11.195',
+		port=3306,
 		user='web',
 		password='df54ZR459',
 		database='IrmaDB_result')

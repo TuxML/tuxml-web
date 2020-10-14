@@ -8,29 +8,20 @@ import socket
 tuxmlDB = None
 
 if(socket.gethostname() != 'tuxmlweb'):
-	print("Connexion à la BDD en passant par le serveur web (SSH)")
-	tunn = SSHTunnelForwarder(
-			('tuxmlweb.istic.univ-rennes1.fr', 22),
-			ssh_username='zprojet',
-			ssh_pkey='../keys/cle',
-			remote_bind_address=('148.60.11.195', 3306))
-	tunn.start()
-	print("Connecté au serveur web (SSH), connexion à la BDD")
-	tuxmlDB = mysql.connector.connect(
-		host='148.60.11.195',
-		port=3306,
-		user='web',
-		password='df54ZR459',
-		database='IrmaDB_result')
+    print("Connexion à la BDD en passant par le serveur web (SSH)")
+    tuxmlDB = mysql.connector.connect(
+        host='localhost',
+        port=20000,
+        user='web',
+        password='df54ZR459',
+        database='IrmaDB_result')
 else:
-	print("Connexion directe à la BDD")
-	tuxmlDB = mysql.connector.connect(
-		host='148.60.11.195',
-		port=3306,
-		user='web',
-		password='df54ZR459',
-		database='IrmaDB_result')
-
+    print("Connexion directe à la BDD")
+    tuxmlDB = mysql.connector.connect(
+        host='148.60.11.195',
+        user='web',
+        password='df54ZR459',
+        database='IrmaDB_result')
 print("Connecté !")
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))

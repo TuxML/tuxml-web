@@ -45,9 +45,15 @@ def hello_world():
 	return render_template('base.html', count=nbcompil)
 
 
+
 @app.route('/stats')
 def stats():
-	return render_template('stats.html')
+	cursortest = tuxmlDB.cursor()
+	cursortest.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0")
+	nbcompilfailed = cursortest.fetchone()[0]
+
+	return render_template('stats.html', nbcompilfailed=nbcompilfailed)
+
 
 @app.route('/test1')
 def hello():

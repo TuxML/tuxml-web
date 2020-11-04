@@ -1,5 +1,5 @@
+*
 !server.py
 !.gitignore
-!static/
-!templates/
-*
+!static/*
+!templates/*

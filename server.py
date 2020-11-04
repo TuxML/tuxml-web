@@ -42,7 +42,7 @@ def stats():
     cursor = tuxmlDB.cursor()
     cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0")
     nbcompilfailed = cursor.fetchone()[0]
-    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations")
+    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = cursor.fetchall()
 
     return render_template('stats.html', nbcompilfailed=nbcompilfailed, versions=versions)

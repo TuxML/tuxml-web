@@ -1,7 +1,6 @@
-*
 !server.py
 !.gitignore
 !static/
 !static/css/*
 !templates/
-
+*

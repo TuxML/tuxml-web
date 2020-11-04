@@ -25,7 +25,7 @@
 
 
 
-<p><em><br> Failures : <b>{{nbcompilfailed}}</b> </em> </p>
+<!--  <p><em><br> Failures : <b>{{nbcompilfailed}}</b> </em> </p> -->
 
 
 
@@ -57,7 +57,17 @@
 
 
 
-<p><em><br> Versions : <b>{{versions}}</b> </em> </p>
+<table border="1" cellpadding="5" cellspacing="5">
+       {% for row in versions %}
+           <tr>
+           {% for d in row %}
+               <td>{{ d }}</td>
+           {% endfor %}
+           </tr>
+       {% endfor %}
+</table>
+
+
 
 
 
@@ -67,4 +77,6 @@
 
 </body>
 </html> 
+
+
 

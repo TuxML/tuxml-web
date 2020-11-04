@@ -33,9 +33,14 @@
 	<ul>
 		<li class="deroulant"><a href="#">  Versions: &ensp;</a>
 			<ul class = "sous">
-				<li><a href="#">  html</a></li>
-				<li><a href="#">  html</a></li>
-				<li><a href="#">  html</a></li>
+				{% for row in versions %}
+				{% for d in row %}
+               		
+				<li><a href="#">  {{ d }}</a></li>
+
+				{% endfor %}
+           		{% endfor %}
+	
 
 			</ul>
 		</li>

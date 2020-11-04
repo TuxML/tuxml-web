@@ -8,7 +8,7 @@ sudo apt install python3-flask
 sudo pip3 install mysql-connector-python waitress
 ```
 
-If you're using the ISTIC's VPN or are using the ISTIC' WIFI network, you can start the server directly :
+If you're using the ISTIC's VPN or are using the ISTIC's WIFI network, you can start the server directly :
 ```
 python3 server.py
 ```

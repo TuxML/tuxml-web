@@ -33,6 +33,11 @@
 	<ul>
 		<li class="deroulant"><a href="#">  Versions: &ensp;</a>
 			<ul class = "sous">
+
+
+
+				<li><a href="#">  All </a></li>
+
 				{% for row in versions %}
 				{% for d in row %}
                		
@@ -72,7 +77,15 @@
        {% endfor %}
 </table>
 
-
+<table border="1" cellpadding="5" cellspacing="5">
+       {% for row in laversion %}
+           <tr>
+           {% for d in row %}
+               <td>{{ d }}</td>
+           {% endfor %}
+           </tr>
+       {% endfor %}
+</table>
 
 
 

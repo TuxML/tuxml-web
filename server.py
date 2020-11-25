@@ -48,6 +48,16 @@ def stats():
 
     return render_template('stats.html', nbcompilfailed=nbcompilfailed, versions=versions)
 
+
+@app.route('/stats/<version>')
+def stats():
+    cursor = tuxmlDB.cursor()
+    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
+    laversion = cursor.fetchone()[version]
+    cursor.execute("SELECT * FROM compilations WHERE compiled_kernel_version = laversion")
+
+    return render_template('stats.html', laversion=laversion)
+
 @app.route('/test1')
 def hello():
     return 'Hello, World!'

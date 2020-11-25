@@ -68,4 +68,5 @@ if __name__ == "__main__":
     arg = 8000
     if len(sys.argv) == 2:
             arg = str(sys.argv[1])
+    app.debug = True
     serve(app, host="127.0.0.1", port=arg)

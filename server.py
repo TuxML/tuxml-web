@@ -50,7 +50,7 @@ def stats():
 
 
 @app.route('/stats/<version>')
-def stats():
+def statslaversion(version):
     cursor = tuxmlDB.cursor()
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     laversion = cursor.fetchone()[version]

@@ -5,7 +5,7 @@ import os
 import mysql.connector
 from sshtunnel import SSHTunnelForwarder
 import socket
-
+import sys
 tuxmlDB = None
 
 if(socket.gethostname() != 'tuxmlweb'):
@@ -55,4 +55,4 @@ def hello():
 
 if __name__ == "__main__":
     from waitress import serve
-    serve(app, host="127.0.0.1", port=8000)
+    serve(app, host="127.0.0.1", port=str(sys.argv[1]))

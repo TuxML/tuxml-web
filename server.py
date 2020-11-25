@@ -55,4 +55,7 @@ def hello():
 
 if __name__ == "__main__":
     from waitress import serve
-    serve(app, host="127.0.0.1", port=str(sys.argv[1]))
+    arg = 8000
+    if len(sys.argv) == 2:
+            arg = str(sys.argv[1])
+    serve(app, host="127.0.0.1", port=arg)

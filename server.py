@@ -3,7 +3,6 @@ from flask import Flask
 from flask import render_template
 import os
 import mysql.connector
-from sshtunnel import SSHTunnelForwarder
 import socket
 import sys
 tuxmlDB = None

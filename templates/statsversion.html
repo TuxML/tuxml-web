@@ -31,12 +31,11 @@
 
 <nav>
 	<ul>
-		<li class="deroulant"><a href="#">  Versions: &ensp;</a>
+		<li class="deroulant"><a href="#">  Version: {{laversion}}</a>
 			<ul class = "sous">
 
 
 
-				
 				<li><a href="http://tuxmlweb.istic.univ-rennes1.fr/stats/">  All </a></li>
 
 				{% for row in versions %}
@@ -69,7 +68,7 @@
 
 
 <table border="1" cellpadding="5" cellspacing="5">
-       {% for row in versions %}
+       {% for row in versionreq %}
            <tr>
            {% for d in row %}
                <td>{{ d }}</td>
@@ -77,7 +76,6 @@
            </tr>
        {% endfor %}
 </table>
-
 
 
 

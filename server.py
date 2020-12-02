@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template, url_for, request
 import os
 import mysql.connector
 import socket
@@ -37,7 +36,7 @@ def hello_world():
 
 
 
-@app.route('/stats')
+@app.route('/stats/')
 def stats():
     cursor = tuxmlDB.cursor()
     cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0")
@@ -48,15 +47,16 @@ def stats():
     return render_template('stats.html', nbcompilfailed=nbcompilfailed, versions=versions)
 
 
-@app.route('/stats/<int:version>')
-def statslaversion(version):
+@app.route('/stats/2/')
+def statslaversion():
     cursor = tuxmlDB.cursor()
-    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
-    laversion = cursor.fetchone()[version]
+    laversion = request.args.get('laversion')
     cursor.execute("SELECT * FROM compilations WHERE compiled_kernel_version = laversion")
-    laversion = cursor.fetchall()
+    versionreq = cursor.fetchall()
+    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
+    versions = cursor.fetchall()
     
-    return render_template('stats.html', laversion=laversion)
+    return render_template('statsversion.html', laversion=laversion, versionreq=versionreq, versions=versions)
 
 @app.route('/test1')
 def hello():

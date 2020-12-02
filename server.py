@@ -51,14 +51,12 @@ def stats():
 
 @app.route('/stats/2/')
 def statslaversion():
-    cursor = tuxmlDB.cursor()
+    cursor = tuxmlDB.cursor(buffered=True)
     laversion = request.args.get('laversion')
-    cursor.execute("SELECT * FROM compilations WHERE compiled_kernel_version = laversion")
+    cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(laversion))
     versionreq = cursor.fetchall()
-    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
-    versions = cursor.fetchall()
     
-    return render_template('statsversion.html', laversion=laversion, versionreq=versionreq, versions=versions)
+    return render_template('statsversion.html', laversion=laversion, versionreq=versionreq)
 
 @app.route('/test1')
 def hello():
@@ -72,3 +70,4 @@ if __name__ == "__main__":
             arg = str(sys.argv[1])
     app.debug = True
     serve(app, host="127.0.0.1", port=arg)
+    

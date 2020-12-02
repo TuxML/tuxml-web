@@ -10,84 +10,94 @@
 
   <title>TuxML</title>
 
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
   <!-- Custom CSS -->
-	<link href="{{ url_for('static', filename='css/part5.css') }}" rel="stylesheet">
-
-
+  <link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
 
 </head>
-
-<body>
-
-
-
-
-
-<!--  <p><em><br> Failures : <b>{{nbcompilfailed}}</b> </em> </p> -->
-
-
-
-<nav>
-	<ul>
-		<li class="deroulant"><a href="#">  Versions: &ensp;</a>
-			<ul class = "sous">
-
-
-
+<body id="page-top">
+	<div class="masthead d-flex">
+	<div class="card w-75 mx-auto my-auto shadow-lg align-content-start flex-row align-middle">
+		  <div class="m-4 bd-highlight">
+			  <div class="mx-auto text-center">
+				 <a href=".."><img  src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
+				  <h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/stats</h2>
+				 <form>
+					 <div class = "mb-n3"><label for="kerver"><h3>Kernel Version</h3></label></div>
+					 
+					 <select name="version" id="kerver">
+							 {% for row in versions %}
+							 {% for d in row %}
+							 <option value="{{ d }}">{{ d }}</option>
+							 {% endfor %}
+								{% endfor %}
+					 </select>
+					 
+					 <div class = "mt-2 mb-n2"><label for="kerver"><h3>Option to require</h3></label></div>
+					 <input type="text" class="form-control" id="inputEmail3" placeholder="Option">
+					 
+					 <button class="btn m-4 btn-primary" type="submit">Search</button><br>
 				
-				<li><a href="/stats/">  All </a></li>
+				 </form>
+			  </div>
+		  </div>
+		  <div class="my-4 mr-4 w-100 card shadow-lg">
+			  <table class="table">
+					<thead>
+					  <tr>
+						<th scope="col">Build status</th>
+						<th scope="col">Size</th>
+						<th scope="col">Compile method</th>
+						<th scope="col">.log</th>
+						<th scope="col">.conf</th>
+					  </tr>
+					</thead>
+					<tbody>
+					  <tr>
+						<td>Succeed</td>
+						<td>15876104</td>
+						<td>Software</td>
+						<td><button class ="btn btn-log">Download</button></td>
+						<td><button class ="btn btn-conf">Download</button></td>
+					  </tr>
+					  <tr>
+						<td>Succeed</td>
+						<td>15914257</td>
+						<td>Software</td>
+						<td><button class ="btn btn-log">Download</button></td>
+						<td><button class ="btn btn-conf">Download</button></td>
+					  </tr>
+					  <tr>
+						<td>Failed</td>
+						<td>14597104</td>
+						<td>Hardware</td>
+						<td><button type="button" class ="btn btn-log">Download</button></td>
+						<td><button type="button" class="btn btn-conf">Download</button></td>
+					  </tr>
+					</tbody>
+				  </table>
+		  </div>
+		</div>
+	</div>
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+	<i class="fas fa-angle-up"></i>
+  </a>
 
-				{% for row in versions %}
-				{% for d in row %}
-               		
-				<li><a href="/stats/2?laversion={{d}}#">  {{ d }}</a></li>
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-				{% endfor %}
-           		{% endfor %}
-	
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-			</ul>
-		</li>
-
-		<li class= "deroulant"><a href ="#">Articles &ensp;</a>
-			<ul class = "sous">
-				<li><a href="#">  html</a></li>
-				<li><a href="#">  html</a></li>
-				<li><a href="#">  html</a></li>
-
-			</ul>
-		</li>
-		<li><a href="#"> Contact</a></li>
-		<li><a href="#"> A propos</a></li>
-
-	</ul>
-
-</nav>
-
-
-
-<table border="1" cellpadding="5" cellspacing="5">
-       {% for row in versions %}
-           <tr>
-           {% for d in row %}
-               <td>{{ d }}</td>
-           {% endfor %}
-           </tr>
-       {% endfor %}
-</table>
-
-
-
-
-
-
-
-
+  <!-- Custom scripts for this template -->
+  <script src="js/stylish-portfolio.min.js"></script>
 
 </body>
-</html> 
 
-
-
+</html>

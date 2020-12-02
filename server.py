@@ -4,9 +4,11 @@ import os
 import mysql.connector
 import socket
 import sys
+from os import path
+
 tuxmlDB = None
 
-if(socket.gethostname() != 'tuxmlweb'):
+if(path.exists("tunnel")):
     print("Connexion à la BDD en passant par le serveur web (SSH)")
     tuxmlDB = mysql.connector.connect(
     host='localhost',

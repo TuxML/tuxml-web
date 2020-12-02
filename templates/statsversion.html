@@ -36,12 +36,12 @@
 
 
 
-				<li><a href="http://tuxmlweb.istic.univ-rennes1.fr/stats/">  All </a></li>
+				<li><a href="/stats/">  All </a></li>
 
 				{% for row in versions %}
 				{% for d in row %}
                		
-				<li><a href="http://tuxmlweb.istic.univ-rennes1.fr/stats/2/?laversion={{d}}#">  {{ d }}</a></li>
+				<li><a href="?laversion={{d}}#">  {{ d }}</a></li>
 
 				{% endfor %}
            		{% endfor %}

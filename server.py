@@ -39,10 +39,9 @@ def hello_world():
 
     return render_template('base.html', count=nbcompil)
 
-@app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/')
-def lafin():
-    (os.system('git pull && screen -dm python3 server.py'))
-    print(os._exit(0))
+@app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/') 
+def laFin():
+    print(os._exit(0)) #On ferme le serveur, systemd s'occupe de faire un git pull et de le relancer
     return ("¯\_(ツ)_/¯")
 
 @app.route('/stats/')
@@ -81,8 +80,7 @@ if __name__ == "__main__":
     arg = 8000
     if len(sys.argv) == 2:
             arg = str(sys.argv[1])
-    app.debug = True
-    while True:
-        sleep(1)
-        waitress.serve(app, host="127.0.0.1", port=arg)
+    if(socket.gethostname() != 'tuxmlweb'):
+        app.debug = True
+    waitress.serve(app, host="127.0.0.1", port=arg)
     

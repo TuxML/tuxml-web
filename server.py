@@ -1,13 +1,16 @@
 #!/usr/bin/python3
+import signal
+from time import sleep
+import threading
 from flask import Flask, render_template, url_for, request
 import os
 import mysql.connector
 import socket
 import sys
-from os import path
+from os import path, wait
+import waitress
 
 tuxmlDB = None
-
 if(path.exists("tunnel")):
     print("Connexion à la BDD en passant par le serveur web (SSH)")
     tuxmlDB = mysql.connector.connect(
@@ -36,7 +39,11 @@ def hello_world():
 
     return render_template('base.html', count=nbcompil)
 
-
+@app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/')
+def lafin():
+    (os.system('git pull && screen -dm python3 server.py'))
+    print(os._exit(0))
+    return ("¯\_(ツ)_/¯")
 
 @app.route('/stats/')
 def stats():
@@ -71,10 +78,11 @@ def hello():
 
 
 if __name__ == "__main__":
-    from waitress import serve
     arg = 8000
     if len(sys.argv) == 2:
             arg = str(sys.argv[1])
     app.debug = True
-    serve(app, host="127.0.0.1", port=arg)
+    while True:
+        sleep(1)
+        waitress.serve(app, host="127.0.0.1", port=arg)
     

@@ -39,7 +39,7 @@ def hello_world():
 
     return render_template('base.html', count=nbcompil)
 
-@app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/') 
+@app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/', methods = ['GET', 'POST'])
 def laFin():
     print(os._exit(0)) #On ferme le serveur, systemd s'occupe de faire un git pull et de le relancer
     return ("¯\_(ツ)_/¯")

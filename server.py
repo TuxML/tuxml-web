@@ -7,7 +7,7 @@ import os
 import mysql.connector
 import socket
 import sys
-from os import path, wait
+from os import path
 import waitress
 
 tuxmlDB = None

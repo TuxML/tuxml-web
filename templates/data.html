@@ -80,7 +80,11 @@
 						{% for row in ten %}
 						  <tr>
 						{% for e in row %}
+							{% if loop.first %}
+							<td> <a href="/data/configuration/{{e}}/">  {{ e }}</a> </td>
+							{% else %}
 							<td> {{e}} </td>
+							{% endif %}
 						{% endfor %}
 						</tr>
 						{% endfor %}

@@ -26,7 +26,9 @@
 
   <!-- Header -->
   <header class="masthead d-flex">
-    <div class="container text-center my-auto">
+    <div class="mx-auto shadow-lg text-center my-auto">
+      <div class="card p-4">
+        <div>
       <img  src="https://avatars0.githubusercontent.com/u/32133780?s=200&v=4" alt="">
       <h1 class="mb-1">TuxML</h1>
       <h2 class="mb-5">
@@ -36,8 +38,9 @@
       <h3>
         <em>Currently learning from <br><b>{{count}}</b> contributions</em>
       </h3>
-        <button class="btn btn-primary btn-xl mt-3"> <a href= "{{ url_for('stats') }} "> Cliquer pour continuer </a></button>
-
+        <a class="btn btn-primary btn-xl mt-3" href= "{{ url_for('stats') }} "> Show me some data ! </a>
+      </div>
+      </div>
     </div>
     <div class="overlay"></div>
   </header>

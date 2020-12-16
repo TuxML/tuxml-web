@@ -1,13 +1,16 @@
 #!/usr/bin/python3
+import signal
+from time import sleep
+import threading
 from flask import Flask, render_template, url_for, request
 import os
 import mysql.connector
 import socket
 import sys
 from os import path
+import waitress
 
 tuxmlDB = None
-
 if(path.exists("tunnel")):
     print("Connexion à la BDD en passant par le serveur web (SSH)")
     tuxmlDB = mysql.connector.connect(
@@ -36,9 +39,12 @@ def hello_world():
 
     return render_template('base.html', count=nbcompil)
 
+@app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/', methods = ['GET', 'POST'])
+def laFin():
+    print(os._exit(0)) #On ferme le serveur, systemd s'occupe de faire un git pull et de le relancer
+    return ("¯\_(ツ)_/¯")
 
-
-@app.route('/stats/')
+@app.route('/data/')
 def stats():
     cursor = tuxmlDB.cursor()
     cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0")
@@ -46,7 +52,7 @@ def stats():
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = cursor.fetchall()
 
-    return render_template('stats.html', nbcompilfailed=nbcompilfailed, versions=versions)
+    return render_template('data.html', nbcompilfailed=nbcompilfailed, versions=versions)
 
 
 @app.route('/stats/2/')
@@ -70,10 +76,10 @@ def hello():
 
 
 if __name__ == "__main__":
-    from waitress import serve
     arg = 8000
     if len(sys.argv) == 2:
             arg = str(sys.argv[1])
-    app.debug = True
-    serve(app, host="127.0.0.1", port=arg)
+    if(socket.gethostname() != 'tuxmlweb'):
+        app.debug = True
+    waitress.serve(app, host="127.0.0.1", port=arg)
     

@@ -118,12 +118,10 @@ h6 {
 }
 
 .masthead h2 {
-  filter: drop-shadow(0px 0px 1px rgba(255, 255,255, 1));
   font-size: 1.7rem;
 }
 
 .masthead h3 {
-  filter: drop-shadow(0px 0px 1px rgba(255, 255,255, 1));
   font-size: 0.8rem;
 }
 
@@ -131,6 +129,7 @@ h6 {
   filter: drop-shadow(0px 20px 30px rgba(0, 0, 0, 0.5));
   );
 }
+
 
 @media (min-width: 992px) {
   .masthead {
@@ -351,8 +350,18 @@ footer.footer .social-link:hover {
 }
 
 a {
-  color: #FFFFFF;
 }
+
+.tux {
+  color: #fff;
+  background: -webkit-linear-gradient(135deg, rgba(40,13,255,1) 0%, rgba(196,0,221,1) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  filter: drop-shadow(0px 15px 30px rgba(0, 0, 0, 0.5));
+}
+
+
 
 a:hover, a:focus, a:active {
   color: #155d74;
@@ -374,6 +383,19 @@ a:hover, a:focus, a:active {
   border-color: #ecb807 !important;
   color: #fff !important;
 }
+
+.btn-log {
+  background-color: #3200fa !important;
+  border-color: #3200fa !important;
+  color: #fff !important;
+}
+
+.btn-conf {
+  background-color: #5700fa !important;
+  border-color: #5700fa !important;
+  color: #fff !important;
+}
+
 
 .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active {
   background-color: #ba9106 !important;

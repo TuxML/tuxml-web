@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>TuxML</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+  <!-- Custom CSS -->
+  <link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+
+
+  <!-- Header -->
+  <header class="masthead d-flex">
+	  <div class = "card w-75 mx-auto my-auto ">
+		  <div class ="m-4">
+		  <h2><a class = "tux" href = "../../..">TuxML</a>/<a style="color:#212529;" href = "../..">data</a>/<b><a style="color: grey;">Configuration N°{{config[0]}}</a></b></h2>
+		  </div>
+		<div class="card mx-100 my-auto shadow-lg align-content-start flex-row align-middle">
+			<div class="m-4 x-8 w-60 bd-highlight">
+				<h2>Compilation info</h2>
+				<b>Date : </b> {{config[1]}} <br>
+				<b>Length : </b> {{config[2]}} s <br>
+				<b>Compressed kernel size: </b> {{config[7]}} o <br>
+				<b>Kernel version : </b> <a href ="../../../data?laversion={{config[11]}}"> {{config[11]}} </a><br><br>
+				<b>Dependencies : </b><div class="card p-2"> {{config[9]}} </div><br><br>
+				
+				</div>
+		<div class="m-4 p-4 w-40 card ml-auto shadow-lg"style="flex-shrink: 0;">
+			<h2>Compiler info</h2><br>
+			<h5>Software</h5>
+			<b>System : </b> {{sconfig[1]}} {{sconfig[2]}} <br>
+			<b>Distribution : </b> {{sconfig[3]}} {{sconfig[4]}} <br>
+			<b>GCC Version : </b> {{sconfig[5]}} <br>
+			<b>LibC Version : </b> {{sconfig[6]}} <br>
+			<b>TuxML Version : </b> {{sconfig[7]}} <br>
+			<br>
+			<h5>Hardware</h5>
+			<b>Architecture : </b> {{hconfig[1]}} <br>
+			<b>CPU : </b> {{hconfig[2]}} <br>
+			<b>CPU cores : </b> {{hconfig[3]}} <br>
+			<b>CPU Max Frequency : </b> {{hconfig[4]}} MHz <br>
+			<b>Ram : </b> {{hconfig[5]/1000000}} Go <br>
+			<b>Ran on hard drive : </b> {{hconfig[6]}} <br>
+			</div>
+		</div>
+	  </div>
+	<div class="overlay"></div>
+  </header>
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+	<i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/stylish-portfolio.min.js"></script>
+
+</body>
+
+</html>

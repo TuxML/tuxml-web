@@ -44,6 +44,8 @@ def laFin():
     print(os._exit(0)) #On ferme le serveur, systemd s'occupe de faire un git pull et de le relancer
     return ("¯\_(ツ)_/¯")
 
+
+"""
 @app.route('/data/')
 def stats():
     cursor = tuxmlDB.cursor()
@@ -53,6 +55,20 @@ def stats():
     versions = cursor.fetchall()
 
     return render_template('data.html', nbcompilfailed=nbcompilfailed, versions=versions)
+"""
+
+@app.route('/data/')
+def stats():
+    cursor = tuxmlDB.cursor()
+    laversion = request.args.get('laversion')
+    cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(laversion))
+    versionreq = cursor.fetchall()
+    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
+    versions = cursor.fetchall()
+    cursor.execute("SELECT compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '{}' LIMIT 10;".format(laversion))
+    ten = cursor.fetchall()
+
+    return render_template('data.html', laversion=laversion, versionreq=versionreq, versions=versions, ten=ten)
 
 
 @app.route('/stats/2/')

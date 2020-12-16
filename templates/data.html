@@ -28,13 +28,33 @@
 				  <h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/data</h2>
 				 <form>
 					 <div class = "mb-n3"><label for="kerver"><h3>Kernel Version</h3></label></div>
+
+
+					 <nav>
+						<ul>
+							<li class="deroulant"><a href="#">  Version: {{laversion}}</a>
+								<ul class = "sous">
+									<li><a href="/data/">  All </a></li>
+
+									{% for row in versions %}
+									{% for d in row %}
+					               		
+									<li><a href="?laversion={{d}}#">  {{ d }}</a></li>
+
+									{% endfor %}
+					           		{% endfor %}
+						
+
+								</ul>
+							</li>
+					</nav>
 					 
 					 <select name="version" id="kerver">
 							 {% for row in versions %}
 							 {% for d in row %}
-							 <option value="{{ d }}">{{ d }}</option>
+							 <option value= "https://tuxmlweb.istic.univ-rennes1.fr/data/?laversion={{d}}#"><a href="?laversion={{d}}#">  {{ d }}</a></option>
 							 {% endfor %}
-								{% endfor %}
+							 {% endfor %}
 					 </select>
 					 
 					 <div class = "mt-2 mb-n2"><label for="kerver"><h3>Option to require</h3></label></div>
@@ -49,35 +69,20 @@
 			  <table class="table" style="text-align:center">
 					<thead>
 					  <tr>
-						<th scope="col">Build status</th>
-						<th scope="col">Size</th>
-						<th scope="col">Compile method</th>
-						<th scope="col">.log</th>
-						<th scope="col">.conf</th>
+						<th scope="col">compilation_date</th>
+						<th scope="col">compilation_time</th>
+						<th scope="col">compiled_kernel_size</th>
+						<th scope="col">compiled_kernel_version</th>
 					  </tr>
 					</thead>
 					<tbody>
-					  <tr>
-						<td>Succeed</td>
-						<td>15876104</td>
-						<td>Software</td>
-						<td><button class ="btn btn-log">Download</button></td>
-						<td><button class ="btn btn-conf">Download</button></td>
-					  </tr>
-					  <tr>
-						<td>Succeed</td>
-						<td>15914257</td>
-						<td>Software</td>
-						<td><button class ="btn btn-log">Download</button></td>
-						<td><button class ="btn btn-conf">Download</button></td>
-					  </tr>
-					  <tr>
-						<td>Failed</td>
-						<td>14597104</td>
-						<td>Hardware</td>
-						<td><button type="button" class ="btn btn-log">Download</button></td>
-						<td><button type="button" class="btn btn-conf">Download</button></td>
-					  </tr>
+						{% for row in ten %}
+						  <tr>
+						{% for e in row %}
+							<td> {{e}} </td>
+						{% endfor %}
+						</tr>
+						{% endfor %}
 					</tbody>
 				  </table>
 		  </div>

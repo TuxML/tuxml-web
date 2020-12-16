@@ -54,6 +54,18 @@ def stats():
 
     return render_template('data.html', nbcompilfailed=nbcompilfailed, versions=versions)
 
+@app.route('/data/configuration/<int:id>/')
+def user_view(id):
+    cursor = tuxmlDB.cursor()
+    cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
+    config = cursor.fetchone()
+    cursor.execute("SELECT * FROM software_environment WHERE sid = " + str(config[12]))
+    sconfig = cursor.fetchone()
+    cursor.execute("SELECT * FROM hardware_environment WHERE hid = " + str(config[13]))
+    hconfig = cursor.fetchone()
+
+    return render_template('config.html', config=config, sconfig=sconfig, hconfig=hconfig)
+
 
 @app.route('/stats/2/')
 def statslaversion():

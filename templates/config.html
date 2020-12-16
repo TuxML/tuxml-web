@@ -37,14 +37,14 @@
 				<h2>Compilation info</h2>
 				<b>Date : </b> {{config[1]}} <br>
 				<b>Length : </b> {{config[2]}} s <br>
-				<b>Compressed kernel size: </b> {{config[7]}} o <br>
+				<b>Compressed kernel size: </b> {{config[7]/1000000}} Mo <br>
 				<b>Kernel version : </b> <a href ="../../../data?laversion={{config[11]}}"> {{config[11]}} </a><br><br>
 				<b>Dependencies : </b><div class="card p-2"> {{config[9]}} </div><br><br>
 				<b>Downloads : </b> 
-				<a href ="config" class="btn m-4 btn-primary">Config</a>
-				<a href ="stdout" class="btn m-4 btn-primary">Log</a>
-				<a href ="stderr" class="btn m-4 btn-primary">Error log</a>
-				<a href ="userOutput" class="btn m-4 btn-primary">User output</a>
+				<a href ="config" class="btn m-2 btn-primary">Config</a>
+				<a href ="stdout" class="btn m-2 btn-primary">Log</a>
+				<a href ="stderr" class="btn m-2 btn-primary">Error log</a>
+				<a href ="userOutput" class="btn m-2 btn-primary">User output</a>
 				</div>
 		<div class="m-4 p-4 w-40 card ml-auto shadow-lg"style="flex-shrink: 0;">
 			<h2>Compiler info</h2><br>
@@ -61,7 +61,7 @@
 			<b>CPU cores : </b> {{hconfig[3]}} <br>
 			<b>CPU Max Frequency : </b> {{hconfig[4]}} MHz <br>
 			<b>Ram : </b> {{hconfig[5]/1000000}} Go <br>
-			<b>Ran on hard drive : </b> {{hconfig[6]}} <br>
+			<b>Ran on hard drive : </b> {% if hconfig[6] == 1  %} Yes {% else %} No {% endif %} <br>
 			</div>
 		</div>
 	  </div>

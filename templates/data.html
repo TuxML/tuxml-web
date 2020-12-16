@@ -28,31 +28,11 @@
 				  <h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/data</h2>
 				 <form>
 					 <div class = "mb-n3"><label for="kerver"><h3>Kernel Version</h3></label></div>
-
-
-					 <nav>
-						<ul>
-							<li class="deroulant"><a href="#">  Version: {{laversion}}</a>
-								<ul class = "sous">
-									<li><a href="/data/">  All </a></li>
-
-									{% for row in versions %}
-									{% for d in row %}
-					               		
-									<li><a href="?laversion={{d}}#">  {{ d }}</a></li>
-
-									{% endfor %}
-					           		{% endfor %}
-						
-
-								</ul>
-							</li>
-					</nav>
 					 
-					 <select name="version" id="kerver">
+					 <select name="version" id="kerver" onchange="location = this.value;">
 							 {% for row in versions %}
 							 {% for d in row %}
-							 <option value= "https://tuxmlweb.istic.univ-rennes1.fr/data/?laversion={{d}}#"><a href="?laversion={{d}}#">  {{ d }}</a></option>
+							 <option value="/data/?laversion={{d}}#"> {{ d }}</a></option>
 							 {% endfor %}
 							 {% endfor %}
 					 </select>

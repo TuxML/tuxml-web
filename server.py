@@ -1,8 +1,10 @@
 #!/usr/bin/python3
+import bz2
 import signal
+from io import BytesIO
 from time import sleep
 import threading
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, send_file
 import os
 import mysql.connector
 import socket
@@ -67,8 +69,26 @@ def user_view(id):
     sconfig = cursor.fetchone()
     cursor.execute("SELECT * FROM hardware_environment WHERE hid = " + str(config[13]))
     hconfig = cursor.fetchone()
-
     return render_template('config.html', config=config, sconfig=sconfig, hconfig=hconfig)
+
+@app.route('/data/configuration/<int:id>/<string:request>')
+def getData(id, request):
+    if request == "config" :
+        cursor = tuxmlDB.cursor()
+        cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
+        return send_file(BytesIO(bz2.decompress(cursor.fetchone()[3])), as_attachment=True, attachment_filename="TuxML-"+str(id)+".config")
+    elif request == "stdout" :
+        cursor = tuxmlDB.cursor()
+        cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
+        return send_file(BytesIO(bz2.decompress(cursor.fetchone()[4])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-stdout.log")
+    elif request == "stderr" :
+        cursor = tuxmlDB.cursor()
+        cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
+        return send_file(BytesIO(bz2.decompress(cursor.fetchone()[5])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-stderr.log")
+    elif request == "userOutput" :
+        cursor = tuxmlDB.cursor()
+        cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
+        return send_file(BytesIO(bz2.decompress(cursor.fetchone()[6])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-userOutput.log")
 
 
 @app.route('/stats/2/')

@@ -18,6 +18,8 @@
   <!-- Custom CSS -->
   <link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
 
+
+
 </head>
 
 <body id="page-top">
@@ -38,7 +40,11 @@
 				<b>Compressed kernel size: </b> {{config[7]}} o <br>
 				<b>Kernel version : </b> <a href ="../../../data?laversion={{config[11]}}"> {{config[11]}} </a><br><br>
 				<b>Dependencies : </b><div class="card p-2"> {{config[9]}} </div><br><br>
-				
+				<b>Downloads : </b> 
+				<a href ="config" class="btn m-4 btn-primary">Config</a>
+				<a href ="stdout" class="btn m-4 btn-primary">Log</a>
+				<a href ="stderr" class="btn m-4 btn-primary">Error log</a>
+				<a href ="userOutput" class="btn m-4 btn-primary">User output</a>
 				</div>
 		<div class="m-4 p-4 w-40 card ml-auto shadow-lg"style="flex-shrink: 0;">
 			<h2>Compiler info</h2><br>
@@ -76,6 +82,7 @@
 
   <!-- Custom scripts for this template -->
   <script src="js/stylish-portfolio.min.js"></script>
+
 
 </body>
 

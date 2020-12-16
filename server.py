@@ -45,18 +45,6 @@ def laFin():
     return ("¯\_(ツ)_/¯")
 
 
-"""
-@app.route('/data/')
-def stats():
-    cursor = tuxmlDB.cursor()
-    cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0")
-    nbcompilfailed = cursor.fetchone()[0]
-    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
-    versions = cursor.fetchall()
-
-    return render_template('data.html', nbcompilfailed=nbcompilfailed, versions=versions)
-"""
-
 @app.route('/data/')
 def stats():
     cursor = tuxmlDB.cursor()
@@ -65,7 +53,7 @@ def stats():
     versionreq = cursor.fetchall()
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = cursor.fetchall()
-    cursor.execute("SELECT compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '{}' LIMIT 10;".format(laversion))
+    cursor.execute("SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '{}' LIMIT 10;".format(laversion))
     ten = cursor.fetchall()
 
     return render_template('data.html', laversion=laversion, versionreq=versionreq, versions=versions, ten=ten)

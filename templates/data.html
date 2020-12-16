@@ -26,21 +26,20 @@
 			  <div class="mx-auto text-center">
 				 <a href=".."><img  src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
 				  <h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/data</h2>
-				 <form>
-					 <div class = "mb-n3"><label for="kerver"><h3>Kernel Version</h3></label></div>
+				 
+					 <div class = "mb-n3"><label for="kerver"><h3>Kernel version to show</h3></label></div>
 					 
 					 <select name="version" id="kerver" onchange="location = this.value;">
 							 {% for row in versions %}
 							 {% for d in row %}
-							 <option value="/data/?laversion={{d}}#"> {{ d }}</a></option>
+							 <option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}#"> {{ d }} </a></option>
 							 {% endfor %}
 							 {% endfor %}
 					 </select>
-					 
-					 <div class = "mt-2 mb-n2"><label for="kerver"><h3>Option to require</h3></label></div>
-					 <input type="text" class="form-control" id="inputEmail3" placeholder="Option">
-					 
-					 <button class="btn m-4 btn-primary" type="submit">Search</button><br>
+					 <form id = "specificID">
+					 <div class = "mt-4 mb-n2"><label for="kerver"><h3>Looking for a specific configuration ?</h3></label></div>
+					 <input type="text" class="form-control" onchange="document.getElementById('specificID').action = 'configuration/'+this.value;" placeholder="cid">
+					 <button class="btn m-2 btn-primary" type="submit">GO</button><br>
 				
 				 </form>
 			  </div>

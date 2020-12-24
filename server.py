@@ -51,18 +51,21 @@ def laFin():
 def stats():
     cursor = tuxmlDB.cursor()
     laversion = None
+    numberOfNuplet = None
     if len(request.args) == 0:
         laversion = "4.13.3"
+        numberOfNuplet = 20
     else:
         laversion = request.args.get('laversion')
+        numberOfNuplet = request.args.get('numberOfNuplet')
     cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(laversion))
     versionreq = cursor.fetchall()
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = cursor.fetchall()
-    cursor.execute("SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '{}' LIMIT 10;".format(laversion))
+    cursor.execute("SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '" + laversion + "' LIMIT " + str(numberOfNuplet) + " ;")
     ten = cursor.fetchall()
 
-    return render_template('data.html', laversion=laversion, versionreq=versionreq, versions=versions, ten=ten)
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, versionreq=versionreq, versions=versions, ten=ten)
 
 @app.route('/data/configuration/<int:id>/')
 def user_view(id):

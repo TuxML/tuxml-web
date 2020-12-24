@@ -32,7 +32,7 @@
 					 <select name="version" id="kerver" onchange="location = this.value;">
 							 {% for row in versions %}
 							 {% for d in row %}
-							 <option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}#"> {{ d }} </a></option>
+							 <option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}#"> {{ d }} </a></option>
 							 {% endfor %}
 							 {% endfor %}
 					 </select>

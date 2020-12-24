@@ -27,8 +27,8 @@
 				 <a href=".."><img  src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
 				  <h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/data</h2>
 				 
-					 <div class = "mb-n3"><label for="kerver"><h3>Kernel version to show</h3></label></div>
-					 
+
+					 <div class = "mb-n3"><label for="kerver"><h3>Kernel version to show</h3></label></div>					 
 					 <select name="version" id="kerver" onchange="location = this.value;">
 							 {% for row in versions %}
 							 {% for d in row %}
@@ -36,10 +36,22 @@
 							 {% endfor %}
 							 {% endfor %}
 					 </select>
+
+
 					 <form id = "specificID">
 					 <div class = "mt-4 mb-n2"><label for="kerver"><h3>Looking for a specific configuration ?</h3></label></div>
 					 <input type="text" class="form-control" onchange="document.getElementById('specificID').action = 'configuration/'+this.value;" placeholder="cid">
 					 <button class="btn m-2 btn-primary" type="submit">GO</button><br>
+
+					 <div class = "mt-4 mb-n2"><label for="kerver"><h3>Number of rows displayed</h3></label></div>
+					 <select name="numberOfNuplet" id="kerver" onchange="location = this.value;">
+							 <option {% if '10' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10#"> 10 </a></option>
+ 							 <option {% if '20' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20#"> 20 </a></option>
+							 <option {% if '50' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50#"> 50 </a></option>
+							 <option {% if '100' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100#"> 100 </a></option>
+							 <option {% if '200' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200#"> 200 </a></option>
+					 </select>
+
 				
 				 </form>
 			  </div>

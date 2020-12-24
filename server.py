@@ -54,7 +54,7 @@ def stats():
     numberOfNuplet = None
     if len(request.args) == 0:
         laversion = "4.13.3"
-        numberOfNuplet = 20
+        numberOfNuplet = '20'
     else:
         laversion = request.args.get('laversion')
         numberOfNuplet = request.args.get('numberOfNuplet')

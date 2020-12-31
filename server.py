@@ -47,7 +47,7 @@ def laFin():
     return ("¯\_(ツ)_/¯")
 
 @app.route('/data/')
-def stats():
+def data():
     connection = getConnection()
     cursor = connection.cursor()
 

@@ -46,18 +46,18 @@ def laFin():
     print(os._exit(0)) #On ferme le serveur, systemd s'occupe de faire un git pull et de le relancer
     return ("¯\_(ツ)_/¯")
 
-
 @app.route('/data/')
 def stats():
     cursor = tuxmlDB.cursor()
-    laversion = None
-    numberOfNuplet = None
-    if len(request.args) == 0:
+
+    laversion = request.args.get('laversion')
+    numberOfNuplet = request.args.get('numberOfNuplet')
+    if laversion is None :
         laversion = "4.13.3"
-        numberOfNuplet = '20'
-    else:
-        laversion = request.args.get('laversion')
-        numberOfNuplet = request.args.get('numberOfNuplet')
+
+    if numberOfNuplet is None :
+        numberOfNuplet = '10'
+
     cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(laversion))
     versionreq = cursor.fetchall()
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")

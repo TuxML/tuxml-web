@@ -12,33 +12,33 @@ import sys
 from os import path
 import waitress
 
-tuxmlDB = None
-if(path.exists("tunnel")):
-    print("Connexion à la BDD en passant par le serveur web (SSH)")
-    tuxmlDB = mysql.connector.connect(
-    host='localhost',
-    port=20000,
-    user='web',
-    password='df54ZR459',
-    database='IrmaDB_result')
-else:
-    print("Connexion directe à la BDD")
-    tuxmlDB = mysql.connector.connect(
-    host='148.60.11.195',
-    user='web',
-    password='df54ZR459',
-    database='IrmaDB_result')
-print("Connecté !")
-
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 
 
+
+def getConnection():
+    if (path.exists("tunnel")):
+        tuxmlDB = mysql.connector.connect(
+            host='localhost',
+            port=20000,
+            user='web',
+            password='df54ZR459',
+            database='IrmaDB_result')
+    else:
+        tuxmlDB = mysql.connector.connect(
+            host='148.60.11.195',
+            user='web',
+            password='df54ZR459',
+            database='IrmaDB_result')
+    return tuxmlDB
+
 @app.route('/')
 def hello_world():
-    mycursor = tuxmlDB.cursor()
+    connection = getConnection()
+    mycursor = connection.cursor()
     mycursor.execute("SELECT COUNT(*) FROM compilations")
     nbcompil = mycursor.fetchone()[0]
-
+    connection.close()
     return render_template('base.html', count=nbcompil)
 
 @app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/', methods = ['GET', 'POST'])
@@ -48,7 +48,8 @@ def laFin():
 
 @app.route('/data/')
 def stats():
-    cursor = tuxmlDB.cursor()
+    connection = getConnection()
+    cursor = connection.cursor()
 
     laversion = request.args.get('laversion')
     numberOfNuplet = request.args.get('numberOfNuplet')
@@ -64,49 +65,52 @@ def stats():
     versions = cursor.fetchall()
     cursor.execute("SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '" + laversion + "' LIMIT " + str(numberOfNuplet) + " ;")
     ten = cursor.fetchall()
-
+    connection.close()
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, versionreq=versionreq, versions=versions, ten=ten)
 
 @app.route('/data/configuration/<int:id>/')
 def user_view(id):
-    cursor = tuxmlDB.cursor()
+    connection = getConnection()
+    cursor = connection.cursor()
     cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
     config = cursor.fetchone()
     cursor.execute("SELECT * FROM software_environment WHERE sid = " + str(config[12]))
     sconfig = cursor.fetchone()
     cursor.execute("SELECT * FROM hardware_environment WHERE hid = " + str(config[13]))
     hconfig = cursor.fetchone()
+    connection.close()
     return render_template('config.html', config=config, sconfig=sconfig, hconfig=hconfig)
 
 @app.route('/data/configuration/<int:id>/<string:request>')
 def getData(id, request):
+    connection = getConnection()
+    cursor = connection.cursor()
+    returnAction = None
     if request == "config" :
-        cursor = tuxmlDB.cursor()
         cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-        return send_file(BytesIO(bz2.decompress(cursor.fetchone()[3])), as_attachment=True, attachment_filename="TuxML-"+str(id)+".config")
+        returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[3])), as_attachment=True, attachment_filename="TuxML-"+str(id)+".config")
     elif request == "stdout" :
-        cursor = tuxmlDB.cursor()
         cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-        return send_file(BytesIO(bz2.decompress(cursor.fetchone()[4])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-stdout.log")
+        returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[4])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-stdout.log")
     elif request == "stderr" :
-        cursor = tuxmlDB.cursor()
         cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-        return send_file(BytesIO(bz2.decompress(cursor.fetchone()[5])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-stderr.log")
+        returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[5])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-stderr.log")
     elif request == "userOutput" :
-        cursor = tuxmlDB.cursor()
         cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-        return send_file(BytesIO(bz2.decompress(cursor.fetchone()[6])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-userOutput.log")
-
+        returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[6])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-userOutput.log")
+    connection.close()
+    return returnAction
 
 @app.route('/stats/2/')
 def statslaversion():
-    cursor = tuxmlDB.cursor(buffered=True)
+    connection = getConnection()
+    cursor = connection.cursor()
     laversion = request.args.get('laversion')
     cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(laversion))
     versionreq = cursor.fetchall()
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = cursor.fetchall()
-    
+    connection.close()
     return render_template('statsversion.html', laversion=laversion, versionreq=versionreq, versions=versions)
 
 @app.route('/test1')
@@ -124,5 +128,5 @@ if __name__ == "__main__":
             arg = str(sys.argv[1])
     if(socket.gethostname() != 'tuxmlweb'):
         app.debug = True
-    waitress.serve(app, host="127.0.0.1", port=arg)
+    waitress.serve(app, host="127.0.0.1", port=arg, threads=6) 
     

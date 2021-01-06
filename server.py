@@ -118,25 +118,6 @@ def getData(id, request):
     connection.close()
     return returnAction
 
-@app.route('/stats/2/')
-def statslaversion():
-    connection = getConnection()
-    cursor = connection.cursor()
-    laversion = request.args.get('laversion')
-    cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(laversion))
-    versionreq = cursor.fetchall()
-    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
-    versions = cursor.fetchall()
-    connection.close()
-    return render_template('statsversion.html', laversion=laversion, versionreq=versionreq, versions=versions)
-
-@app.route('/test1')
-def hello():
-    path = request.path
-    method = request.method
-    domain = request.base_url
-
-    return 'path : ' + path + ' method : ' + method + 'domain' + domain
 
 
 if __name__ == "__main__":

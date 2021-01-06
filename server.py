@@ -56,9 +56,14 @@ def data():
     page = request.args.get('page')
 
     if laversion is None :
-        laversion = "4.13.3"
+        laversion = "All"
+        versionreq = "All"
     else:
         laversion.replace(";", "").replace("\\","")
+        cursor.execute(
+            "SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(
+                laversion))
+        versionreq = cursor.fetchall()
 
     if numberOfNuplet is None :
         numberOfNuplet = 10
@@ -73,11 +78,9 @@ def data():
 
 
 
-    cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(laversion))
-    versionreq = cursor.fetchall()
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
-    versions = cursor.fetchall()
-    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '" + laversion + "' ORDER BY cid DESC LIMIT " + str(numberOfNupletTemp) + ")a ORDER BY cid ASC LIMIT  " +  str(numberOfNuplet) + ")b ORDER BY cid DESC ;")
+    versions = [["All"]] + cursor.fetchall()
+    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ " ORDER BY cid DESC LIMIT " + str(numberOfNupletTemp) + ")a ORDER BY cid ASC LIMIT  " +  str(numberOfNuplet) + ")b ORDER BY cid DESC ;")
 
     ten = cursor.fetchall()
     connection.close()

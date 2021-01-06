@@ -82,8 +82,17 @@ def data():
     versions = [["All"]] + cursor.fetchall()
     cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ " ORDER BY cid DESC LIMIT " + str(numberOfNupletTemp) + ")a ORDER BY cid ASC LIMIT  " +  str(numberOfNuplet) + ")b ORDER BY cid DESC ;")
 
-    ten = cursor.fetchall()
+    temp = cursor.fetchall()
     connection.close()
+    
+    ten = []
+    
+    for e in temp:
+        if e[3] == -1:
+            ten.append((e[0],e[1],str(e[2]) + " s","Compilation failed",e[4]))
+        else:
+            ten.append((e[0],e[1],str(e[2]) + " s",(str(e[3]/1000000) + " Mo"),e[4]))
+    
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten)
 
 @app.route('/data/configuration/<int:id>/')

@@ -72,7 +72,7 @@ def data():
     versionreq = cursor.fetchall()
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = cursor.fetchall()
-    cursor.execute("SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '" + laversion + "' ORDER BY cid ASC LIMIT " + str(numberOfNupletTemp) + " ;")
+    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '" + laversion + "' ORDER BY cid ASC LIMIT " + str(numberOfNupletTemp) + ")a ORDER BY cid DESC LIMIT  " +  str(numberOfNuplet) + ")b ORDER BY cid ASC ;")
     ten = cursor.fetchall()
     connection.close()
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, versionreq=versionreq, versions=versions, ten=ten)

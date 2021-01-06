@@ -53,17 +53,26 @@ def data():
 
     laversion = request.args.get('laversion')
     numberOfNuplet = request.args.get('numberOfNuplet')
+    page = request.args.get('page')
+
     if laversion is None :
         laversion = "4.13.3"
 
     if numberOfNuplet is None :
-        numberOfNuplet = '10'
+        numberOfNuplet = 10
+
+    if page is None :
+    	page = 1
+
+    numberOfNupletTemp = int(numberOfNuplet) * int(page)
+
+
 
     cursor.execute("SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(laversion))
     versionreq = cursor.fetchall()
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = cursor.fetchall()
-    cursor.execute("SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '" + laversion + "' LIMIT " + str(numberOfNuplet) + " ;")
+    cursor.execute("SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '" + laversion + "' ORDER BY cid ASC LIMIT " + str(numberOfNupletTemp) + " ;")
     ten = cursor.fetchall()
     connection.close()
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, versionreq=versionreq, versions=versions, ten=ten)

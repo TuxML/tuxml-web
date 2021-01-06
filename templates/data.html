@@ -42,6 +42,7 @@
 					 <div class = "mt-4 mb-n2"><label for="kerver"><h3>Looking for a specific configuration ?</h3></label></div>
 					 <input type="text" class="form-control" onchange="document.getElementById('specificID').action = 'configuration/'+this.value;" placeholder="cid">
 					 <button class="btn m-2 btn-primary" type="submit">GO</button><br>
+					 </form>
 
 					 <div class = "mt-4 mb-n2"><label for="kerver"><h3>Number of rows displayed</h3></label></div>
 					 <select name="numberOfNuplet" id="kerver" onchange="location = this.value;">
@@ -52,8 +53,14 @@
 							 <option {% if '200' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200#"> 200 </a></option>
 					 </select>
 
+ 					 <div class = "mt-4 mb-n2">
+	 					 <a href="/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}#">  < </a>
+	 					 <a href="/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}#">  {{page}} </a>
+	  					 <a href="/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}#">  > </a>
+  					 </div>
+
 				
-				 </form>
+				
 			  </div>
 		  </div>
 		  <div class="my-4 mr-4 w-100 card shadow-lg">

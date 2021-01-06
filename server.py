@@ -65,6 +65,7 @@ def data():
     	page = 1
 
     numberOfNupletTemp = int(numberOfNuplet) * int(page)
+    page = int(page)
 
 
 
@@ -75,7 +76,7 @@ def data():
     cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations WHERE compiled_kernel_version = '" + laversion + "' ORDER BY cid ASC LIMIT " + str(numberOfNupletTemp) + ")a ORDER BY cid DESC LIMIT  " +  str(numberOfNuplet) + ")b ORDER BY cid ASC ;")
     ten = cursor.fetchall()
     connection.close()
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, versionreq=versionreq, versions=versions, ten=ten)
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten)
 
 @app.route('/data/configuration/<int:id>/')
 def user_view(id):

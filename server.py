@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import bz2
+from  distutils import util
 import signal
 from io import BytesIO
 from time import sleep
@@ -55,14 +56,24 @@ def data():
     numberOfNuplet = request.args.get('numberOfNuplet')
     page = request.args.get('page')
 
+    sortBy = request.args.get('sortBy')
+    print(request.args.get('ascend'))
+    ascend = request.args.get('ascend')
+    if ascend is None :
+        ascend = False
+    else:
+        ascend = util.strtobool(ascend)
+    print (ascend)
+
+    if sortBy is None or not(sortBy == "sic" or sortBy == "compilation_date" or sortBy == "compilation_time" or sortBy == "compiled_kernel_size" or sortBy == "compiled_kernel_version"): #On ne peut pas obtenir les colonnes (Droits refusés pour Web), du coup go hardcoder :/
+        sortBy = "cid"
+
     if laversion is None :
         laversion = "All"
         versionreq = "All"
     else:
         laversion.replace(";", "").replace("\\","")
-        cursor.execute(
-            "SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{}';".format(
-                laversion))
+        cursor.execute(f"SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{laversion}';")
         versionreq = cursor.fetchall()
 
     if numberOfNuplet is None :
@@ -80,7 +91,7 @@ def data():
 
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = [["All"]] + cursor.fetchall()
-    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ " ORDER BY cid DESC LIMIT " + str(numberOfNupletTemp) + ")a ORDER BY cid ASC LIMIT  " +  str(numberOfNuplet) + ")b ORDER BY cid DESC ;")
+    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
 
     temp = cursor.fetchall()
     connection.close()
@@ -92,8 +103,10 @@ def data():
             ten.append((e[0],e[1],str(e[2]) + " s","Compilation failed",e[4]))
         else:
             ten.append((e[0],e[1],str(e[2]) + " s",(str(e[3]/1000000) + " Mo"),e[4]))
-    
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten)
+
+    print(ascend)
+
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend)
 
 @app.route('/data/configuration/<int:id>/')
 def user_view(id):

@@ -46,10 +46,11 @@
 							 <option {% if '200' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200#"> 200 </a></option>
 					 </select>
 
- 					 <div class = "mt-4 mb-n2">
-	 					 <a href="/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}#">  < </a>
-	 					 <a href="/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}#">  {{page}} </a>
-	  					 <a href="/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}#">  > </a>
+ 					 <div class = "mt-4 mb-n3"><h3 class="mb-1">Page</h3><div class="card flex-row d-flex align-items-center justify-content-between">
+	 					 <a class="btn" href="/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}#">  < </a>
+	 					 <a>  <b>{{page}}</b> </a>
+	  					 <a class="btn" href="/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}#">  > </a>
+						  </div>
   					 </div>
 
 				

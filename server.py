@@ -65,7 +65,7 @@ def data():
     else:
         numberOfNuplet.replace(";", "").replace("\\","")
 
-    if page is None :
+    if page is None or int(page) < 1:
     	page = 1
 
     numberOfNupletTemp = int(numberOfNuplet) * int(page)

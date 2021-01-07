@@ -57,13 +57,11 @@ def data():
     page = request.args.get('page')
 
     sortBy = request.args.get('sortBy')
-    print(request.args.get('ascend'))
     ascend = request.args.get('ascend')
     if ascend is None :
         ascend = False
     else:
         ascend = util.strtobool(ascend)
-    print (ascend)
 
     if sortBy is None or not(sortBy == "sic" or sortBy == "compilation_date" or sortBy == "compilation_time" or sortBy == "compiled_kernel_size" or sortBy == "compiled_kernel_version"): #On ne peut pas obtenir les colonnes (Droits refusés pour Web), du coup go hardcoder :/
         sortBy = "cid"
@@ -107,7 +105,6 @@ def data():
         else:
             ten.append((e[0],e[1],str(e[2]) + " s",(str(e[3]/1000000) + " Mo"),e[4]))
 
-    print(ascend)
 
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count)
 

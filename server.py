@@ -95,9 +95,10 @@ def data():
     cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
     temp = cursor.fetchall()
     cursor.execute("SELECT COUNT(cid) FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ;")
-    count = cursor.fetchall()
+    count = cursor.fetchone()
     connection.close()
     
+    count = count[0]
     ten = []
     
     for e in temp:

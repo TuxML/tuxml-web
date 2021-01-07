@@ -39,31 +39,33 @@
 
 					<div class = "mt-2 mb-n3"><label for="kerver"><h3>Number of rows displayed</h3></label></div>
 					 <select name="numberOfNuplet" id="kerver" onchange="location = this.value;">
-							 <option {% if '10' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}"> 10 </a></option>
-							  <option {% if '20' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}"> 20 </a></option>
-							 <option {% if '50' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}"> 50 </a></option>
-							 <option {% if '100' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}"> 100 </a></option>
-							 <option {% if '200' == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}"> 200 </a></option>
+							 <option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}"> 10 </a></option>
+							  <option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}"> 20 </a></option>
+							 <option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}"> 50 </a></option>
+							 <option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}"> 100 </a></option>
+							 <option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}"> 200 </a></option>
 					 </select>
 
- 					 <div class = "mt-4 mb-n3"><h3 class="mb-1">Page</h3><div class="card flex-row d-flex align-items-center justify-content-between">
-	 					 <a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}">  < </a>
-	 					 <a>  <b>{{page}}</b> </a>
-	  					 <a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}">  > </a>
-						  </div>
+ 					 <div class = "mt-4 mb-n3"><h3 class="mb-1">Page</h3>
+ 					 	<div class="card flex-row d-flex align-items-center justify-content-between">
+		 					 <a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}">  < </a>
+		 					 <a>  <b>{{page}}</b> </a>
+		  					 <a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}">  > </a>
+					  	</div>
+
+					  	<h3 class="mb-1">Showing {{ page * numberOfNuplet + 1 - numberOfNuplet }} to {{ page * numberOfNuplet }} entries</h3>									 
   					 </div>
 
 				
 
 					 <form id = "specificID">
 					 <div class = "mt-5 mb-n2"><label for="kerver"><h3>Looking for a specific configuration ?</h3></label></div>
+
 					 <input type="text" class="form-control" onchange="document.getElementById('specificID').action = 'configuration/'+this.value;" placeholder="cid">
 					 <button class="btn m-2 btn-primary" type="submit">GO</button><br>
 
-					 
 
-				
-			  </div>
+				</div>
 		  </div>
 		  <div class="my-4 mr-4 w-100 card shadow-lg">
 			  <table class="table" style="text-align:center">

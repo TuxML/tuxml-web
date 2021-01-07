@@ -86,14 +86,16 @@ def data():
 
     numberOfNupletTemp = int(numberOfNuplet) * int(page)
     page = int(page)
+    numberOfNuplet = int(numberOfNuplet)
 
 
 
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = [["All"]] + cursor.fetchall()
     cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
-
     temp = cursor.fetchall()
+    cursor.execute("SELECT COUNT(cid) FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ;")
+    count = cursor.fetchall()
     connection.close()
     
     ten = []
@@ -106,7 +108,7 @@ def data():
 
     print(ascend)
 
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend)
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count)
 
 @app.route('/data/configuration/<int:id>/')
 def user_view(id):

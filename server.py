@@ -95,9 +95,18 @@ def data():
 
     interest = request.args.getlist('interest')
     str_interest = ""
+    if not(interest) :
+    	url_interest = ""
+    else :
+        url_interest= interest[0]
+        for e in interest:
+            str_interest = str_interest + ", " + e + " "
+        for e in interest[1:]:
+            url_interest = url_interest + "&interest=" + e
 
-    for e in interest:
-        str_interest = str_interest + ", " + e + " "
+
+
+
 
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = [["All"]] + cursor.fetchall()
@@ -109,7 +118,7 @@ def data():
     
     count = count[0]
     ten = temp
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest)
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest)
 
 
     """

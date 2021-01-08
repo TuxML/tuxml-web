@@ -21,17 +21,17 @@ cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 def getConnection():
     if (path.exists("tunnel")):
         tuxmlDB = mysql.connector.connect(
-            host='localhost',
-            port=20000,
-            user='web',
-            password='df54ZR459',
-            database='IrmaDB_result')
+        host='localhost',
+        port=20000,
+        user='web',
+        password='df54ZR459',
+        database='IrmaDB_result')
     else:
         tuxmlDB = mysql.connector.connect(
-            host='148.60.11.195',
-            user='web',
-            password='df54ZR459',
-            database='IrmaDB_result')
+        host='148.60.11.195',
+        user='web',
+        password='df54ZR459',
+        database='IrmaDB_result')
 
     return tuxmlDB
 
@@ -62,6 +62,8 @@ def data():
 
     sortBy = request.args.get('sortBy')
     ascend = request.args.get('ascend')
+
+
     if ascend is None :
         ascend = False
     else:
@@ -84,33 +86,41 @@ def data():
         numberOfNuplet.replace(";", "").replace("\\","")
 
     if page is None or int(page) < 1:
-    	page = 1
+        page = 1
 
     numberOfNupletTemp = int(numberOfNuplet) * int(page)
     page = int(page)
     numberOfNuplet = int(numberOfNuplet)
 
 
+    interest = request.args.getlist('interest')
+    str_interest = ""
+
+    for e in interest:
+        str_interest = str_interest + ", " + e + " "
 
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = [["All"]] + cursor.fetchall()
-    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compilation_date, compilation_time, compiled_kernel_size, compiled_kernel_version FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
+    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compiled_kernel_version " + str(str_interest) + "FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
     temp = cursor.fetchall()
     cursor.execute("SELECT COUNT(cid) FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ;")
     count = cursor.fetchone()
     connection.close()
     
     count = count[0]
+    ten = temp
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest)
+
+
+    """
     ten = []
-    
+
     for e in temp:
-        if e[3] == -1:
-            ten.append((e[0],e[1],str(e[2]) + " s","Compilation failed",e[4]))
-        else:
-            ten.append((e[0],e[1],str(e[2]) + " s",(str(e[3]/1000000) + " Mo"),e[4]))
-
-
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count)
+    if e[3] == -1:
+        ten.append((e[0],e[1],str(e[2]) + " s","Compilation failed",e[4]))
+    else:
+        ten.append((e[0],e[1],str(e[2]) + " s",(str(e[3]/1000000) + " Mo"),e[4]))
+        """
 
 @app.route('/data/configuration/<int:id>/')
 @cache.cached(timeout=10000000, query_string=True)
@@ -145,6 +155,7 @@ def getData(id, request):
     elif request == "userOutput" :
         cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
         returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[6])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-userOutput.log")
+    
     connection.close()
     return returnAction
 
@@ -153,8 +164,9 @@ def getData(id, request):
 if __name__ == "__main__":
     arg = 8000
     if len(sys.argv) == 2:
-            arg = str(sys.argv[1])
+        arg = str(sys.argv[1])
     if(socket.gethostname() != 'tuxmlweb'):
         app.debug = True
+
     waitress.serve(app, host="127.0.0.1", port=arg, threads=9)
     

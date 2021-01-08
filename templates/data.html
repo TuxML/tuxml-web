@@ -3,108 +3,135 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-  <title>TuxML</title>
-  <link rel="icon" type="image/png" href="https://avatars0.githubusercontent.com/u/32133780?s=100" />
-  <!-- Bootstrap Core CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<title>TuxML</title>
+	<link rel="icon" type="image/png" href="https://avatars0.githubusercontent.com/u/32133780?s=100" />
+	<!-- Bootstrap Core CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
-  <!-- Custom CSS -->
-  <link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
+	<!-- Custom CSS -->
+	<link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
 
 </head>
 <body id="page-top" class="static-bg">
 	<div class="masthead d-flex">
-	<div class="card w-75 m-auto shadow-lg align-content-start flex-row align-middle">
-		  <div class="m-4 bd-highlight">
-			  <div class="mx-auto text-center">
-				 <a href=".."><img  src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
-				  <h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/data</h2>
-				 
-					 <div class = "mt-4 mb-n3"><label for="kerver"><h3>Kernel version to show</h3></label></div>					 
-					 <select name="version" id="kerver" onchange="location = this.value;">
-							 {% for row in versions %}
-							 {% for d in row %}
-							 <option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}"> {{ d }} </a></option>
-							 {% endfor %}
-							 {% endfor %}
-					 </select>
+		<div class="card w-75 m-auto shadow-lg align-content-start flex-row align-middle">
+			<div class="m-4 bd-highlight">
+				<div class="mx-auto text-center">
+					<a href=".."><img  src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
+					<h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/data</h2>
 
-					 <hr/>
+					<div class = "mt-4 mb-n3"><label for="kerver"><h3>Kernel version to show</h3></label></div>					 
+					<select name="version" id="kerver" onchange="location = this.value;">
+						{% for row in versions %}
+						{% for d in row %}
+						<option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}"> {{ d }} </a></option>
+						{% endfor %}
+						{% endfor %}
+					</select>
+
+					<hr/>
 
 					<div class = "mt-2 mb-n3"><label for="kerver"><h3>Number of rows displayed</h3></label></div>
-					 <select name="numberOfNuplet" id="kerver" onchange="location = this.value;">
-							 <option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}"> 10 </a></option>
-							  <option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}"> 20 </a></option>
-							 <option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}"> 50 </a></option>
-							 <option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}"> 100 </a></option>
-							 <option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}"> 200 </a></option>
-					 </select>
-					 <hr/>
- 					 <div class = "mt-2"><h3 class="mb-1">Page</h3>
-					  <div>
- 					 	<div class="shadow-sm flex-row d-flex align-items-center justify-content-between mb-2">
-		 					 <a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}">  < </a>
-		 					 <a>  <b>{{page}}</b> </a>
-		  					 <a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}">  > </a>
-					  	</div>
-						  <div class="flex-row d-flex align-items-center justify-content-between">
-							  <a class="btn" {%if (page > 1) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page=1&sortBy={{sortBy}}&ascend={{ascend}}" {%endif%} >First</a> 
-							  <a class="btn" {%if page!=((count/numberOfNuplet)|round(method='ceil')|int) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{(count/numberOfNuplet)|round(method='ceil')|int}}&sortBy={{sortBy}}&ascend={{ascend}}" {%endif%}  >Last</a>
-						  </div>
-					  </div>
-					  <hr/>
-					  	<h3 class="mt-2 mb-2">Showing {{ page * numberOfNuplet + 1 - numberOfNuplet }} to {{ page * numberOfNuplet }} of {{ count }} entries</h3>
-						  <hr/>									 
-  					 </div>
+					<select name="numberOfNuplet" id="kerver" onchange="location = this.value;">
+						<option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}"> 10 </a></option>
+						<option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}"> 20 </a></option>
+						<option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}"> 50 </a></option>
+						<option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}"> 100 </a></option>
+						<option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}"> 200 </a></option>
+					</select>
+					<hr/>
+					<div class = "mt-2"><h3 class="mb-1">Page</h3>
+						<div>
+							<div class="shadow-sm flex-row d-flex align-items-center justify-content-between mb-2">
+								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}">  < </a>
+								<a>  <b>{{page}}</b> </a>
+								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}">  > </a>
+							</div>
+							<div class="flex-row d-flex align-items-center justify-content-between">
+								<a class="btn" {%if (page > 1) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page=1&sortBy={{sortBy}}&ascend={{ascend}}" {%endif%} >First</a> 
+								<a class="btn" {%if page!=((count/numberOfNuplet)|round(method='ceil')|int) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{(count/numberOfNuplet)|round(method='ceil')|int}}&sortBy={{sortBy}}&ascend={{ascend}}" {%endif%}  >Last</a>
+							</div>
+						</div>
+						<hr/>
+						<h3 class="mt-2 mb-2">Showing {{ page * numberOfNuplet + 1 - numberOfNuplet }} to {{ page * numberOfNuplet }} of {{ count }} entries</h3>
+						<hr/>									 
+					</div>
 
-				
 
-					 <form id = "specificID">
-					 <div class = "mt-2 mb-n2"><label for="kerver"><h3>Looking for a specific configuration ?</h3></label></div>
 
-					 <input type="text" class="form-control" onchange="document.getElementById('specificID').action = 'configuration/'+this.value;" placeholder="cid">
-					 <button class="btn m-2 btn-primary" type="submit">GO</button><br>
+					<form id = "specificID">
+						<div class = "mt-2 mb-n2"><label for="kerver"><h3>Looking for a specific configuration ?</h3></label></div>
+
+						<input type="text" class="form-control" onchange="document.getElementById('specificID').action = 'configuration/'+this.value;" placeholder="cid">
+						<button class="btn m-2 btn-primary" type="submit">GO</button><br>
+					</form>
+
+					<form>
+						<fieldset>
+							<h3 class="mt-2 mb-2">Choose columns :</h3>
+							<div>
+								<input type="checkbox" id="compilation_date" name="interest" value="compilation_date" >
+								<label for="compilation_date">compilation_date</label>
+							</div>
+							<div>
+								<input type="checkbox" id="compilation_time" name="interest" value="compilation_time">
+								<label for="compilation_time">compilation_time</label>
+							</div>
+							<div>
+								<input type="checkbox" id="compiled_kernel_size" name="interest" value="compiled_kernel_size">
+								<label for="compiled_kernel_size">compiled_kernel_size</label>
+							</div>
+							<button class="btn m-2 btn-primary" type="submit">GO</button><br>
+
+						</fieldset>
+						
+					</form>
+
+					<h3 class="mt-2 mb-2"> {{interest[0]}}</h3>
+
+
+
 
 
 				</div>
-		  </div>
-		  <div class="my-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
-			  <table class="table" style="text-align:center;}">
+			</div>
+			<div class="my-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
+				<table class="table" style="text-align:center;}">
 					<thead>
-					  <tr>
-					  	<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}">cid {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
-						<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compilation_date&ascend={{not(ascend) if sortBy == 'compilation_date' else False}}">compilation_date {% if sortBy == "compilation_date" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
-						<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compilation_time&ascend={{not(ascend) if sortBy == 'compilation_time' else False}}">compilation_time {% if sortBy == "compilation_time" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
-						<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compiled_kernel_size&ascend={{not(ascend) if sortBy == 'compiled_kernel_size' else False}}">compiled_kernel_size {% if sortBy == "compiled_kernel_size" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
-						<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compiled_kernel_version&ascend={{not(ascend) if sortBy == 'compiled_kernel_version' else False}}">compiled_kernel_version {% if sortBy == "compiled_kernel_version" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th></th>
-					  </tr>
+						<tr>
+							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}">cid {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
+							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compilation_date&ascend={{not(ascend) if sortBy == 'compilation_date' else False}}">compilation_date {% if sortBy == "compilation_date" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
+							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compilation_time&ascend={{not(ascend) if sortBy == 'compilation_time' else False}}">compilation_time {% if sortBy == "compilation_time" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
+							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compiled_kernel_size&ascend={{not(ascend) if sortBy == 'compiled_kernel_size' else False}}">compiled_kernel_size {% if sortBy == "compiled_kernel_size" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
+							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compiled_kernel_version&ascend={{not(ascend) if sortBy == 'compiled_kernel_version' else False}}">compiled_kernel_version {% if sortBy == "compiled_kernel_version" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th></th>
+						</tr>
 					</thead>
 					<tbody>
 						{% for row in ten %}
-						  <tr>
-						{% for e in row %}
+						<tr>
+							{% for e in row %}
 							{% if loop.first %}
 							<td> <a href="/data/configuration/{{e}}/">  {{ e }}</a> </td>
 							{% else %}
 							<td> {{e}} </td>
 							{% endif %}
-						{% endfor %}
+							{% endfor %}
 						</tr>
 						{% endfor %}
 					</tbody>
-				  </table>
-		  </div>
+				</table>
+			</div>
 		</div>
 	</div>
 
 
-</body>
+				</body>
 
-</html>
+				</html>

@@ -5,6 +5,7 @@ import signal
 from io import BytesIO
 from time import sleep
 import threading
+from flask_caching import Cache
 from flask import Flask, render_template, url_for, request, send_file
 import os
 import mysql.connector
@@ -14,7 +15,7 @@ from os import path
 import waitress
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
-
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 
 def getConnection():
@@ -31,9 +32,11 @@ def getConnection():
             user='web',
             password='df54ZR459',
             database='IrmaDB_result')
+
     return tuxmlDB
 
 @app.route('/')
+@cache.cached(timeout=3600)
 def hello_world():
     connection = getConnection()
     mycursor = connection.cursor()
@@ -48,6 +51,7 @@ def laFin():
     return ("¯\_(ツ)_/¯")
 
 @app.route('/data/')
+@cache.cached(timeout=360, query_string=True)
 def data():
     connection = getConnection()
     cursor = connection.cursor()
@@ -109,6 +113,7 @@ def data():
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count)
 
 @app.route('/data/configuration/<int:id>/')
+@cache.cached(timeout=10000000, query_string=True)
 def user_view(id):
     connection = getConnection()
     cursor = connection.cursor()

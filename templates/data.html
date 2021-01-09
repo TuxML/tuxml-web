@@ -31,7 +31,7 @@
 					<select name="version" id="kerver" onchange="location = this.value;">
 						{% for row in versions %}
 						{% for d in row %}
-						<option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}"> {{ d }} </a></option>
+						<option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> {{ d }} </a></option>
 						{% endfor %}
 						{% endfor %}
 					</select>
@@ -40,23 +40,23 @@
 
 					<div class = "mt-2 mb-n3"><label for="kerver"><h3>Number of rows displayed</h3></label></div>
 					<select name="numberOfNuplet" id="kerver" onchange="location = this.value;">
-						<option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}"> 10 </a></option>
-						<option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}"> 20 </a></option>
-						<option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}"> 50 </a></option>
-						<option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}"> 100 </a></option>
-						<option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}"> 200 </a></option>
+						<option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 10 </a></option>
+						<option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 20 </a></option>
+						<option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 50 </a></option>
+						<option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 100 </a></option>
+						<option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 200 </a></option>
 					</select>
 					<hr/>
 					<div class = "mt-2"><h3 class="mb-1">Page</h3>
 						<div>
 							<div class="shadow-sm flex-row d-flex align-items-center justify-content-between mb-2">
-								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}">  < </a>
+								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}">  < </a>
 								<a>  <b>{{page}}</b> </a>
-								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}">  > </a>
+								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}">  > </a>
 							</div>
 							<div class="flex-row d-flex align-items-center justify-content-between">
-								<a class="btn" {%if (page > 1) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page=1&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}" {%endif%} >First</a> 
-								<a class="btn" {%if page!=((count/numberOfNuplet)|round(method='ceil')|int) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{(count/numberOfNuplet)|round(method='ceil')|int}}&sortBy={{sortBy}}&ascend={{ascend}}&interest={{url_interest}}" {%endif%}  >Last</a>
+								<a class="btn" {%if (page > 1) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page=1&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}" {%endif%} >First</a> 
+								<a class="btn" {%if page!=((count/numberOfNuplet)|round(method='ceil')|int) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{(count/numberOfNuplet)|round(method='ceil')|int}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}" {%endif%}  >Last</a>
 							</div>
 						</div>
 						<hr/>
@@ -88,6 +88,12 @@
 								<input type="checkbox" id="compiled_kernel_size" name="interest" value="compiled_kernel_size">
 								<label for="compiled_kernel_size">compiled_kernel_size</label>
 							</div>
+							<div>
+								<input type="checkbox" id="compiled_kernel_version" name="interest" value="compiled_kernel_version">
+								<label for="compiled_kernel_version">compiled_kernel_version</label>
+							</div>
+
+
 							<button class="btn m-2 btn-primary" type="submit">GO</button><br>
 
 						</fieldset>
@@ -105,10 +111,10 @@
 				<table class="table" style="text-align:center;}">
 					<thead>
 						<tr>
-							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}&interest={{url_interest}}">cid {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
-							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=compiled_kernel_version&ascend={{not(ascend) if sortBy == 'compiled_kernel_version' else False}}&interest={{url_interest}}">compiled_kernel_version {% if sortBy == "compiled_kernel_version" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th></th>
+							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}{{url_interest}}">cid {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
+
 							{% for e in interest %}
-								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={{not(ascend) if sortBy == '{{e}}' else False}}&interest={{url_interest}}">{{e}} {% if sortBy == "{{e}}" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
+								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={{not(ascend) if sortBy == '{{e}}' else False}}{{url_interest}}">{{e}} {% if sortBy == '{{e}}' %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
 							{% endfor %}
 						</tr>
 					</thead>

@@ -95,14 +95,10 @@ def data():
 
     interest = request.args.getlist('interest')
     str_interest = ""
-    if not(interest) :
-    	url_interest = ""
-    else :
-        url_interest= interest[0]
-        for e in interest:
-            str_interest = str_interest + ", " + e + " "
-        for e in interest[1:]:
-            url_interest = url_interest + "&interest=" + e
+    url_interest = ""
+    for e in interest:
+        str_interest = str_interest + ", " + e + " "
+        url_interest = url_interest + "&interest=" + e
 
 
 
@@ -110,7 +106,7 @@ def data():
 
     cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
     versions = [["All"]] + cursor.fetchall()
-    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid, compiled_kernel_version " + str(str_interest) + "FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
+    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid " + str_interest + " FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
     temp = cursor.fetchall()
     cursor.execute("SELECT COUNT(cid) FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ;")
     count = cursor.fetchone()

@@ -114,7 +114,7 @@
 							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}{{url_interest}}">cid {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
 
 							{% for e in interest %}
-								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={{not(ascend) if sortBy == '{{e}}' else False}}{{url_interest}}">{{e}} {% if sortBy == '{{e}}' %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
+								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={% if sortBy == e %}{{not(ascend)}}{% else %}False{% endif %}{{url_interest}}">{{e}} {% if sortBy == e %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
 							{% endfor %}
 						</tr>
 					</thead>

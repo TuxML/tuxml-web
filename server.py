@@ -115,8 +115,11 @@ def data():
             if i == -1:
                 line = [str(e)]
             else:
-                if interest[i] == "compiled_kernel_size" and e == -1:
-                    line.append("Compilation failed")
+                if interest[i] == "compiled_kernel_size" :
+                    if e == -1:
+                        line.append("Compilation failed")
+                    else :
+                        line.append(str(e/1000000) + " Mo")
                 else:
             	    line.append(str(e))
             i = i + 1

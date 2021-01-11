@@ -105,13 +105,30 @@ def data():
     cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid " + str_interest + " FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
     temp = cursor.fetchall()
     count = dbManager.getCompilationCount(laversion)
-    ten = temp
+    
+    #modify the values contained in the query to adapt the reading to a human
+    ten=[]
+    line = []
+    i = -1
+    for row in temp :
+        for e in row :
+            if i == -1:
+                line = [str(e)]
+            else:
+                if interest[i] == "compiled_kernel_size" and e == -1:
+                    line.append("Compilation failed")
+                else:
+            	    line.append(str(e))
+            i = i + 1
+        i = -1
+        ten.append(line)     
+
+
+
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest)
 
 
     """
-    ten = []
-
     for e in temp:
     if e[3] == -1:
         ten.append((e[0],e[1],str(e[2]) + " s","Compilation failed",e[4]))

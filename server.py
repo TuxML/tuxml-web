@@ -6,7 +6,7 @@ from io import BytesIO
 from time import sleep
 import threading
 from flask_caching import Cache
-from flask import Flask, render_template, url_for, request, send_file
+from flask import Flask, render_template, url_for, request, send_file, redirect
 import os
 import mysql.connector
 import socket
@@ -104,11 +104,7 @@ def data():
     versions = [["All"]] + cursor.fetchall()
     cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid " + str_interest + " FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
     temp = cursor.fetchall()
-    cursor.execute("SELECT COUNT(cid) FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ;")
-    count = cursor.fetchone()
-    connection.close()
-    
-    count = count[0]
+    count = dbManager.getCompilationCount(laversion)
     ten = temp
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest)
 
@@ -126,18 +122,10 @@ def data():
 @app.route('/data/configuration/<int:id>/')
 @cache.cached(timeout=10000000, query_string=True)
 def user_view(id):
-    connection = getConnection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-    config = cursor.fetchone()
-    if config is None :
-        return data()
-    cursor.execute("SELECT * FROM software_environment WHERE sid = " + str(config[12]))
-    sconfig = cursor.fetchone()
-    cursor.execute("SELECT * FROM hardware_environment WHERE hid = " + str(config[13]))
-    hconfig = cursor.fetchone()
-    connection.close()
-    return render_template('config.html', config=config, sconfig=sconfig, hconfig=hconfig)
+    confData = dbManager.getCompilationInfo(id)
+    if confData is None:
+        return redirect(url_for('data'))
+    return render_template('config.html', config=confData[0], sconfig=confData[1], hconfig=confData[2])
 
 @app.route('/data/configuration/<int:id>/<string:request>')
 def getData(id, request):

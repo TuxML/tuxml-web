@@ -101,10 +101,20 @@ __x.start()
 #Sample functions
 
 def getCompilationCount(specificVersion = None):
-    if specificVersion is not None:
-        return makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE compiled_kernel_version = '{specificVersion}'")
-    else:
+    if specificVersion is None or 'All' in specificVersion:
         return makeRequest("SELECT COUNT(cid) FROM compilations")
+    else:
+        return makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE compiled_kernel_version = '{specificVersion}'")
+
+
+def getCompilationInfo(compilationId):
+    try:
+        comp = makeRequest("SELECT * FROM compilations WHERE cid = " + str(compilationId))
+        soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(comp[12]))
+        hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(comp[13]))
+        return (comp,soft,hard)
+    except:
+        return None
 
 
 def getNumberOfActiveOptions(compilationId):

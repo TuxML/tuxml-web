@@ -11,10 +11,10 @@ class __CacheItem:
         self.__lock = threading.Lock()
         self.lastUpdate = arrow.now()
         self.useCount = 0
-    def update(self, data):
+    def update(self, data, impact = 1):
         self.__lock.acquire()
         self.__data = data
-        self.useCount += 1
+        self.useCount += impact
         self.lastUpdate = arrow.now()
         self.__lock.release()
     def getData(self):
@@ -62,25 +62,39 @@ def __incrementCounter():
     __totalFetchCount += 1
     __incrementLocker.release()
 
-def __updateCache(query, data, queriesCache = __queriesCache):
-    cacheItem = queriesCache.get(query, __CacheItem())
+def __updateCache(query, data):
+    global __queriesCache
+    cacheItem = __queriesCache.get(query, __CacheItem())
     cacheItem.update(data)
     __cacheLocker.acquire()
-    queriesCache[query] = cacheItem
+    __queriesCache[query] = cacheItem
     __cacheLocker.release()
 
-def __refreshCacheRoutine(queriesCache = __queriesCache): # Works as a thread
+def __refreshCacheRoutine(): # Works as a thread
+    global __queriesCache
     global __totalFetchCount
     refreshCount = 0
     while True:
         refreshCount +=1
         __cacheLocker.acquire()
-        for request,cachedData in queriesCache.items():
-            if ((cachedData.useCount / __totalFetchCount) > 0.5)\
-            or ((cachedData.useCount / __totalFetchCount) > 0.25 and (refreshCount % 4) == 0)\
-            or ((cachedData.useCount / __totalFetchCount) > 0.125 and (refreshCount % 6) == 0)\
+
+        for request,cachedData in __queriesCache.items():
+            if ((cachedData.useCount / __totalFetchCount) > 0.25)\
+            or ((cachedData.useCount / __totalFetchCount) > 0.125 and (refreshCount % 4) == 0)\
+            or ((cachedData.useCount / __totalFetchCount) > 0.0625 and (refreshCount % 8) == 0)\
             or ((refreshCount % 10) == 0):
-                cachedData.update(__fetchData(request))
+                cachedData.update(__fetchData(request),impact=0)
+
+        if refreshCount % 188 == 0:
+            purgedQueriesCache = {}
+            purgedFetchCount = 0
+            for request,cachedData in __queriesCache.items():
+                if (arrow.now() - cachedData.lastUpdate).seconds > 86400 :
+                    purgedQueriesCache[request] = cachedData
+                    purgedFetchCount += cachedData.useCount
+            __queriesCache = purgedQueriesCache
+            __totalFetchCount = purgedFetchCount
+
         __cacheLocker.release()
         sleep(300)
 

@@ -7,7 +7,7 @@ tuxmlweb.istic.univ-rennes1.fr
 You will need the following packages :
 ```
 sudo apt install python3-flask
-sudo pip3 install mysql-connector-python waitress flask-caching
+sudo pip3 install mysql-connector-python waitress flask-caching arrow
 ```
 
 If you're using the ISTIC's VPN or are using the ISTIC's WIFI network, you can start the server directly :

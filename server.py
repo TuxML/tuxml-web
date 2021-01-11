@@ -6,7 +6,7 @@ from io import BytesIO
 from time import sleep
 import threading
 from flask_caching import Cache
-from flask import Flask, render_template, url_for, request, send_file, redirect
+from flask import Flask, render_template, url_for, request, send_file, redirect, abort
 import os
 import mysql.connector
 import socket
@@ -142,30 +142,20 @@ def user_view(id):
     confData = dbManager.getCompilationInfo(id)
     if confData is None:
         return redirect(url_for('data'))
-    return render_template('config.html', config=confData[0], sconfig=confData[1], hconfig=confData[2])
+    return render_template('config.html', config=confData.compilationInfo, sconfig=confData.softwareInfo, hconfig=confData.hardwareInfo)
 
 @app.route('/data/configuration/<int:id>/<string:request>')
 def getData(id, request):
-    connection = getConnection()
-    cursor = connection.cursor()
-    returnAction = None
-    if request == "config" :
-        cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-        returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[3])), as_attachment=True, attachment_filename="TuxML-"+str(id)+".config")
-    elif request == "stdout" :
-        cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-        returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[4])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-stdout.log")
-    elif request == "stderr" :
-        cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-        returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[5])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-stderr.log")
-    elif request == "userOutput" :
-        cursor.execute("SELECT * FROM compilations WHERE cid = " + str(id))
-        returnAction = send_file(BytesIO(bz2.decompress(cursor.fetchone()[6])), as_attachment=True, attachment_filename="TuxML-"+str(id)+"-userOutput.log")
-    
-    connection.close()
-    return returnAction
 
+    if not dbManager.compilationExists(id):
+        return abort(404)
 
+    requestedFile = dbManager.getCompilationFile(id,request)
+
+    if requestedFile is None or not dbManager.compilationExists(id):
+        return abort(500)
+
+    return send_file(BytesIO(requestedFile), as_attachment=True, attachment_filename=f"TuxML-{id}.{request + ('.log' if (request!='config') else '') }")
 
 if __name__ == "__main__":
     arg = 8000

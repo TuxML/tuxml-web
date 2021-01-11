@@ -41,12 +41,15 @@ def __fetchData(query):
 
     curs = tuxmlDB.cursor(buffered=True)
     curs.execute(query)
-    result = curs.fetchall()
-    if len(result) == 1:
-        result = result[0]
-    if len(result) == 1:
-        result = result[0]
-    return result
+    try:
+        result = curs.fetchall()
+        if len(result) == 1:
+            result = result[0]
+        if len(result) == 1:
+            result = result[0]
+        return result
+    except:
+        return None
 
 __queriesCache = {}
 __totalFetchCount = 0
@@ -97,7 +100,6 @@ def makeRequest(query, caching = True):
 __x = threading.Thread(target=__refreshCacheRoutine)
 __x.start()
 
-
 #Sample functions
 
 def getCompilationCount(specificVersion = None):
@@ -106,23 +108,46 @@ def getCompilationCount(specificVersion = None):
     else:
         return makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE compiled_kernel_version = '{specificVersion}'")
 
+def compilationExists(compilationId):
+        try:
+            return bool(makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE cid = '{compilationId}'"))
+        except:
+            return False
 
-def getCompilationInfo(compilationId):
+def getCompilationInfo(compilationId, basic = False):
+    class compilationInfo:
+        def __init__ (self,compilationInfo,softwareInfo, hardwareInfo) :
+            self.compilationInfo = compilationInfo
+            self.softwareInfo = softwareInfo
+            self.hardwareInfo = hardwareInfo
     try:
-        comp = makeRequest("SELECT * FROM compilations WHERE cid = " + str(compilationId))
-        soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(comp[12]))
-        hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(comp[13]))
-        return (comp,soft,hard)
+        comp = makeRequest("SELECT * FROM compilations WHERE cid = " + str(compilationId), caching=False)
+        if not basic :
+            soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(comp[12]))
+            hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(comp[13]))
+        return compilationInfo(comp,soft,hard)
+    except:
+        return None
+
+def getCompilationFile(compilationId, requestedFileType):
+    reqparam = None
+    if requestedFileType == "config":
+        reqparam="config_file"
+    elif requestedFileType == "stdout":
+        reqparam = "stdout_log_file"
+    elif requestedFileType == "stderr":
+        reqparam = "stderr_log_file"
+    elif requestedFileType == "userOutput":
+        reqparam = "user_output_file"
+    try:
+        return bz2.decompress(makeRequest(f"SELECT {reqparam} FROM compilations WHERE cid = {compilationId}", caching=False))
     except:
         return None
 
 
 def getNumberOfActiveOptions(compilationId):
-    configFile = makeRequest("SELECT config_file FROM compilations WHERE cid = "+str(compilationId),caching=False)
-    if (configFile is None):
-        return -1
     try:
-        configFile = bz2.decompress(configFile).decode('ascii')
+        configFile = getCompilationFile(compilationId,"config")
         ny = 0
         for l in configFile.splitlines():
             if l.endswith("=y"):

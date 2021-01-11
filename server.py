@@ -13,6 +13,8 @@ import socket
 import sys
 from os import path
 import waitress
+import dbManager
+
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
@@ -36,14 +38,8 @@ def getConnection():
     return tuxmlDB
 
 @app.route('/')
-@cache.cached(timeout=3600)
 def hello_world():
-    connection = getConnection()
-    mycursor = connection.cursor()
-    mycursor.execute("SELECT COUNT(*) FROM compilations")
-    nbcompil = mycursor.fetchone()[0]
-    connection.close()
-    return render_template('base.html', count=nbcompil)
+    return render_template('base.html', count=dbManager.getCompilationCount())
 
 @app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/', methods = ['GET', 'POST'])
 def laFin():

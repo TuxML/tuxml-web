@@ -120,6 +120,8 @@ def data():
                         line.append("Compilation failed")
                     else :
                         line.append(str(e/1000000) + " Mo")
+                elif interest[i] == "compilation_time" :
+                    line.append(str(e) + " s")
                 else:
             	    line.append(str(e))
             i = i + 1
@@ -131,13 +133,6 @@ def data():
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest)
 
 
-    """
-    for e in temp:
-    if e[3] == -1:
-        ten.append((e[0],e[1],str(e[2]) + " s","Compilation failed",e[4]))
-    else:
-        ten.append((e[0],e[1],str(e[2]) + " s",(str(e[3]/1000000) + " Mo"),e[4]))
-        """
 
 @app.route('/data/configuration/<int:id>/')
 @cache.cached(timeout=10000000, query_string=True)

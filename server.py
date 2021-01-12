@@ -70,11 +70,8 @@ def data():
 
     if laversion is None :
         laversion = "All"
-        versionreq = "All"
     else:
         laversion.replace(";", "").replace("\\","")
-        cursor.execute(f"SELECT COUNT(compiled_kernel_size) FROM compilations WHERE compiled_kernel_size < 0 AND compiled_kernel_version = '{laversion}';")
-        versionreq = cursor.fetchall()
 
     if numberOfNuplet is None :
         numberOfNuplet = 10
@@ -99,11 +96,8 @@ def data():
 
 
 
-
-    cursor.execute("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ASC")
-    versions = [["All"]] + cursor.fetchall()
-    cursor.execute("SELECT b.* FROM (SELECT a.* FROM (SELECT cid " + str_interest + " FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
-    temp = cursor.fetchall()
+    versions = [["All"]] + dbManager.getExistingKernelVersions()
+    temp = dbManager.makeRequest("SELECT b.* FROM (SELECT a.* FROM (SELECT cid " + str_interest + " FROM compilations " + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
     count = dbManager.getCompilationCount(laversion)
     
     #modify the values contained in the query to adapt the reading to a human
@@ -130,7 +124,7 @@ def data():
 
 
 
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versionreq=versionreq, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest)
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest)
 
 
 

@@ -7,17 +7,23 @@ import mysql.connector
 import arrow
 
 class __CacheItem:
-    def __init__(self):
+    def __init__(self, passiveData = False):
         self.__lock = threading.Lock()
         self.lastUpdate = arrow.now()
         self.useCount = 0
-    def update(self, data, impact = 1):
+        self.isPassiveData = passiveData
+        self.__data = None
+    def update(self, data, impact = True):
         self.__lock.acquire()
         self.__data = data
-        self.useCount += impact
-        self.lastUpdate = arrow.now()
+        if impact :
+            self.useCount += 1
+            self.lastUpdate = arrow.now()
         self.__lock.release()
     def getData(self):
+        if self.isPassiveData:
+            data = self.__data
+            return data
         self.__lock.acquire()
         data = self.__data
         self.useCount += 1
@@ -62,9 +68,9 @@ def __incrementCounter():
     __totalFetchCount += 1
     __incrementLocker.release()
 
-def __updateCache(query, data):
+def __updateCache(query, data, isPassiveData):
     global __queriesCache
-    cacheItem = __queriesCache.get(query, __CacheItem())
+    cacheItem = __queriesCache.get(query, __CacheItem(passiveData=isPassiveData))
     cacheItem.update(data)
     __cacheLocker.acquire()
     __queriesCache[query] = cacheItem
@@ -82,14 +88,14 @@ def __refreshCacheRoutine(): # Works as a thread
             if ((cachedData.useCount / __totalFetchCount) > 0.25)\
             or ((cachedData.useCount / __totalFetchCount) > 0.125 and (refreshCount % 4) == 0)\
             or ((cachedData.useCount / __totalFetchCount) > 0.0625 and (refreshCount % 8) == 0)\
-            or ((refreshCount % 10) == 0):
-                cachedData.update(__fetchData(request),impact=0)
+            or ((refreshCount % 10) == 0 and not cachedData.isPassiveData):
+                cachedData.update(__fetchData(request),impact=False)
 
         if refreshCount % 188 == 0:
             purgedQueriesCache = {}
             purgedFetchCount = 0
             for request,cachedData in __queriesCache.items():
-                if (arrow.now() - cachedData.lastUpdate).seconds > 86400 :
+                if (arrow.now() - cachedData.lastUpdate).seconds > 86400 and not cachedData.isPassiveData:
                     purgedQueriesCache[request] = cachedData
                     purgedFetchCount += cachedData.useCount
             __queriesCache = purgedQueriesCache
@@ -98,21 +104,25 @@ def __refreshCacheRoutine(): # Works as a thread
         __cacheLocker.release()
         sleep(300)
 
-def makeRequest(query, caching = True):
+def makeRequest(query, caching = True, isPassiveData = False):
     if caching :
         __incrementCounter()
         try:
             return __queriesCache[query].getData()
-        except:
+        except Exception as e :
             pass
     data = __fetchData(query)
     if caching :
-        updateThread = threading.Thread(target=__updateCache, args=(query, data))
+        updateThread = threading.Thread(target=__updateCache, args=(query, data, isPassiveData))
         updateThread.start()
     return(data)
 
 __x = threading.Thread(target=__refreshCacheRoutine)
 __x.start()
+
+
+
+
 
 #Sample functions
 
@@ -135,10 +145,10 @@ def getCompilationInfo(compilationId, basic = False):
             self.softwareInfo = softwareInfo
             self.hardwareInfo = hardwareInfo
     try:
-        comp = makeRequest("SELECT * FROM compilations WHERE cid = " + str(compilationId), caching=False)
+        comp = makeRequest("SELECT * FROM compilations WHERE cid = " + str(compilationId), isPassiveData=True)
         if not basic :
-            soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(comp[12]))
-            hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(comp[13]))
+            soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(comp[12]), isPassiveData=True)
+            hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(comp[13]), isPassiveData=True)
         return compilationInfo(comp,soft,hard)
     except:
         return None
@@ -158,6 +168,33 @@ def getCompilationFile(compilationId, requestedFileType):
     except:
         return None
 
+def getColumnsForCompilationsTable(includeBlobs = False):
+    col = makeRequest("SHOW COLUMNS FROM `compilations`", isPassiveData=True)
+    result = []
+    for c in col:
+        if includeBlobs :
+            result.append(c[0])
+        elif "blob" not in c[1]:
+            result.append(c[0])
+    return result
+
+def getColumnsForHardwareEnvTable():
+    col = makeRequest("SHOW COLUMNS FROM `hardware_environment`", isPassiveData=True)
+    result = []
+    for c in col:
+            result.append(c[0])
+    return result
+
+def getColumnsForSoftwareEnvTable():
+    col = makeRequest("SHOW COLUMNS FROM `software_environment`", isPassiveData=True)
+    result = []
+    for c in col:
+            result.append(c[0])
+    return result
+
+def getExistingKernelVersions(desc = False):
+    return makeRequest("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version " + ("DESC" if desc else "ASC"), isPassiveData=True)
+
 
 def getNumberOfActiveOptions(compilationId):
     try:
@@ -170,3 +207,4 @@ def getNumberOfActiveOptions(compilationId):
     except Exception as e:
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return -1
+

@@ -38,7 +38,7 @@
 				<b>Date : </b> {{config[1]}} <br>
 				<b>Length : </b> {{config[2]}} s <br>
 				<b>Compressed kernel size: </b> {% if config[7] == -1  %} 0 (Compilation failed) {% else %} {{config[7]/1000000}} Mo {% endif %} <br>
-				<b>Kernel version : </b> <a href ="../../../data?laversion={{config[11]}}"> {{config[11]}} </a><br><br>
+				<b>Kernel version : </b> <a href ="../../../data?laversion={{config[11]}}&interest=compilation_date&interest=compilation_time&interest=compiled_kernel_size&interest=compiled_kernel_version"> {{config[11]}}</a><br><br>
 				<b>Dependencies : </b><div class="card p-2"> {{config[9]}} </div><br><br>
 				<b>Downloads : </b> 
 				<a href ="config" class="btn m-2 btn-primary">Config</a>

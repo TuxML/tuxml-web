@@ -78,23 +78,43 @@
 						<fieldset>
 							<h3 class="mt-2 mb-2">Customise columns layout</h3>
 							<div class="align-content-start text-left">
-							<div class= "my-0">
-								<input type="checkbox" id="compilation_date" name="interest" value="compilation_date" {% for e in interest %} {% if e == "compilation_date" %} checked {% endif %} {% endfor %} >
-								<label for="compilation_date">compilation_date</label>
+
+								<div class= "my-0">
+									<input type="checkbox" id="compilation_date" name="interest" value="compilation_date" {% for e in interest %} {% if e == "compilation_date" %} checked {% endif %} {% endfor %} >
+									<label for="compilation_date">compilation_date</label>
+								</div>
+								<div class= "my-n1">
+									<input type="checkbox" id="compilation_time" name="interest" value="compilation_time" {% for e in interest %} {% if e == "compilation_time" %} checked {% endif %} {% endfor %}  >
+									<label for="compilation_time">compilation_time</label>
+								</div>
+								<div class= "my-n1">
+									<input type="checkbox" id="compiled_kernel_size" name="interest" value="compiled_kernel_size" {% for e in interest %} {% if e == "compiled_kernel_size" %} checked {% endif %} {% endfor %} >
+									<label for="compiled_kernel_size">compiled_kernel_size</label>
+								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="compiled_kernel_version" name="interest" value="compiled_kernel_version" {% for e in interest %} {% if e == "compiled_kernel_version" %} checked {% endif %} {% endfor %} >
+									<label for="compiled_kernel_version">compiled_kernel_version</label>
+								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="compressed_compiled_kernel_size" name="interest" value="compressed_compiled_kernel_size" {% for e in interest %} {% if e == "compressed_compiled_kernel_size" %} checked {% endif %} {% endfor %} >
+									<label for="compressed_compiled_kernel_size">compressed_compiled_kernel_size</label>
+								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="number_cpu_core_used" name="interest" value="number_cpu_core_used" {% for e in interest %} {% if e == "number_cpu_core_used" %} checked {% endif %} {% endfor %} >
+									<label for="number_cpu_core_used">number_cpu_core_used</label>
+								</div>
+									<div class="mr-n3 my-n1">
+									<input type="checkbox" id="sid" name="interest" value="sid" {% for e in interest %} {% if e == "sid" %} checked {% endif %} {% endfor %} >
+									<label for="sid">sid</label>
+								</div>
+									<div class="mr-n3 my-n1">
+									<input type="checkbox" id="hid" name="interest" value="hid" {% for e in interest %} {% if e == "hid" %} checked {% endif %} {% endfor %} >
+									<label for="hid">hid</label>
+								</div>
+
 							</div>
-							<div class= "my-n1">
-								<input type="checkbox" id="compilation_time" name="interest" value="compilation_time" {% for e in interest %} {% if e == "compilation_time" %} checked {% endif %} {% endfor %}  >
-								<label for="compilation_time">compilation_time</label>
-							</div>
-							<div class= "my-n1">
-								<input type="checkbox" id="compiled_kernel_size" name="interest" value="compiled_kernel_size" {% for e in interest %} {% if e == "compiled_kernel_size" %} checked {% endif %} {% endfor %} >
-								<label for="compiled_kernel_size">compiled_kernel_size</label>
-							</div>
-							<div class="mr-n3 my-n1">
-								<input type="checkbox" id="compiled_kernel_version" name="interest" value="compiled_kernel_version" {% for e in interest %} {% if e == "compiled_kernel_version" %} checked {% endif %} {% endfor %} >
-								<label for="compiled_kernel_version">compiled_kernel_version</label>
-							</div>
-							</div>
+
+							
 
 							<button class="btn m-2 px-3 mt-0 btn-primary" type="submit">Apply</button><br>
 

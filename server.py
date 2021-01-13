@@ -19,6 +19,18 @@ import dbManager
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
+@app.context_processor
+def time_formatter():
+    def format_time(amount):
+        m, s = divmod(amount, 60)
+        return '{:02d} min {:02d} sec'.format(int(m), int(s))
+    return dict(format_time=format_time)
+    
+@app.context_processor
+def size_formatter():
+    def format_size(amount, unit):
+        return '{:.2f} {:s}'.format(round(amount/1000000, 2), unit)
+    return dict(format_size=format_size)
 
 def getConnection():
     if (path.exists("tunnel")):
@@ -113,14 +125,15 @@ def data():
                     if e == -1:
                         line.append("Compilation failed")
                     else :
-                        line.append(str(e/1000000) + " Mo")
+                        line.append('{:.2f} Mo'.format(round(e/1000000, 2)))
                 elif interest[i] == "compilation_time" :
-                    line.append(str(e) + " s")
+                        m, s = divmod(e, 60)
+                        line.append('{:02d} min {:02d} sec'.format(int(m), int(s)))
                 else:
             	    line.append(str(e))
             i = i + 1
         i = -1
-        ten.append(line)     
+        ten.append(line)
 
 
 

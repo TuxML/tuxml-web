@@ -68,7 +68,7 @@
 						<div class = "mt-2 mb-n2"><label for="kerver"><h3>Looking for a specific configuration ?</h3></label></div>
 						<div class="d-flex flex-row align-items-center">
 							<div class ="">
-						<input type="text" class="form-control" onchange="document.getElementById('specificID').action = 'configuration/'+this.value;" placeholder="cid"></div>
+						<input type="text" class="form-control" onchange="document.getElementById('specificID').action = 'configuration/'+this.value;" placeholder="CID"></div>
 						<div class ="">
 						<button class="btn m-2 btn-primary p-2 " type="submit">GO</button></div>
 						</div>
@@ -81,35 +81,35 @@
 
 								<div class= "my-0">
 									<input type="checkbox" id="compilation_date" name="interest" value="compilation_date" {% for e in interest %} {% if e == "compilation_date" %} checked {% endif %} {% endfor %} >
-									<label for="compilation_date">compilation_date</label>
+									<label for="compilation_date">Compilation Date</label>
 								</div>
 								<div class= "my-n1">
 									<input type="checkbox" id="compilation_time" name="interest" value="compilation_time" {% for e in interest %} {% if e == "compilation_time" %} checked {% endif %} {% endfor %}  >
-									<label for="compilation_time">compilation_time</label>
+									<label for="compilation_time">Compilation Time</label>
 								</div>
 								<div class= "my-n1">
 									<input type="checkbox" id="compiled_kernel_size" name="interest" value="compiled_kernel_size" {% for e in interest %} {% if e == "compiled_kernel_size" %} checked {% endif %} {% endfor %} >
-									<label for="compiled_kernel_size">compiled_kernel_size</label>
+									<label for="compiled_kernel_size">Compiled Kernel Size</label>
 								</div>
 								<div class="mr-n3 my-n1">
 									<input type="checkbox" id="compiled_kernel_version" name="interest" value="compiled_kernel_version" {% for e in interest %} {% if e == "compiled_kernel_version" %} checked {% endif %} {% endfor %} >
-									<label for="compiled_kernel_version">compiled_kernel_version</label>
+									<label for="compiled_kernel_version">Compiled Kernel Version</label>
 								</div>
 								<div class="mr-n3 my-n1">
 									<input type="checkbox" id="compressed_compiled_kernel_size" name="interest" value="compressed_compiled_kernel_size" {% for e in interest %} {% if e == "compressed_compiled_kernel_size" %} checked {% endif %} {% endfor %} >
-									<label for="compressed_compiled_kernel_size">compressed_compiled_kernel_size</label>
+									<label for="compressed_compiled_kernel_size">Compressed Compiled Kernel Size</label>
 								</div>
 								<div class="mr-n3 my-n1">
 									<input type="checkbox" id="number_cpu_core_used" name="interest" value="number_cpu_core_used" {% for e in interest %} {% if e == "number_cpu_core_used" %} checked {% endif %} {% endfor %} >
-									<label for="number_cpu_core_used">number_cpu_core_used</label>
+									<label for="number_cpu_core_used">Number Cpu Core Used</label>
 								</div>
 									<div class="mr-n3 my-n1">
 									<input type="checkbox" id="sid" name="interest" value="sid" {% for e in interest %} {% if e == "sid" %} checked {% endif %} {% endfor %} >
-									<label for="sid">sid</label>
+									<label for="sid">SID</label>
 								</div>
 									<div class="mr-n3 my-n1">
 									<input type="checkbox" id="hid" name="interest" value="hid" {% for e in interest %} {% if e == "hid" %} checked {% endif %} {% endfor %} >
-									<label for="hid">hid</label>
+									<label for="hid">HID</label>
 								</div>
 
 							</div>
@@ -135,10 +135,10 @@
 				<table class="table" style="text-align:center;}">
 					<thead>
 						<tr>
-							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}{{url_interest}}">cid {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
+							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}{{url_interest}}">CID {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
 
 							{% for e in interest %}
-								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={% if sortBy == e %}{{not(ascend)}}{% else %}False{% endif %}{{url_interest}}">{{e}} {% if sortBy == e %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
+								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={% if sortBy == e %}{{not(ascend)}}{% else %}False{% endif %}{{url_interest}}">{{(e | replace("_", " ")).title()}} {% if sortBy == e %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
 							{% endfor %}
 						</tr>
 					</thead>

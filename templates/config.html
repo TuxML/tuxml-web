@@ -36,8 +36,8 @@
 			<div class="m-4 x-8 w-60 bd-highlight">
 				<h2>Compilation info</h2>
 				<b>Date : </b> {{config[1]}} <br>
-				<b>Length : </b> {{config[2]}} s <br>
-				<b>Compressed kernel size: </b> {% if config[7] == -1  %} 0 (Compilation failed) {% else %} {{config[7]/1000000}} Mo {% endif %} <br>
+				<b>Length : </b> {{format_time(config[2])}}<br>
+				<b>Compressed kernel size: </b> {% if config[7] == -1  %} 0 (Compilation failed) {% else %} {{format_size(config[7], "Mo")}} {% endif %} <br>
 				<b>Kernel version : </b> <a href ="../../../data?laversion={{config[11]}}&interest=compilation_date&interest=compilation_time&interest=compiled_kernel_size&interest=compiled_kernel_version"> {{config[11]}}</a><br><br>
 				<b>Dependencies : </b><div class="card p-2"> {{config[9]}} </div><br><br>
 				<b>Downloads : </b> 
@@ -60,7 +60,7 @@
 			<b>CPU : </b> {{hconfig[2]}} <br>
 			<b>CPU cores : </b> {{hconfig[3]}} <br>
 			<b>CPU Max Frequency : </b> {{hconfig[4]}} MHz <br>
-			<b>Ram : </b> {{hconfig[5]/1000000}} Go <br>
+			<b>Ram : </b> {{format_size(hconfig[5], "Go")}}<br>
 			<b>Ran on hard drive : </b> {% if hconfig[6] == 1  %} Yes {% else %} No {% endif %} <br>
 			</div>
 		</div>

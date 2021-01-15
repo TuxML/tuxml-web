@@ -101,6 +101,16 @@ def __refreshCacheRoutine(): # Works as a thread
             __queriesCache = purgedQueriesCache
             __totalFetchCount = purgedFetchCount
 
+        if refreshCount % 752 == 0:
+            purgedQueriesCache = {}
+            purgedFetchCount = 0
+            for request,cachedData in __queriesCache.items():
+                if (arrow.now() - cachedData.lastUpdate).seconds > 86400 and cachedData.isPassiveData:
+                    purgedQueriesCache[request] = cachedData
+                    purgedFetchCount += cachedData.useCount
+            __queriesCache = purgedQueriesCache
+            __totalFetchCount = purgedFetchCount
+
         __cacheLocker.release()
         sleep(300)
 

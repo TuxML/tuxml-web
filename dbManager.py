@@ -61,6 +61,8 @@ __queriesCache = {}
 __totalFetchCount = 0
 __incrementLocker = threading.Lock()
 __cacheLocker = threading.Lock()
+__currentCompilationCount = 0
+
 
 def __incrementCounter():
     global __totalFetchCount
@@ -79,17 +81,17 @@ def __updateCache(query, data, isPassiveData):
 def __refreshCacheRoutine(): # Works as a thread
     global __queriesCache
     global __totalFetchCount
+    global __currentCompilationCount
     refreshCount = 0
     while True:
         refreshCount +=1
         __cacheLocker.acquire()
-
-        for request,cachedData in __queriesCache.items():
-            if ((cachedData.useCount / __totalFetchCount) > 0.25)\
-            or ((cachedData.useCount / __totalFetchCount) > 0.125 and (refreshCount % 4) == 0)\
-            or ((cachedData.useCount / __totalFetchCount) > 0.0625 and (refreshCount % 8) == 0)\
-            or ((refreshCount % 10) == 0 and not cachedData.isPassiveData):
-                cachedData.update(__fetchData(request),impact=False)
+        newCount = makeRequest("SELECT COUNT(cid) FROM compilations", caching=False)
+        if newCount > __currentCompilationCount:
+            __currentCompilationCount = newCount
+            for request,cachedData in __queriesCache.items():
+                if not cachedData.isPassiveData:
+                    cachedData.update(__fetchData(request),impact=False)
 
         if refreshCount % 188 == 0:
             purgedQueriesCache = {}

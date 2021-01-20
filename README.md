@@ -51,13 +51,15 @@ ssh zprojet@148.60.11.219 -i /pathofthekey
 ## "Smart caching" system
 Behind this name is a simple way to keep data as fresh as possible without having to overwhelm the database with requests, as a complementary to flask-caching.
 
-+ The system will periodically refresh the cache items according to their frequency of use (From to every 5 minutes to each 50 minutes).
++ The system will periodically refresh the cache items according to their frequency of use (From every 5 minutes to each 50 minutes). 
 
 + Every 6 hours, the cache will be purged of items that haven't been used in 24 hours.
 
-+ Cached items with the passiveData flag will never be refreshed or deleted from the cache, so **use the flag wisely.**
++ And every 24 hours, the cache will be purged of passiveData-flagged items that haven't been used in that period of time.
 
-Note : The behavior of the passiveData-flagged cache items will be improved in the future
++ Cached items with the passiveData flag will never be refreshed so **use the flag wisely.**
+
+**Note** : The refreshing strategy could change in the future in favor of something more specialized to our case (Eg : Based on the changes of the compilations number)
 
 ## Methods
 ### makeRequest

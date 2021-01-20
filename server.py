@@ -112,7 +112,7 @@ def data():
     str_interest_software_left_join = ""
     for e in interest_software :
         str_interest_software = str_interest_software + ", software_environment." + e + " "
-        url_interest_software = url_interest_software + "&interest=" + e
+        url_interest_software = url_interest_software + "&interest_software=" + e
 
     if interest_software is not None :
         str_interest_software_left_join = " LEFT JOIN software_environment ON compilations.sid = software_environment.sid "
@@ -152,7 +152,7 @@ def data():
         i = -1
         ten.append(line)
 
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest)
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest, url_interest_software=url_interest_software)
 
 
 

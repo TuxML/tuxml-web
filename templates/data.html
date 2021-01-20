@@ -31,7 +31,7 @@
 					<select name="version" id="kerver" onchange="location = this.value;">
 						{% for row in versions %}
 						{% for d in row %}
-						<option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> {{ d }} </a></option>
+						<option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> {{ d }} </a></option>
 						{% endfor %}
 						{% endfor %}
 					</select>
@@ -40,23 +40,23 @@
 
 					<div class = "mt-2 mb-n3"><label for="kerver"><h3>Number of rows displayed</h3></label></div>
 					<select name="numberOfNuplet" id="kerver" onchange="location = this.value;">
-						<option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 10 </a></option>
-						<option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 20 </a></option>
-						<option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 50 </a></option>
-						<option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 100 </a></option>
-						<option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}"> 200 </a></option>
+						<option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 10 </a></option>
+						<option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 20 </a></option>
+						<option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 50 </a></option>
+						<option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 100 </a></option>
+						<option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 200 </a></option>
 					</select>
 					<hr/>
 					<div class = "mt-2"><h3 class="mb-1">Page</h3>
 						<div>
 							<div class="shadow-sm flex-row d-flex align-items-center justify-content-between mb-2">
-								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}">  < </a>
+								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}">  < </a>
 								<a>  <b>{{page}}</b> </a>
-								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}">  > </a>
+								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}">  > </a>
 							</div>
 							<div class="flex-row d-flex align-items-center justify-content-between">
 								<a class="btn" {%if (page > 1) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page=1&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}" {%endif%} >First</a> 
-								<a class="btn" {%if page!=((count/numberOfNuplet)|round(method='ceil')|int) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{(count/numberOfNuplet)|round(method='ceil')|int}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}" {%endif%}  >Last</a>
+								<a class="btn" {%if page!=((count/numberOfNuplet)|round(method='ceil')|int) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{(count/numberOfNuplet)|round(method='ceil')|int}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}" {%endif%}  >Last</a>
 							</div>
 						</div>
 						<hr/>

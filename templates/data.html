@@ -131,14 +131,14 @@
 				<table class="table" style="text-align:center;}">
 					<thead>
 						<tr>
-							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}{{url_interest}}">CID {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
+							<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy=cid&ascend={{not(ascend) if sortBy == 'cid' else False}}{{url_interest}}{{url_interest_software}}">CID {% if sortBy == "cid" %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %} </a></th>
 
 							{% for e in interest %}
-								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={% if sortBy == e %}{{not(ascend)}}{% else %}False{% endif %}{{url_interest}}">{{(e | replace("_", " ")).title()}} {% if sortBy == e %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
+								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={% if sortBy == e %}{{not(ascend)}}{% else %}False{% endif %}{{url_interest}}{{url_interest_software}}">{{(e | replace("_", " ")).title()}} {% if sortBy == e %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
 							{% endfor %}
 
 							{% for e in interest_software %}
-								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={% if sortBy == e %}{{not(ascend)}}{% else %}False{% endif %}{{url_interest}}">{{(e | replace("_", " ")).title()}} {% if sortBy == e %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
+								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={% if sortBy == e %}{{not(ascend)}}{% else %}False{% endif %}{{url_interest}}{{url_interest_software}}">{{(e | replace("_", " ")).title()}} {% if sortBy == e %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
 							{% endfor %}
 							
 						</tr>

@@ -74,10 +74,13 @@
 						</div>
 					</form>
 					<hr/>
+
+
 					<form>
-						<fieldset>
-							<h3 class="mt-2 mb-2">Customise columns layout</h3>
-							<div class="align-content-start text-left">
+						<h3 class="mt-2 mb-2">Customise columns layout</h3>
+						<div class="align-content-start text-left">
+							<fieldset>
+								<legend>compilation information</legend>							
 
 								<div class= "my-0">
 									<input type="checkbox" id="compilation_date" name="interest" value="compilation_date" {% for e in interest %} {% if e == "compilation_date" %} checked {% endif %} {% endfor %} >
@@ -103,18 +106,45 @@
 									<input type="checkbox" id="number_cpu_core_used" name="interest" value="number_cpu_core_used" {% for e in interest %} {% if e == "number_cpu_core_used" %} checked {% endif %} {% endfor %} >
 									<label for="number_cpu_core_used">Number Cpu Core Used</label>
 								</div>
-									<div class="mr-n3 my-n1">
+
+							</fieldset>
+
+							<fieldset>
+								<legend>software environment</legend>
+
+								<div class="mr-n3 my-n1">
 									<input type="checkbox" id="gcc_version" name="interest_software" value="gcc_version" {% for e in interest_software %} {% if e == "gcc_version" %} checked {% endif %} {% endfor %} >
 									<label for="gcc_version">Gcc Version</label>
 								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="libc_version" name="interest_software" value="libc_version" {% for e in interest_software %} {% if e == "libc_version" %} checked {% endif %} {% endfor %} >
+									<label for="libc_version">Libc Version</label>
+								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="linux_distribution" name="interest_software" value="linux_distribution" {% for e in interest_software %} {% if e == "linux_distribution" %} checked {% endif %} {% endfor %} >
+									<label for="linux_distribution">Linux Distribution</label>
+								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="linux_distribution_version" name="interest_software" value="linux_distribution_version" {% for e in interest_software %} {% if e == "linux_distribution_version" %} checked {% endif %} {% endfor %} >
+									<label for="linux_distribution_version">Linux Distribution Version</label>
+								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="system_kernel" name="interest_software" value="system_kernel" {% for e in interest_software %} {% if e == "system_kernel" %} checked {% endif %} {% endfor %} >
+									<label for="system_kernel">System Kernel</label>
+								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="system_kernel_version" name="interest_software" value="system_kernel_version" {% for e in interest_software %} {% if e == "system_kernel_version" %} checked {% endif %} {% endfor %} >
+									<label for="system_kernel_version">System Kernel Version</label>
+								</div>
+								<div class="mr-n3 my-n1">
+									<input type="checkbox" id="tuxml_version" name="interest_software" value="tuxml_version" {% for e in interest_software %} {% if e == "tuxml_version" %} checked {% endif %} {% endfor %} >
+									<label for="tuxml_version">TuxML Version</label>
+								</div>
 
-							</div>
+							</fieldset>
 
-							
-
-							<button class="btn m-2 px-3 mt-0 btn-primary" type="submit">Apply</button><br>
-
-						</fieldset>
+						</div>
+						<button class="btn m-2 px-3 mt-0 btn-primary" type="submit">Apply</button><br>
 						
 					</form>
 

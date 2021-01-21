@@ -422,3 +422,17 @@ a:hover, a:focus, a:active {
 .text-secondary {
   color: #ecb807 !important;
 }
+
+.fieldset_columns_layout {
+  border:1px solid black; 
+  border-radius:8px;
+  padding:10px; 
+
+}
+
+.legend_columns_layout {
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}

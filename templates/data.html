@@ -79,8 +79,8 @@
 					<form>
 						<h3 class="mt-2 mb-2">Customise columns layout</h3>
 						<div class="align-content-start text-left">
-							<fieldset>
-								<legend>compilation information</legend>							
+							<fieldset class ="fieldset_columns_layout">
+								<legend class ="legend_columns_layout">compilation information</legend>							
 
 								<div class= "my-0">
 									<input type="checkbox" id="compilation_date" name="interest" value="compilation_date" {% for e in interest %} {% if e == "compilation_date" %} checked {% endif %} {% endfor %} >
@@ -109,8 +109,8 @@
 
 							</fieldset>
 
-							<fieldset>
-								<legend>software environment</legend>
+							<fieldset class ="fieldset_columns_layout">
+								<legend class ="legend_columns_layout">software environment</legend>
 
 								<div class="mr-n3 my-n1">
 									<input type="checkbox" id="gcc_version" name="interest_software" value="gcc_version" {% for e in interest_software %} {% if e == "gcc_version" %} checked {% endif %} {% endfor %} >

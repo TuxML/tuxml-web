@@ -6,7 +6,7 @@ from io import BytesIO
 from time import sleep
 import threading
 from flask_caching import Cache
-from flask import Flask, render_template, url_for, request, send_file, redirect, abort
+from flask import Flask, render_template, url_for, request, send_file, redirect, abort, session
 import os
 import mysql.connector
 import socket
@@ -17,6 +17,7 @@ import dbManager
 
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
+app.config['SECRET_KEY'] = '71794b6f6130464a494b6e62634b7167594b5850'
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 @app.context_processor
@@ -152,6 +153,19 @@ def data():
         i = -1
         ten.append(line)
 
+        session['laversion'] = laversion
+        session['numberOfNuplet'] = numberOfNuplet
+        session['page'] = page
+        session['versions'] = versions
+        session['ten'] = ten
+        session['sortBy'] = sortBy
+        session['ascend'] = ascend
+        session['count'] = count
+        session['interest'] = interest
+        session['url_interest'] = url_interest
+        session['interest_software'] = interest_software
+        session['url_interest_software'] = url_interest_software
+
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest, interest_software=interest_software, url_interest_software=url_interest_software)
 
 
@@ -161,7 +175,7 @@ def data():
 def user_view(id):
     confData = dbManager.getCompilationInfo(id)
     if confData is None:
-        return redirect(url_for('data'))
+        return redirect(url_for('data', laversion=session['laversion'], numberOfNuplet=session['numberOfNuplet'], page=session['page'], versions=session['versions'], ten=session['ten'], sortBy=session['sortBy'], ascend=session['ascend'], count=session['count'], interest=session['interest'], url_interest=session['url_interest'], interest_software =session['interest_software'], url_interest_software=session['url_interest_software']))
     return render_template('config.html', config=confData.compilationInfo, sconfig=confData.softwareInfo, hconfig=confData.hardwareInfo)
 
 @app.route('/data/configuration/<int:id>/<string:request>')

@@ -32,11 +32,11 @@ def get_configuration_file(cid):
 cf1 = get_configuration_file(116733)
 #print(cf1)
 #number of option in a file
-with open(cf1) as f:
-            j=0 
-            for i, line in enumerate(f):
-                
-                if line.startswith('# CONFIG'):
-                    j +=1
-        return j 
+    with open(cf1) as f:
+        j=0 
+        for i, line in enumerate(f):
+                    
+            if line.startswith('# CONFIG'):
+                j +=1
+    return j 
 print("Number of configuration in this file is: ",file_lengthy("test1.bin.out"))

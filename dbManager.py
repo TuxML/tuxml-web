@@ -226,7 +226,7 @@ def getCompilationFile(compilationId, requestedFileType):
     elif requestedFileType == "userOutput":
         reqparam = "user_output_file"
     try:
-        return bz2.decompress(programmaticRequest(getColumn=reqparam, withConditions=f"cid = {compilationId}", caching= False))
+        return bz2.decompress(programmaticRequest(getColumn=reqparam, withConditions=f"cid = {compilationId}", caching= False, execute=True))
     except:
         return None
 

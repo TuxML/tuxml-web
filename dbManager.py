@@ -269,9 +269,29 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return -1
 
-def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit:int=None, offset:int=None, table='compilations', caching=True, execute=True):
-
+def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp', caching=True, execute=False):
     options = ''
+
+    softenv = False
+    hardenv = False
+
+    if getColumn is None:
+        softenv = True
+        hardenv = True
+        getColumn = "*"
+
+    for col in getColumnsForSoftwareEnvTable():
+        if col in getColumn :
+            softenv = True
+
+    for col in getColumnsForHardwareEnvTable():
+        if col in getColumn :
+            hardenv = True
+
+    if hardenv:
+        mainTable += " JOIN hardware_environment hardenv ON comp.hid = hardenv.hid"
+    if softenv:
+        mainTable += " JOIN software_environment softenv ON comp.sid = softenv.sid"
 
     if not isinstance(getColumn, str): #If necessary, we reformat the columns input
         getColumn = ", ".join(getColumn)
@@ -292,14 +312,15 @@ def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit
             ordering = " ORDER BY "+ordering
         options += ordering
 
-
     if limit is not None:
         options += f" LIMIT {limit}"
 
     if offset is not None:
         options += f" OFFSET {offset}"
 
-    query = f"SELECT {getColumn} FROM {table}{options};"
+
+
+    query = f"SELECT {getColumn} FROM {mainTable}{options};"
 
     if execute:
         return makeRequest(query, caching=caching)

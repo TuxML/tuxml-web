@@ -226,7 +226,7 @@ def getCompilationFile(compilationId, requestedFileType):
     elif requestedFileType == "userOutput":
         reqparam = "user_output_file"
     try:
-        return bz2.decompress(makeRequest(f"SELECT {reqparam} FROM compilations WHERE cid = {compilationId}", caching=False))
+        return bz2.decompress(programmaticRequest(getColumn=reqparam, withConditions=f"cid = {compilationId}", caching= False))
     except:
         return None
 
@@ -269,7 +269,7 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return -1
 
-def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit:int=None, offset:int=None, table='compilations', caching=False, execute=True):
+def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit:int=None, offset:int=None, table='compilations', caching=True, execute=True):
 
     options = ''
 
@@ -277,12 +277,11 @@ def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit
         getColumn = ", ".join(getColumn)
 
 
-
     if withConditions is not None:
         if not isinstance(withConditions, str):  #If necessary, we reformat the conditions input
             withConditions = " AND ".join(withConditions)
         if len(withConditions) > 0: # If we effectively have an input, we add the "introduction"
-            ordering = " WHERE " + withConditions
+            withConditions = " WHERE " + withConditions
         options += withConditions
 
 
@@ -291,7 +290,7 @@ def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit
             ordering = ", ".join(ordering)
         if len(ordering) > 0: # If we effectively have an input, we add the "introduction"
             ordering = " ORDER BY "+ordering
-        options +=ordering
+        options += ordering
 
 
     if limit is not None:

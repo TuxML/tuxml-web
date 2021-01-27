@@ -437,3 +437,7 @@ a:hover, a:focus, a:active {
   text-align: center;
   color :#9400D3;
 }
+
+.compare_compilation {
+  background-color: #FF7F50;
+}

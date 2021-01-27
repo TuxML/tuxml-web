@@ -128,6 +128,8 @@ def data():
 
 
 
+
+
     #modify the values contained in the query to adapt the reading to a human
     ten=[]
     line = []
@@ -143,30 +145,40 @@ def data():
                     else :
                         line.append('{:.2f} Mo'.format(round(e/1000000, 2)))
                 elif interest[i] == "compilation_time" :
-                        m, s = divmod(e, 60)
-                        line.append('{:02d} min {:02d} sec'.format(int(m), int(s)))
+                    m, s = divmod(e, 60)
+                    line.append('{:02d} min {:02d} sec'.format(int(m), int(s)))
                 else:
-            	    line.append(str(e))
+                    line.append(str(e))
             else :
                 line.append(str(e))
             i = i + 1
         i = -1
         ten.append(line)
 
-        session['laversion'] = laversion
-        session['numberOfNuplet'] = numberOfNuplet
-        session['page'] = page
-        session['versions'] = versions
-        session['ten'] = ten
-        session['sortBy'] = sortBy
-        session['ascend'] = ascend
-        session['count'] = count
-        session['interest'] = interest
-        session['url_interest'] = url_interest
-        session['interest_software'] = interest_software
-        session['url_interest_software'] = url_interest_software
 
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest, interest_software=interest_software, url_interest_software=url_interest_software)
+    #query_compare_compilation
+    temp_query_compare_compilation = dbManager.makeRequest("SELECT compilations.cid " + str_interest + str_interest_software + " FROM compilations " + str_interest_software_left_join + " WHERE cid IN ('193426','193425') ;")
+
+
+    query_compare_compilation=temp_query_compare_compilation
+
+
+
+
+    session['laversion'] = laversion
+    session['numberOfNuplet'] = numberOfNuplet
+    session['page'] = page
+    session['versions'] = versions
+    session['ten'] = ten
+    session['sortBy'] = sortBy
+    session['ascend'] = ascend
+    session['count'] = count
+    session['interest'] = interest
+    session['url_interest'] = url_interest
+    session['interest_software'] = interest_software
+    session['url_interest_software'] = url_interest_software
+
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest, interest_software=interest_software, url_interest_software=url_interest_software, query_compare_compilation=query_compare_compilation)
 
 
 

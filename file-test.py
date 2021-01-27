@@ -31,6 +31,7 @@ def get_configuration_file(cid):
         socket.close()
 cf1 = get_configuration_file(116733)
 #print(cf1)
+#number of option in a file
 with open(cf1) as f:
             j=0 
             for i, line in enumerate(f):

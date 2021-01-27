@@ -257,7 +257,6 @@ def getColumnsForSoftwareEnvTable():
 def getExistingKernelVersions(desc = False):
     return makeRequest("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version " + ("DESC" if desc else "ASC"), isPassiveData=True)
 
-
 def getNumberOfActiveOptions(compilationId):
     try:
         configFile = getCompilationFile(compilationId,"config")
@@ -270,3 +269,40 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return -1
 
+def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit:int=None, offset:int=None, table='compilations', caching=False, execute=True):
+
+    options = ''
+
+    if not isinstance(getColumn, str): #If necessary, we reformat the columns input
+        getColumn = ", ".join(getColumn)
+
+
+
+    if withConditions is not None:
+        if not isinstance(withConditions, str):  #If necessary, we reformat the conditions input
+            withConditions = " AND ".join(withConditions)
+        if len(withConditions) > 0: # If we effectively have an input, we add the "introduction"
+            ordering = " WHERE " + withConditions
+        options += withConditions
+
+
+    if ordering is not None:
+        if not isinstance(ordering, str):  #If necessary, we reformat the ordering input
+            ordering = ", ".join(ordering)
+        if len(ordering) > 0: # If we effectively have an input, we add the "introduction"
+            ordering = " ORDER BY "+ordering
+        options +=ordering
+
+
+    if limit is not None:
+        options += f" LIMIT {limit}"
+
+    if offset is not None:
+        options += f" OFFSET {offset}"
+
+    query = f"SELECT {getColumn} FROM {table}{options};"
+
+    if execute:
+        return makeRequest(query, caching=caching)
+    else:
+        return query

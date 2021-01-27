@@ -40,4 +40,4 @@ def file_lengthy(cf1):
                 if line.startswith('# CONFIG'):
                     j +=1
         return j 
-print("Number of configuration in this file: ",file_lengthy("test1.bin.out"))
+print(j)

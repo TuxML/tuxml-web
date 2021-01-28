@@ -226,7 +226,7 @@ def getCompilationFile(compilationId, requestedFileType):
     elif requestedFileType == "userOutput":
         reqparam = "user_output_file"
     try:
-        return bz2.decompress(makeRequest(f"SELECT {reqparam} FROM compilations WHERE cid = {compilationId}", caching=False))
+        return bz2.decompress(programmaticRequest(getColumn=reqparam, withConditions=f"cid = {compilationId}", caching= False, execute=True))
     except:
         return None
 
@@ -269,20 +269,39 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return -1
 
-def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit:int=None, offset:int=None, table='compilations', caching=False, execute=True):
-
+def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp', caching=True, execute=False):
     options = ''
+
+    softenv = False
+    hardenv = False
+
+    if getColumn is None:
+        softenv = True
+        hardenv = True
+        getColumn = "*"
+
+    for col in getColumnsForSoftwareEnvTable():
+        if col in getColumn :
+            softenv = True
+
+    for col in getColumnsForHardwareEnvTable():
+        if col in getColumn :
+            hardenv = True
+
+    if hardenv:
+        mainTable += " JOIN hardware_environment hardenv ON comp.hid = hardenv.hid"
+    if softenv:
+        mainTable += " JOIN software_environment softenv ON comp.sid = softenv.sid"
 
     if not isinstance(getColumn, str): #If necessary, we reformat the columns input
         getColumn = ", ".join(getColumn)
-
 
 
     if withConditions is not None:
         if not isinstance(withConditions, str):  #If necessary, we reformat the conditions input
             withConditions = " AND ".join(withConditions)
         if len(withConditions) > 0: # If we effectively have an input, we add the "introduction"
-            ordering = " WHERE " + withConditions
+            withConditions = " WHERE " + withConditions
         options += withConditions
 
 
@@ -291,8 +310,7 @@ def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit
             ordering = ", ".join(ordering)
         if len(ordering) > 0: # If we effectively have an input, we add the "introduction"
             ordering = " ORDER BY "+ordering
-        options +=ordering
-
+        options += ordering
 
     if limit is not None:
         options += f" LIMIT {limit}"
@@ -300,7 +318,9 @@ def programmaticRequest(getColumn="*", withConditions=None, ordering=None, limit
     if offset is not None:
         options += f" OFFSET {offset}"
 
-    query = f"SELECT {getColumn} FROM {table}{options};"
+
+
+    query = f"SELECT {getColumn} FROM {mainTable}{options};"
 
     if execute:
         return makeRequest(query, caching=caching)

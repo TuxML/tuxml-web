@@ -100,7 +100,7 @@
 						<input type="hidden" name="numberOfNuplet" value="{{numberOfNuplet}}">
 						<input type="hidden" name="laversion" value="{{laversion}}">
 						<input type="hidden" name="page" value="{{page}}">
-						<input type="hidden" name="sortBy"value="{{sortBy}}">
+						<input type="hidden" name="sortBy" value="{{sortBy}}">
 						<input type="hidden" name="ascend" value="{{ascend}}">
 
 						<h3 class="mt-2 mb-2">Customise columns layout</h3>
@@ -173,9 +173,19 @@
 						<button class="btn m-2 px-3 mt-0 btn-primary" type="submit">Apply</button><br>
 						
 					</form>
+					<hr/>
+
+
+					<!--
+						Compare	
+					-->
+      				<button class="btn m-2 px-3 mt-0 btn-primary" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True';">Compare tool</button>
+
+
 				</div>
 			</div>
 
+			
 
 
 
@@ -195,6 +205,8 @@
 							{% for e in interest_software %}
 								<th scope="col"><a style="color:#212529;" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{1}}&sortBy={{e}}&ascend={% if sortBy == e %}{{not(ascend)}}{% else %}False{% endif %}{{url_interest}}{{url_interest_software}}">{{(e | replace("_", " ")).title()}} {% if sortBy == e %} {% if ascend %} ⬆ {% else %} ⬇ {% endif %} {% endif %}</th>
 							{% endfor %}
+
+
 							
 						</tr>
 					</thead>
@@ -223,8 +235,12 @@
 							<td> {{e}} </td>
 							{% endif %}
 							{% endfor %}
+							{% if compare %}
+								<td> <form> <input type="checkbox" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True{{url_compare_cid_list}}&compare_cid_list={{row[0]}}';" {% for e in compare_cid_list %} {% if e == row[0] %} checked {% endif %} {% endfor %}></form>  </td>
+							{% endif %}
 						</tr>
 						{% endfor %}
+
 					</tbody>
 				</table>
 			</div>

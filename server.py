@@ -157,12 +157,67 @@ def data():
 
 
     #query_compare_compilation
-    temp_query_compare_compilation = dbManager.makeRequest("SELECT compilations.cid " + str_interest + str_interest_software + " FROM compilations " + str_interest_software_left_join + " WHERE cid IN ('193426','193425') ;")
+    compare = request.args.get('compare')
+    compare_cid_list = request.args.getlist('compare_cid_list')
 
 
-    query_compare_compilation=temp_query_compare_compilation
+    str_compare_cid_list = ""
+    url_compare_cid_list = ""
+    firstloop = True
+    for e in compare_cid_list :
+        if firstloop :
+            str_compare_cid_list = " '" + e + "' "
+            firstloop = False
+        else :
+            str_compare_cid_list = str_compare_cid_list + " ,'" + e + "' "
+        url_compare_cid_list = url_compare_cid_list + "&compare_cid_list=" + e
 
-
+    query_compare_compilation=[]
+    if len(compare_cid_list) > 0:
+        temp_query_compare_compilation = dbManager.makeRequest("SELECT compilations.cid " + str_interest + str_interest_software + " FROM compilations " + str_interest_software_left_join + " WHERE cid IN (" + str_compare_cid_list + ") ;")
+        #modify the values contained in the query to adapt the reading to a human
+        line = []
+        i = -1
+        if len(compare_cid_list) > 1 :
+            for row in temp_query_compare_compilation :
+                for e in row :
+                    if i == -1:
+                        line = [str(e)]
+                    elif i < len(interest):
+                        if interest[i] == "compiled_kernel_size" :
+                            if e == -1:
+                                line.append("Compilation failed")
+                            else :
+                                line.append('{:.2f} Mo'.format(round(e/1000000, 2)))
+                        elif interest[i] == "compilation_time" :
+                            m, s = divmod(e, 60)
+                            line.append('{:02d} min {:02d} sec'.format(int(m), int(s)))
+                        else:
+                            line.append(str(e))
+                    else :
+                        line.append(str(e))
+                    i = i + 1
+                i = -1
+                query_compare_compilation.append(line)
+        elif len(compare_cid_list) == 1 :
+            for e in temp_query_compare_compilation :
+                    if i == -1:
+                        line = [str(e)]
+                    elif i < len(interest):
+                        if interest[i] == "compiled_kernel_size" :
+                            if e == -1:
+                                line.append("Compilation failed")
+                            else :
+                                line.append('{:.2f} Mo'.format(round(e/1000000, 2)))
+                        elif interest[i] == "compilation_time" :
+                            m, s = divmod(e, 60)
+                            line.append('{:02d} min {:02d} sec'.format(int(m), int(s)))
+                        else:
+                            line.append(str(e))
+                    else :
+                        line.append(str(e))
+                    i = i + 1
+            query_compare_compilation.append(line)
 
 
     session['laversion'] = laversion
@@ -178,7 +233,7 @@ def data():
     session['interest_software'] = interest_software
     session['url_interest_software'] = url_interest_software
 
-    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest, interest_software=interest_software, url_interest_software=url_interest_software, query_compare_compilation=query_compare_compilation)
+    return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest, interest_software=interest_software, url_interest_software=url_interest_software, query_compare_compilation=query_compare_compilation, compare=compare, compare_cid_list=compare_cid_list, url_compare_cid_list=url_compare_cid_list)
 
 
 

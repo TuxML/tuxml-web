@@ -179,7 +179,7 @@
 					<!--
 						Compare	
 					-->
-      				<button class="btn m-2 px-3 mt-0 btn-primary" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True';">Compare tool</button>
+      				<button class="btn m-2 px-3 mt-0 btn-primary" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True';">Comparison tool</button>
 
 
 				</div>
@@ -215,12 +215,15 @@
 						{% for row in query_compare_compilation %}
 						<tr>
 							{% for e in row %}
-							{% if loop.first %}
-							<td> <a href="/data/configuration/{{e}}/">  {{ e }}</a> </td>
-							{% else %}
-							<td> {{e}} </td>
-							{% endif %}
+								{% if loop.first %}
+									<td> <a href="/data/configuration/{{e}}/">  {{ e }}</a> </td>
+								{% else %}
+									<td> {{e}} </td>
+								{% endif %}							
 							{% endfor %}
+							{% if compare %}
+								<td> <form> <input type="checkbox" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True{{url_compare_cid_list}}&remove_compare_cid={{row[0]}}';" checked  ></form>  </td>
+							{% endif %}
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -229,14 +232,14 @@
 						{% for row in ten %}
 						<tr>
 							{% for e in row %}
-							{% if loop.first %}
-							<td> <a href="/data/configuration/{{e}}/">  {{ e }}</a> </td>
-							{% else %}
-							<td> {{e}} </td>
-							{% endif %}
+								{% if loop.first %}
+									<td> <a href="/data/configuration/{{e}}/">  {{ e }}</a> </td>
+								{% else %}
+									<td> {{e}} </td>
+								{% endif %}
 							{% endfor %}
 							{% if compare %}
-								<td> <form> <input type="checkbox" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True{{url_compare_cid_list}}&compare_cid_list={{row[0]}}';" {% for e in compare_cid_list %} {% if e == row[0] %} checked {% endif %} {% endfor %}></form>  </td>
+								<td> <form> <input type="checkbox" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True{{url_compare_cid_list}}&compare_cid_list={{row[0]}}{% for e in compare_cid_list %}{% if e == row[0] %}&remove_compare_cid={{row[0]}}{% endif %}{% endfor %}';" {% for e in compare_cid_list %} {% if e == row[0] %}   checked {% endif %} {% endfor %}></form>  </td>
 							{% endif %}
 						</tr>
 						{% endfor %}

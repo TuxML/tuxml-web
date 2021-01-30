@@ -158,7 +158,14 @@ def data():
 
     #query_compare_compilation
     compare = request.args.get('compare')
-    compare_cid_list = request.args.getlist('compare_cid_list')
+    temp_compare_cid_list = request.args.getlist('compare_cid_list')
+    remove_compare_cid = request.args.get('remove_compare_cid')
+
+        #remove remove_compare_cid from compare_cid_list
+    compare_cid_list = []
+    for cid in temp_compare_cid_list :
+        if cid != remove_compare_cid :
+            compare_cid_list.append(cid)
 
 
     str_compare_cid_list = ""

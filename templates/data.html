@@ -187,7 +187,11 @@
 					<!--
 						Compare	
 					-->
-      				<button class="btn m-2 px-3 mt-0 btn-primary" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True';">Comparison tool</button>
+					{% if compare == "True" %}
+						<button class="btn m-2 px-3 mt-0 btn-primary" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=False';">Exit comparison tool</button>
+					{% else %}
+      					<button class="btn m-2 px-3 mt-0 btn-primary" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True';">Comparison tool</button>
+      				{% endif %}
 
 
 				</div>

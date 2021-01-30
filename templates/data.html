@@ -36,7 +36,7 @@
 					<select name="version" id="kerver" onchange="location = this.value;">
 						{% for row in versions %}
 						{% for d in row %}
-						<option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> {{ d }} </a></option>
+						<option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}"> {{ d }} </a></option>
 						{% endfor %}
 						{% endfor %}
 					</select>
@@ -48,11 +48,11 @@
 					-->
 					<div class = "mt-2 mb-n3"><label for="kerver"><h3>Number of rows displayed</h3></label></div>
 					<select name="numberOfNuplet" id="kerver" onchange="location = this.value;">
-						<option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 10 </a></option>
-						<option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 20 </a></option>
-						<option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 50 </a></option>
-						<option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 100 </a></option>
-						<option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}"> 200 </a></option>
+						<option {% if 10 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=10&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}"> 10 </a></option>
+						<option {% if 20 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=20&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}"> 20 </a></option>
+						<option {% if 50 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=50&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}"> 50 </a></option>
+						<option {% if 100 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=100&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}"> 100 </a></option>
+						<option {% if 200 == numberOfNuplet %} selected="selected" {% endif %} value="/data/?laversion={{laversion}}&numberOfNuplet=200&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}"> 200 </a></option>
 					</select>
 					<hr/>
 
@@ -63,13 +63,13 @@
 					<div class = "mt-2"><h3 class="mb-1">Page</h3>
 						<div>
 							<div class="shadow-sm flex-row d-flex align-items-center justify-content-between mb-2">
-								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}">  < </a>
+								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page - 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}">  < </a>
 								<a>  <b>{{page}}</b> </a>
-								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}">  > </a>
+								<a class="btn" href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{ page + 1}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}">  > </a>
 							</div>
 							<div class="flex-row d-flex align-items-center justify-content-between">
-								<a class="btn" {% if (page > 1) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page=1&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}" {%endif%} >First</a> 
-								<a class="btn" {% if page!=((count/numberOfNuplet)|round(method='ceil')|int) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{(count/numberOfNuplet)|round(method='ceil')|int}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}" {%endif%}  >Last</a>
+								<a class="btn" {% if (page > 1) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page=1&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}" {%endif%} >First</a> 
+								<a class="btn" {% if page!=((count/numberOfNuplet)|round(method='ceil')|int) %} href="?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{(count/numberOfNuplet)|round(method='ceil')|int}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}" {%endif%}  >Last</a>
 							</div>
 						</div>
 						<hr/>
@@ -102,6 +102,14 @@
 						<input type="hidden" name="page" value="{{page}}">
 						<input type="hidden" name="sortBy" value="{{sortBy}}">
 						<input type="hidden" name="ascend" value="{{ascend}}">
+
+						<input type="hidden" name="compare" value="{{compare}}">
+
+						{% for e in compare_cid_list %} 
+							<input type="hidden" name="compare_cid_list" value="{{e}}">
+						{% endfor %}
+
+
 
 						<h3 class="mt-2 mb-2">Customise columns layout</h3>
 						<div class="align-content-start text-left">
@@ -221,7 +229,7 @@
 									<td> {{e}} </td>
 								{% endif %}							
 							{% endfor %}
-							{% if compare %}
+							{% if compare == "True" %}
 								<td> <form> <input type="checkbox" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True{{url_compare_cid_list}}&remove_compare_cid={{row[0]}}';" checked  ></form>  </td>
 							{% endif %}
 						</tr>
@@ -238,7 +246,7 @@
 									<td> {{e}} </td>
 								{% endif %}
 							{% endfor %}
-							{% if compare %}
+							{% if compare == "True" %}
 								<td> <form> <input type="checkbox" onclick="window.location.href = '/data/?laversion={{laversion}}&numberOfNuplet={{numberOfNuplet}}&page={{page}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare=True{{url_compare_cid_list}}&compare_cid_list={{row[0]}}{% for e in compare_cid_list %}{% if e == row[0] %}&remove_compare_cid={{row[0]}}{% endif %}{% endfor %}';" {% for e in compare_cid_list %} {% if e == row[0] %}   checked {% endif %} {% endfor %}></form>  </td>
 							{% endif %}
 						</tr>

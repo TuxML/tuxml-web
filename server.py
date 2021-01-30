@@ -161,6 +161,9 @@ def data():
     temp_compare_cid_list = request.args.getlist('compare_cid_list')
     remove_compare_cid = request.args.get('remove_compare_cid')
 
+    if compare is None :
+        compare = False
+
         #remove remove_compare_cid from compare_cid_list
     compare_cid_list = []
     for cid in temp_compare_cid_list :

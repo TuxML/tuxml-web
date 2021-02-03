@@ -1,7 +1,6 @@
-!server.py
-!.gitignore
+!*.py
+!*.md
 !static/*
 !templates/*
-
+!docs/*
 *
-*.pyc

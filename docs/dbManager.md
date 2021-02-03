@@ -107,20 +107,20 @@ Returns the number of active options for a specific `compilationId`.
 
 ## programmaticRequest - To be updated (Optimisation and functionality)
 ```python
-programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp', caching=True, execute=False)
+programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp',isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False))
 ```
 
 Generates an SQL command from given parameters. Makes database requests far easier to write.
 
 #### Main caracteristic of `getColumn`, `withConditions` and `ordering`:
-They can accept arrays, and  also accept naturally-written lists (`getColumn="sid,architecture"`)
+They can accept arrays, and  also accept naturally-written lists (eg: `getColumn="sid,architecture"`)
 
-#### About `caching` and `execute`:
+#### About `caching`, `isPassiveData` and `execute`:
 This method is capable to use the `makeRequest()` method.
 
 By default, `execute` is set to False. Setting it to true will execute the generated command. 
 
-The `caching` parameter is directly piped to the call to `makeRequest()`.
+The `caching` parameter is directly piped to the call to `makeRequest()`, same with `isPassiveData`.
 
 #### "But what if I want to get columns located in the `software_environment` table ?"
 Just put the column you want to get in the `getColumn`, the method automatically does the needed joining.
@@ -138,5 +138,3 @@ SELECT cid, architecture FROM compilations comp JOIN hardware_environment harden
 
 #### Future updates
 - [ ] Only select the needed table when asking for only one column absent from the `compilations` table. Eg : Asking for the `architecture` column will make a join even if only the `hardware_environment` table is needed.
-- [ ] Currently, `AND` is the only conditional operator used. `OR` would be a nice addition.
-- [ ] There is no `isPassiveData` parameter

@@ -37,14 +37,16 @@
 				<h2>Compilation info</h2>
 				<b>Date : </b> {{config[1]}} <br>
 				<b>Length : </b> {{format_time(config[2])}}<br>
-				<b>Compiled kernel size: </b> {% if config[7] == -1  %} 0 (Compilation failed) {% else %} {{format_size(config[7], "Mo")}} {% endif %} <br>
 				<b>Kernel version : </b> <a href ="../../../data?laversion={{config[11]}}&interest=compilation_date&interest=compilation_time&interest=compiled_kernel_size&interest=compiled_kernel_version"> {{config[11]}}</a><br><br>
-				<b>Dependencies : </b><div class="card p-2"> {{config[9]}} </div><br><br>
+				<b>Compiled kernel size : </b> {% if config[7] == -1  %} 0 (Compilation failed) {% else %} {{format_size(config[7], "Mo")}} {% endif %} <br>
+				<b>Compressed compiled kernel size : </b><div class="card p-2"> {{config[8]}} </div><br><br>
 				<b>Downloads : </b> 
 				<a href ="config" class="btn m-2 btn-primary">Config</a>
 				<a href ="stdout" class="btn m-2 btn-primary">Log</a>
 				<a href ="stderr" class="btn m-2 btn-primary">Error log</a>
 				<a href ="userOutput" class="btn m-2 btn-primary">User output</a>
+				<br><br>
+				<b>Dependencies : </b><div class="card p-2"> {{config[9]}} </div><br><br>
 				</div>
 		<div class="m-4 p-4 w-40 card ml-auto shadow-lg"style="flex-shrink: 0;">
 			<h2>Building environment information</h2><br>

@@ -269,7 +269,7 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return None
 
-def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp', caching=True, execute=False):
+def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp',isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False):
     options = ''
 
     softenv = False
@@ -299,7 +299,7 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
 
     if withConditions is not None:
         if not isinstance(withConditions, str):  #If necessary, we reformat the conditions input
-            withConditions = " AND ".join(withConditions)
+            withConditions = f" {'AND' if not(useORConditionalOperator) else 'OR'} ".join(withConditions)
         if len(withConditions) > 0: # If we effectively have an input, we add the "introduction"
             withConditions = " WHERE " + withConditions
         options += withConditions
@@ -321,6 +321,6 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
     query = f"SELECT {getColumn} FROM {mainTable}{options};"
 
     if execute:
-        return makeRequest(query, caching=caching)
+        return makeRequest(query, isPassiveData=isPassiveData, caching=caching)
     else:
         return query

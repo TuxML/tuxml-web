@@ -134,6 +134,9 @@ def data():
     ten=[]
     line = []
     i = -1
+
+    if(isinstance(temp[0], int)):
+        temp = [temp]
     for row in temp :
         for e in row :
             if i == -1:

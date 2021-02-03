@@ -267,7 +267,7 @@ def getNumberOfActiveOptions(compilationId):
         return ny
     except Exception as e:
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
-        return -1
+        return None
 
 def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp', caching=True, execute=False):
     options = ''
@@ -317,8 +317,6 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
 
     if offset is not None:
         options += f" OFFSET {offset}"
-
-
 
     query = f"SELECT {getColumn} FROM {mainTable}{options};"
 

@@ -1,0 +1,15 @@
+To launch jupyterlab use in terminal :
+jupyter lab
+
+matplotlib a été installé avec :
+sudo apt-get install python3-matplotlib
+
+stats.html du dossier template a été obtenu grâce à :
+jupyter nbconvert --to html stats.ipynb --output ../templates/stats.html --TemplateExporter.exclude_input=True --TemplateExporter.exclude_output_prompt=True --TemplateExporter.exclude_input_prompt=True
+
+
+
+
+
+
+

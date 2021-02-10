@@ -258,6 +258,11 @@ def getData(id, request):
 
     return send_file(BytesIO(requestedFile), as_attachment=True, attachment_filename=f"TuxML-{id}.{request + ('.log' if (request!='config') else '') }")
 
+
+@app.route('/stats/')
+def stats():
+    return render_template('stats.html')
+
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
     query_parameters = request.args

@@ -6,7 +6,7 @@ from io import BytesIO
 from time import sleep
 import threading
 from flask_caching import Cache
-from flask import Flask, render_template, url_for, request, send_file, redirect, abort, session
+from flask import Flask, render_template, url_for, request, send_file, redirect, abort, session, jsonify
 import os
 import mysql.connector
 import socket
@@ -256,6 +256,48 @@ def getData(id, request):
         return abort(500)
 
     return send_file(BytesIO(requestedFile), as_attachment=True, attachment_filename=f"TuxML-{id}.{request + ('.log' if (request!='config') else '') }")
+
+@app.route('/api/v1/resources/compilations', methods=['GET'])
+def api_filter():
+    query_parameters = request.args
+
+    cid = query_parameters.get('cid')
+    
+    if cid:
+        query = dbManager.programmaticRequest(getColumn=None, withConditions=f"cid = {cid}", caching= False, execute=False)
+    if (not cid or not dbManager.compilationExists(cid)):
+        return abort(404)
+    
+    connection = getConnection()
+    cursor = connection.cursor()
+    cursor.execute(query)
+    query_result = cursor.fetchall()[0]
+    
+    d = dict_factory(cursor, query_result)
+    d = dict_formatting(d, cid)
+
+    return jsonify(d)
+    
+def dict_factory(cursor, query_list):
+    d = {}
+    for i, v in enumerate(cursor.description):
+        d[v[0]] = query_list[i]
+    return d
+
+def dict_formatting(d, cid):
+    if 'config_file' in d:
+        d['config_file'] = os.path.join(request.url_root, url_for('getData', id=cid, request='config')[1:])
+    if 'stdout_log_file' in d:
+        d['stdout_log_file'] = os.path.join(request.url_root, url_for('getData', id=cid, request='stdout')[1:])
+    if 'stderr_log_file' in d:
+        d['stderr_log_file'] = os.path.join(request.url_root, url_for('getData', id=cid, request='stderr')[1:])
+    if 'user_output_file' in d:
+        d['user_output_file'] = os.path.join(request.url_root, url_for('getData', id=cid, request='userOutput')[1:])
+    if 'hid' in d:
+        del d['hid']
+    if 'sid' in d:
+        del d['sid']
+    return d
 
 if __name__ == "__main__":
     arg = 8000

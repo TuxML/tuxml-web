@@ -18,6 +18,7 @@ import dbManager
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 app.config['SECRET_KEY'] = '71794b6f6130464a494b6e62634b7167594b5850'
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 @app.context_processor

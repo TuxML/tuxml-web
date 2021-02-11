@@ -266,29 +266,76 @@ def stats():
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
     query_parameters = request.args
-
+        
     cid = query_parameters.get('cid')
+    compiled_kernel_version = query_parameters.get('compiled_kernel_version')
+    compiled = query_parameters.get('compiled')
+    limit = query_parameters.get('limit')
+    
+    conditions_list = []
+    ordering = None
+    
+    if not limit or int(limit)>100:
+        limit = 100
     
     if cid:
-        query = dbManager.programmaticRequest(getColumn=None, withConditions=f"cid = {cid}", caching= False, execute=False)
-    if (not cid or not dbManager.compilationExists(cid)):
+        if not dbManager.compilationExists(cid):
+            return abort(404)
+        conditions_list.append(f"cid = {cid}")
+    
+    if compiled_kernel_version:
+        if not dbManager.compilationExistsAdvanced("compilations", "compiled_kernel_version", compiled_kernel_version):
+            return abort(404)
+        conditions_list.append(f"compiled_kernel_version = {compiled_kernel_version}")
+        ordering="cid desc"
+    
+    if compiled:
+        if compiled == "true":
+            conditions_list.append("compiled_kernel_size > 0")
+        elif compiled == "false":
+            conditions_list.append("compiled_kernel_size = -1")
+        else:
+            return abort(404)
+    
+    
+    if (not cid and not compiled_kernel_version and not compiled):
         return abort(404)
+        
+    conditions_string = ""
+    for cond in conditions_list:
+        conditions_string += cond + " AND "
+    conditions_string = conditions_string[:-5]
+    
+    query = dbManager.programmaticRequest(getColumn=None, withConditions=conditions_string, ordering=ordering, limit=limit, caching=False, execute=False)
+    
+    #print(query, file=sys.stderr)
     
     connection = getConnection()
     cursor = connection.cursor()
     cursor.execute(query)
-    query_result = cursor.fetchall()[0]
+    query_result = cursor.fetchall()
+    
+    #print(query_result, file=sys.stderr)
     
     d = dict_factory(cursor, query_result)
-    d = dict_formatting(d, cid)
 
     return jsonify(d)
     
 def dict_factory(cursor, query_list):
-    d = {}
-    for i, v in enumerate(cursor.description):
-        d[v[0]] = query_list[i]
-    return d
+    dict_main = {}
+    for query in query_list:
+        dict_indent = {}
+        for idx, value in enumerate(cursor.description):
+            dict_indent[value[0]] = query[idx]
+        cid = get_cid_from_query(query)
+        dict_indent = dict_formatting(dict_indent, cid)
+        dict_main[cid] = dict_indent
+    return dict_main
+
+#in case the database architecture changes
+def get_cid_from_query(query):
+    return query[0]
+    
 
 def dict_formatting(d, cid):
     if 'config_file' in d:

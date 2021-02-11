@@ -195,10 +195,17 @@ def getCompilationCount(specificVersion = None):
         return makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE compiled_kernel_version = '{specificVersion}'")
 
 def compilationExists(compilationId):
-        try:
-            return bool(makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE cid = '{compilationId}'"))
-        except:
-            return False
+    try:
+        return bool(makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE cid = '{compilationId}'"))
+    except:
+        return False
+
+def compilationExistsAdvanced(table, column, value):
+    print(f"SELECT COUNT({column}) FROM {table} WHERE {column} = {value}", file=sys.stderr)
+    try:
+        return bool(makeRequest(f"SELECT COUNT({column}) FROM {table} WHERE {column} = {value}"))
+    except:
+        return False
 
 def getCompilationInfo(compilationId, basic = False):
     class compilationInfo:

@@ -201,9 +201,15 @@ def compilationExists(compilationId):
         return False
 
 def compilationExistsAdvanced(table, column, value):
-    print(f"SELECT COUNT({column}) FROM {table} WHERE {column} = {value}", file=sys.stderr)
+    #print(type(makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1")).__name__, file=sys.stderr)
+    #print(makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1"), file=sys.stderr)
+    #print(value, file=sys.stderr)
+    #print(bool(makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1")==value), file=sys.stderr)
+    #print(bool("\""+result+"\"" == value), file=sys.stderr)
+
+    result = makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1")
     try:
-        return bool(makeRequest(f"SELECT COUNT({column}) FROM {table} WHERE {column} = {value}"))
+        return bool("\""+result+"\"" == value)
     except:
         return False
 

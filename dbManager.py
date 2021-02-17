@@ -207,7 +207,8 @@ def compilationExistsAdvanced(table, column, value):
     #print(bool(makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1")==value), file=sys.stderr)
     #print(bool("\""+result+"\"" == value), file=sys.stderr)
 
-    result = makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1")
+    request = f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1"
+    result = makeRequest(request)
     try:
         return bool("\""+result+"\"" == value)
     except:
@@ -294,11 +295,11 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
         getColumn = "*"
 
     for col in getColumnsForSoftwareEnvTable():
-        if col in getColumn :
+        if col in getColumn or col in withConditions:
             softenv = True
-
+    
     for col in getColumnsForHardwareEnvTable():
-        if col in getColumn :
+        if col in getColumn or col in withConditions:
             hardenv = True
 
     if hardenv:

@@ -273,6 +273,7 @@ def api_filter():
     #WHERE clauses
     cid = query_parameters.get('cid')
     compiled_kernel_version = query_parameters.get('compiled_kernel_version')
+    gcc_version = query_parameters.get('gcc_version')
     compiled = query_parameters.get('compiled')
     #SELECT
     display = query_parameters.get('display')
@@ -286,8 +287,13 @@ def api_filter():
     select_string = None
     ordering = None
     
-    if not limit or int(limit)>100:
-        limit = 100
+    if limit:
+        if limit.isnumeric():
+            limit = int(limit)
+        elif limit == "none":
+            limit = None
+        else:
+            return abort(404)
     
     if cid:
         if not dbManager.compilationExists(cid):
@@ -299,6 +305,14 @@ def api_filter():
         if not dbManager.compilationExistsAdvanced("compilations", "compiled_kernel_version", compiled_kernel_version):
             return abort(404)
         conditions_list.append(f"compiled_kernel_version = {compiled_kernel_version}")
+        ordering="cid desc"
+        
+    if gcc_version:
+        gcc_version = gcc_version.replace(" ", "+")
+        gcc_version = api_argument_formatting(gcc_version)
+        if not dbManager.compilationExistsAdvanced("software_environment", "gcc_version", gcc_version):
+            return abort(404)
+        conditions_list.append(f"gcc_version = {gcc_version}")
         ordering="cid desc"
     
     if compiled:

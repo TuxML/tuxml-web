@@ -265,14 +265,25 @@ def stats():
 
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
+
+    accepted_display_arguments = ["architecture", "cid", "compilation_date", "compilation_time", "compiled_kernel_size", "compiled_kernel_version", "compressed_compiled_kernel_size", "config_file,", "cpu_brand_name", "cpu_max_frequency", "dependencies", "gcc_version", "libc_version", "linux_distribution", "linux_distribution_version", "mechanical_disk", "number_cpu_core", "number_cpu_core_used", "ram_size", "stderr_log_file", "stdout_log_file", "system_kernel", "system_kernel_version", "tuxml_version", "user_output_file"]
+    
     query_parameters = request.args
         
+    #WHERE clauses
     cid = query_parameters.get('cid')
     compiled_kernel_version = query_parameters.get('compiled_kernel_version')
     compiled = query_parameters.get('compiled')
+    #SELECT
+    display = query_parameters.get('display')
+    #LIMIT
     limit = query_parameters.get('limit')
+
     
     conditions_list = []
+    conditions_string = None
+    select_list = []
+    select_string = None
     ordering = None
     
     if not limit or int(limit)>100:
@@ -284,6 +295,7 @@ def api_filter():
         conditions_list.append(f"cid = {cid}")
     
     if compiled_kernel_version:
+        compiled_kernel_version = api_argument_formatting(compiled_kernel_version)
         if not dbManager.compilationExistsAdvanced("compilations", "compiled_kernel_version", compiled_kernel_version):
             return abort(404)
         conditions_list.append(f"compiled_kernel_version = {compiled_kernel_version}")
@@ -293,20 +305,35 @@ def api_filter():
         if compiled == "true":
             conditions_list.append("compiled_kernel_size > 0")
         elif compiled == "false":
-            conditions_list.append("compiled_kernel_size = -1")
+            conditions_list.append("compiled_kernel_size = \"-1\"")
         else:
             return abort(404)
     
+    if display:
+        display = display.replace(" ", "")
+        display_args = display.split(",")
+        for arg in display_args:
+            if not arg in accepted_display_arguments:
+                return abort(404)
+            select_list.append(arg)
     
     if (not cid and not compiled_kernel_version and not compiled):
         return abort(404)
         
-    conditions_string = ""
-    for cond in conditions_list:
-        conditions_string += cond + " AND "
-    conditions_string = conditions_string[:-5]
     
-    query = dbManager.programmaticRequest(getColumn=None, withConditions=conditions_string, ordering=ordering, limit=limit, caching=False, execute=False)
+    if conditions_list:
+        conditions_string = ""
+        for cond in conditions_list:
+            conditions_string += cond + " AND "
+        conditions_string = conditions_string[:-5]
+    
+    if select_list:
+        select_string = ""
+        for sel in select_list:
+            select_string += sel + ","
+        select_string = select_string[:-1]
+    
+    query = dbManager.programmaticRequest(getColumn=select_string, withConditions=conditions_string, ordering=ordering, limit=limit, caching=False, execute=False)
     
     #print(query, file=sys.stderr)
     
@@ -320,7 +347,8 @@ def api_filter():
     d = dict_factory(cursor, query_result)
 
     return jsonify(d)
-    
+
+#Formats query results into dictonnaries, making it able to be jsonified
 def dict_factory(cursor, query_list):
     dict_main = {}
     for query in query_list:
@@ -336,16 +364,23 @@ def dict_factory(cursor, query_list):
 def get_cid_from_query(query):
     return query[0]
     
+#Makes sure the format is "value" when needed. Useful for compilationExistsAdvanced verification
+def api_argument_formatting(arg):
+    arg = arg.replace("\"", "")
+    arg = arg.replace("\'", "")
+    return "\"" + arg + "\""
 
+#Replaces blobs with links to download the files. Deletes hid and sid from results.
 def dict_formatting(d, cid):
+    domain_name = "https://tuxmlweb.istic.univ-rennes1.fr/"
     if 'config_file' in d:
-        d['config_file'] = os.path.join(request.url_root, url_for('getData', id=cid, request='config')[1:])
+        d['config_file'] = os.path.join(domain_name, url_for('getData', id=cid, request='config')[1:])
     if 'stdout_log_file' in d:
-        d['stdout_log_file'] = os.path.join(request.url_root, url_for('getData', id=cid, request='stdout')[1:])
+        d['stdout_log_file'] = os.path.join(domain_name, url_for('getData', id=cid, request='stdout')[1:])
     if 'stderr_log_file' in d:
-        d['stderr_log_file'] = os.path.join(request.url_root, url_for('getData', id=cid, request='stderr')[1:])
+        d['stderr_log_file'] = os.path.join(domain_name, url_for('getData', id=cid, request='stderr')[1:])
     if 'user_output_file' in d:
-        d['user_output_file'] = os.path.join(request.url_root, url_for('getData', id=cid, request='userOutput')[1:])
+        d['user_output_file'] = os.path.join(domain_name, url_for('getData', id=cid, request='userOutput')[1:])
     if 'hid' in d:
         del d['hid']
     if 'sid' in d:

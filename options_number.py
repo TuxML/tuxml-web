@@ -4,7 +4,7 @@ import socket
 import sys
 from os import path
 def get_configuration_file(cid):
-    print("Getting configuration file of cid=", cid)
+    #print("Getting configuration file of cid=", cid)
     try:
         socket = mysql.connector.connect(
             host='148.60.11.195',
@@ -29,7 +29,7 @@ def get_configuration_file(cid):
     finally:
         cursor.close()
         socket.close()
-cf1 = get_configuration_file(116733)
+#cf1 = get_configuration_file(116733)
 
 def options_number(cpt):
             j=0 
@@ -38,4 +38,11 @@ def options_number(cpt):
                 if '#' not in line:
                     j +=1
             return j 
-print("Number of options in this file is : ", options_number(cf1))
+
+def options(x):
+            l =[]
+            for i in range(10):
+                l.append(options_number(get_configuration_file(x)))
+                x+=1
+            return l       
+print(options(193437))

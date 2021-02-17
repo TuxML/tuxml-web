@@ -195,10 +195,24 @@ def getCompilationCount(specificVersion = None):
         return makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE compiled_kernel_version = '{specificVersion}'")
 
 def compilationExists(compilationId):
-        try:
-            return bool(makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE cid = '{compilationId}'"))
-        except:
-            return False
+    try:
+        return bool(makeRequest(f"SELECT COUNT(cid) FROM compilations WHERE cid = '{compilationId}'"))
+    except:
+        return False
+
+def compilationExistsAdvanced(table, column, value):
+    #print(type(makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1")).__name__, file=sys.stderr)
+    #print(makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1"), file=sys.stderr)
+    #print(value, file=sys.stderr)
+    #print(bool(makeRequest(f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1")==value), file=sys.stderr)
+    #print(bool("\""+result+"\"" == value), file=sys.stderr)
+
+    request = f"SELECT {column} FROM {table} WHERE {column} = {value} LIMIT 1"
+    result = makeRequest(request)
+    try:
+        return bool("\""+result+"\"" == value)
+    except:
+        return False
 
 def getCompilationInfo(compilationId, basic = False):
     class compilationInfo:
@@ -281,11 +295,11 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
         getColumn = "*"
 
     for col in getColumnsForSoftwareEnvTable():
-        if col in getColumn :
+        if col in getColumn or col in withConditions:
             softenv = True
-
+    
     for col in getColumnsForHardwareEnvTable():
-        if col in getColumn :
+        if col in getColumn or col in withConditions:
             hardenv = True
 
     if hardenv:

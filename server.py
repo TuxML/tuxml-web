@@ -279,7 +279,7 @@ def api_filter():
     display = query_parameters.get('display')
     #LIMIT
     limit = query_parameters.get('limit')
-
+    
     
     conditions_list = []
     conditions_string = None
@@ -294,7 +294,9 @@ def api_filter():
             limit = None
         else:
             return abort(404)
-    
+    else:
+        limit = 100
+        
     if cid:
         if not dbManager.compilationExists(cid):
             return abort(404)

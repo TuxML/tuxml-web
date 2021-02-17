@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>TuxML</title>
+    <link rel="icon" type="image/png" href="https://avatars0.githubusercontent.com/u/32133780?s=100" />
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
+
+
+
+</head>
+
+<body id="page-top" class="static-bg">
+
+
+
+<!-- Header -->
+<header class="masthead d-flex">
+    <div class = "card w-75 mx-auto my-auto ">
+        <div class ="m-4">
+            <h2><a class = "tux" href = "../../..">TuxML</a>/<a style="color:#212529;" href = "">search</a></h2>
+            <div class="card mb-2 pl-1 flex-row align-middle" ><form method="get" >Get
+        <select class="mx-1" name="" id="type">
+            <option value="any">Any</option>
+            <option value="successful">Successful</option>
+            <option value="failed">Failed</option>
+        </select>
+            compilations of the
+            <select class="mx-1" name="" id="version">
+                <option value="4.13.3">4.13.3</option>
+                <option value="5.8">5.8</option>
+                <option value="4.16">4.16</option>
+            </select>
+            kernel version that have been realized inv
+            <select class="mx-1" name="" id="length">
+                <option value="0">any time</option>
+                <option value="1">under a minute</option>
+                <option value="10">under 10 minutes</option>
+                <option value="20">under 20 minutes</option>
+                <option value="30">under 30 minutes</option>
+                <option value="60">under an hour</option>
+            </select>
+                <input type="submit" class="btn btn-primary float-right" value="GO">
+            </form></div>
+        </div>
+        <div class="card mx-100 my-auto shadow-lg align-content-start flex-row align-middle">
+            <div class="m-4 x-8 w-60 bd-highlight">
+
+                Ici le tableau de résultats
+            </div>
+        </div>
+    </div>
+    <div class="overlay"></div>
+</header>
+
+</body>
+
+</html>

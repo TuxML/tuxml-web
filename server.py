@@ -235,7 +235,10 @@ def data():
 
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest, interest_software=interest_software, url_interest_software=url_interest_software, query_compare_compilation=query_compare_compilation, compare=compare, compare_cid_list=compare_cid_list, url_compare_cid_list=url_compare_cid_list)
 
-
+@app.route('/search/')
+@cache.cached(timeout=360, query_string=True)
+def search():
+    return render_template("search.html")
 
 @app.route('/data/configuration/<int:id>/')
 @cache.cached(timeout=10000000, query_string=True)

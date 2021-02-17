@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import os
 import sys
+import matplotlib.pyplot as plt
+
 from dbRequest import *
 
 
@@ -22,6 +24,17 @@ def getKernelSizeVersionList(_versionSelect):
             rounddata.append(e)
     
     return rounddata
+
+
+
+
+def showHist(versionKernel):
+    plt.hist(getKernelSizeVersionList(versionKernel))
+
+    plt.title('kernel size distribution', fontsize=10)
+    plt.xlabel('Mo')
+    
+    plt.show()
     
 
 

@@ -40,7 +40,7 @@
 				Table	
 			-->
 			<div class="my-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
-				<iframe width="100%" id="iframenb" scrolling="no" frameborder="0" src="../voila/voila/render/stats.ipynb"></iframe>
+				<iframe width="100%" style="height: max-content;" id="iframenb" scrolling="no" frameborder="0" src="../voila/voila/render/stats.ipynb"></iframe>
 			</div>
 
 
@@ -50,25 +50,5 @@
 
 
 </body>
-<script type="application/javascript">
-    // Select the node that will be observed for mutations
-    const targetNode = document.getElementById('iframenb').contentWindow.document.getElementsByTagName("body");
 
-    // Options for the observer (which mutations to observe)
-    const config = { attributes: false, childList: true, subtree: true };
-
-    // Callback function to execute when mutations are observed
-    const callback = function(mutationsList, observer) {
-
-        document.getElementById('iframenb').style.height = targetNode.scrollHeight
-
-    };
-
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
-
-</script>
 </html>

@@ -269,7 +269,14 @@ def getColumnsForSoftwareEnvTable():
     return result
 
 def getExistingKernelVersions(desc = False):
-    return makeRequest("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version " + ("DESC" if desc else "ASC"), isPassiveData=True)
+    kernelVersions = makeRequest("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ", isPassiveData=True)
+    sortedKerVer = []
+    for kVer in kernelVersions:
+        sortedKerVer.append(kVer[0])
+    sortedKerVer.sort(key=lambda s: [int(u) for u in s.split('.')])
+    if desc :
+        sortedKerVer.reverse()
+    return sortedKerVer
 
 def getNumberOfActiveOptions(compilationId):
     try:

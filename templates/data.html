@@ -34,10 +34,8 @@
 					-->
 					<div class = "mt-4 mb-n3"><label for="kerver"><h3>Kernel version to show</h3></label></div>					 
 					<select name="version" id="kerver" onchange="location = this.value;">
-						{% for row in versions %}
-						{% for d in row %}
+						{% for d in versions %}
 						<option  {% if d == laversion  %} selected="selected" {% endif %} value="/data/?laversion={{d}}&numberOfNuplet={{numberOfNuplet}}&sortBy={{sortBy}}&ascend={{ascend}}{{url_interest}}{{url_interest_software}}&compare={{compare}}{{url_compare_cid_list}}"> {{ d }} </a></option>
-						{% endfor %}
 						{% endfor %}
 					</select>
 					<hr/>

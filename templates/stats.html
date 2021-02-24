@@ -51,19 +51,23 @@
 
 </body>
 <script type="application/javascript">
+    // Select the node that will be observed for mutations
+    const targetNode = document.getElementById('iframenb');
 
-    function resizeIFrameToFitContent( iFrame ) {
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: false, childList: true, subtree: true };
 
-        iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
-        iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
-    }
+    // Callback function to execute when mutations are observed
+    const callback = function(mutationsList, observer) {
 
-    window.addEventListener('DOMContentLoaded', function(e) {
+        targetNode.height = targetNode.contentWindow.document.body.scrollHeight
 
-        var iFrame = document.getElementById( 'iframenb' );
-        resizeIFrameToFitContent( iFrame );
+    };
 
-    } );
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
 
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
 </script>
 </html>

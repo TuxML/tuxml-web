@@ -19,7 +19,7 @@
 	<link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
     <script type="application/javascript">
         // Select the node that will be observed for mutations
-        const targetNode = document.getElementById('iframenb');
+        const targetNode = document.getElementById('iframenb').contentWindow.document.getElementsByTagName("body");;
 
         // Options for the observer (which mutations to observe)
         const config = { attributes: false, childList: true, subtree: true };

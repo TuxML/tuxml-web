@@ -77,8 +77,7 @@ def options_number(cpt):
 
 def options(x):
             l =[]
-            for i in range(10):
-                l.append(options_number(get_configuration_file(x)))
-                x+=1
+            for i in len(x):
+                l.append(options_number(get_configuration_file(x[i])))
             return l       
-print(options(193437))
+print(options(get_list_of_cid_for_version(5.0))

@@ -6,9 +6,24 @@ import matplotlib.pyplot as plt
 from dbRequest import *
 
 
+#Import dbManager
+sys.path.insert(0, "..")
+try:
+    from dbManager import *
+except ImportError:
+    print('No Import')
+
+
+
+    
+
+
 #Choix de la version à télécharger
-def getKernelSizeVersionList(_versionSelect):
-    _kernelSizeVersionList = read_query(f"SELECT compiled_kernel_size FROM compilations WHERE compiled_kernel_version={_versionSelect} ;")
+def getKernelSizeVersionList(versionKernel):
+    versionKernel = "'" + versionKernel + "'"
+    query = "SELECT compiled_kernel_size FROM compilations WHERE compiled_kernel_version=" + versionKernel + ";"
+
+    _kernelSizeVersionList = read_query(query)
     data = []
     for e in _kernelSizeVersionList:
         for i in e:

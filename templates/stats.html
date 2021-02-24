@@ -40,7 +40,7 @@
 				Table	
 			-->
 			<div class="my-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
-				<iframe width="100%" height="100%" scrolling="no" frameborder="0" onload="resizeIframe(this)" src="../voila/voila/render/stats.ipynb"></iframe>
+				<iframe width="100%" id="iframenb" scrolling="no" frameborder="0" onload="resizeIframe(this)" src="../voila/voila/render/stats.ipynb"></iframe>
 			</div>
 
 
@@ -50,9 +50,20 @@
 
 
 </body>
-<script>
-    function resizeIframe(obj) {
-        obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+<script type="application/javascript">
+
+    function resizeIFrameToFitContent( iFrame ) {
+
+        iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
+        iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
     }
+
+    window.addEventListener('DOMContentLoaded', function(e) {
+
+        var iFrame = document.getElementById( 'iframenb' );
+        resizeIFrameToFitContent( iFrame );
+
+    } );
+
 </script>
 </html>

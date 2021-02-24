@@ -19,7 +19,7 @@
 	<link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
     <script type="application/javascript">
         // Select the node that will be observed for mutations
-        const targetNode = document.getElementById('iframenb').contentWindow.document.getElementsByTagName("body");;
+        const targetNode = document.getElementById('iframenb').contentWindow.document.getElementsByTagName("body");
 
         // Options for the observer (which mutations to observe)
         const config = { attributes: false, childList: true, subtree: true };
@@ -27,7 +27,7 @@
         // Callback function to execute when mutations are observed
         const callback = function(mutationsList, observer) {
 
-            targetNode.height = targetNode.contentWindow.document.body.scrollHeight
+            document.getElementById('iframenb').style.height = targetNode.scrollHeight
 
         };
 
@@ -36,6 +36,7 @@
 
         // Start observing the target node for configured mutations
         observer.observe(targetNode, config);
+
     </script>
 </head>
 <body id="page-top" class="static-bg">

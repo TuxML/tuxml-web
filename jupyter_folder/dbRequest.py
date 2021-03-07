@@ -39,3 +39,14 @@ def read_query(query):
 	except:
 		print("Erreur lors de l'envoi de la requete")
 
+def get_file(cid,filename):
+
+	if filename == "boot_log_file":
+		result = read_query(f"SELECT {filename} FROM boot WHERE cid = {cid};")
+	else:
+		result = read_query(f"SELECT {filename} FROM compilations WHERE cid = {cid};")
+
+	try:	
+		return bz2.decompress(result[0][0]).decode('ascii')
+	except:
+		print(f"Erreur lors de la décompression du fichier {filename} de la compilation {cid}\n")

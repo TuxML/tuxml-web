@@ -88,7 +88,7 @@ def data():
         laversion.replace(";", "").replace("\\","")
 
     if numberOfNuplet is None :
-        numberOfNuplet = 10
+        numberOfNuplet = 20
     else:
         numberOfNuplet.replace(";", "").replace("\\","")
 

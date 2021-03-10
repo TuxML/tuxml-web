@@ -105,7 +105,7 @@ getNumberOfActiveOptions(compilationId)
 Returns the number of active options for a specific `compilationId`.
 
 
-## programmaticRequest - To be updated (Optimisation and functionality)
+## programmaticRequest
 ```python
 programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp',isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False))
 ```
@@ -126,15 +126,31 @@ The `caching` parameter is directly piped to the call to `makeRequest()`, same w
 Just put the column you want to get in the `getColumn`, the method automatically does the needed joining.
 
 #### Example
+##### Basic example
 Calling the method with the following parameters
 ```python
-getColumn=['cid','architecture'], withConditions=['cid > 100000','cid < 100010']
-```
+programmaticRequest getColumn=['cid','architecture'], withConditions=['cid > 100000','cid < 100010'])```
 
 generates this command
 ```sql
 SELECT cid, architecture FROM compilations comp JOIN hardware_environment hardenv ON comp.hid = hardenv.hid WHERE cid > 100000 AND cid <100010;
 ```
 
+##### Highlighting the automatic selection of the needed table
+
+Calling the method this way
+```python
+programmaticRequest(getColumn="architecture", withConditions="hid = 1)"
+```
+
+generates this command
+```sql
+SELECT architecture FROM hardware_environment hardenv WHERE hid = 1;
+```
+
 #### Future updates
-- [ ] Only select the needed table when asking for only one column absent from the `compilations` table. Eg : Asking for the `architecture` column will make a join even if only the `hardware_environment` table is needed.
+- [x] Only select the needed table when asking for only one column absent from the `compilations` table. Eg : Asking for the `architecture` column will make a join even if only the `hardware_environment` table is needed.
+
+
+#### Note 
+The `mainTable` parameter is now considered as deprecated and will be removed in the future.

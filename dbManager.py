@@ -290,16 +290,25 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return None
 
-def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp',isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False):
+def getHardwareEnvironmentId(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanicalDisk):
+
+    return programmaticRequest(getColumn="hid")
+
+def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp' ,isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False):
     options = ''
+    programmaticTable = ''
 
     softenv = False
     hardenv = False
+    comptab = False
 
     if getColumn is None:
+        getColumn = "*"
+
+    if getColumn == "*":
         softenv = True
         hardenv = True
-        getColumn = "*"
+        comptab = True
 
     for col in getColumnsForSoftwareEnvTable():
         if col in getColumn or col in withConditions:
@@ -309,10 +318,27 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
         if col in getColumn or col in withConditions:
             hardenv = True
 
+    for col in getColumnsForCompilationsTable(includeBlobs=True)[:-2]:
+        if col in getColumn or col in withConditions:
+            comptab = True
+
+    if comptab:
+        programmaticTable = 'compilations comp'
+
+
     if hardenv:
-        mainTable += " JOIN hardware_environment hardenv ON comp.hid = hardenv.hid"
+        if comptab :
+            programmaticTable += " JOIN hardware_environment hardenv ON comp.hid = hardenv.hid"
+        else:
+            programmaticTable = 'hardware_environment hardenv'
+
+
     if softenv:
-        mainTable += " JOIN software_environment softenv ON comp.sid = softenv.sid"
+        if comptab :
+            programmaticTable += " JOIN software_environment softenv ON comp.sid = softenv.sid"
+        else:
+            programmaticTable = 'software_environment softenv'
+
 
     if not isinstance(getColumn, str): #If necessary, we reformat the columns input
         getColumn = ", ".join(getColumn)
@@ -339,9 +365,10 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
     if offset is not None:
         options += f" OFFSET {offset}"
 
-    query = f"SELECT {getColumn} FROM {mainTable}{options};"
+    query = f"SELECT {getColumn} FROM {programmaticTable}{options};"
 
     if execute:
         return makeRequest(query, isPassiveData=isPassiveData, caching=caching)
     else:
         return query
+

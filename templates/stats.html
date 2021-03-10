@@ -50,5 +50,20 @@
 
 
 </body>
-
+<script type="application/javascript">
+    // Select the node that will be observed for mutations
+    const targetNode = document.getElementById('iframenb').contentWindow.document.body;
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: true, characterData: true, childList: true, subtree: true };
+    const callback = function(mutationsList, observer) {
+        resizeIframe(document.getElementById('iframenb'))
+    };
+    function resizeIframe(iframe) {
+        iframe.height = (iframe.contentWindow.document.body.scrollHeight +10) + "px";
+    }
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
+</script>
 </html>

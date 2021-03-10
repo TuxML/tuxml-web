@@ -3,7 +3,7 @@ import bz2
 from  distutils import util
 import signal
 from io import BytesIO
-from time import sleep
+import time
 import threading
 from flask_caching import Cache
 from flask import Flask, render_template, url_for, request, send_file, redirect, abort, session, jsonify
@@ -55,10 +55,29 @@ def getConnection():
 def hello_world():
     return render_template('base.html', count=dbManager.getCompilationCount())
 
+def stayAliveThenDie():
+    time.sleep(5)
+    print(os._exit(0))
+
+ok = '''⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣶⡾⠏⠉⠙⠳⢦⡀⠀⠀⠀⢠⠞⠉⠙⠲⡀⠀
+⠀⠀⠀⣴⠿⠏⠀⠀⠀⠀⠀⠀⢳⡀⠀⡏⠀⠀⠀⠀⠀⢷
+⠀⠀⢠⣟⣋⡀⢀⣀⣀⡀⠀⣀⡀⣧⠀⢸⠀⠀⠀⠀⠀ ⡇
+⠀⠀⢸⣯⡭⠁⠸⣛⣟⠆⡴⣻⡲⣿⠀⣸⠀⠀OK⠀ ⡇
+⠀⠀⣟⣿⡭⠀⠀⠀⠀⠀⢱⠀⠀⣿⠀⢹⠀⠀⠀⠀⠀ ⡇
+⠀⠀⠙⢿⣯⠄⠀⠀⠀⢀⡀⠀⠀⡿⠀⠀⡇⠀⠀⠀⠀⡼
+⠀⠀⠀⠀⠹⣶⠆⠀⠀⠀⠀⠀⡴⠃⠀⠀⠘⠤⣄⣠⠞⠀
+⠀⠀⠀⠀⠀⢸⣷⡦⢤⡤⢤⣞⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀
+⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀
+⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀⠀⣄⢸⠀⠀⠀⠀⠀⠀
+⣿⣿⣧⣀⣿.........⣀⣰⣏⣘⣆⣀⠀⠀'''.replace("\n","<br>")
+
 @app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/', methods = ['GET', 'POST'])
 def laFin():
-    print(os._exit(0)) #On ferme le serveur, systemd s'occupe de faire un git pull et de le relancer
-    return ("¯\_(ツ)_/¯")
+    x = threading.Thread(target=stayAliveThenDie)
+    x.start()
+    return (ok)
 
 @app.route('/data/')
 @cache.cached(timeout=360, query_string=True)

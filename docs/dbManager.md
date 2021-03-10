@@ -117,7 +117,7 @@ Get the existing hid for the specified hardware characteristics, returns `None` 
 
 ## programmaticRequest
 ```python
-programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp',isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False))
+programmaticRequest(getColumn="*", withConditions="", ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp' ,isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False)
 ```
 
 Generates an SQL command from given parameters. Makes database requests far easier to write.

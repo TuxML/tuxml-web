@@ -101,9 +101,19 @@ Set `desc` to true to invert the order of the list (From increasing ordre to dec
 ```python
 getNumberOfActiveOptions(compilationId)
 ```
-
 Returns the number of active options for a specific `compilationId`.
 
+## getSid
+```python
+getSid(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, gcc_version, libc_version, tuxml_version)
+```
+Get the existing sid for the specified software characteristics, returns `None` if there is no sid associated with this combination.
+
+## getHid
+```python
+getHid(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanical_disk)
+```
+Get the existing hid for the specified hardware characteristics, returns `None` if there is no hid associated with this combination.
 
 ## programmaticRequest
 ```python
@@ -129,7 +139,8 @@ Just put the column you want to get in the `getColumn`, the method automatically
 ##### Basic example
 Calling the method with the following parameters
 ```python
-programmaticRequest getColumn=['cid','architecture'], withConditions=['cid > 100000','cid < 100010'])```
+programmaticRequest getColumn=['cid','architecture'], withConditions=['cid > 100000','cid < 100010'])
+```
 
 generates this command
 ```sql
@@ -140,7 +151,7 @@ SELECT cid, architecture FROM compilations comp JOIN hardware_environment harden
 
 Calling the method this way
 ```python
-programmaticRequest(getColumn="architecture", withConditions="hid = 1)"
+programmaticRequest(getColumn="architecture", withConditions="hid = 1")
 ```
 
 generates this command
@@ -148,8 +159,6 @@ generates this command
 SELECT architecture FROM hardware_environment hardenv WHERE hid = 1;
 ```
 
-#### Future updates
-- [x] Only select the needed table when asking for only one column absent from the `compilations` table. Eg : Asking for the `architecture` column will make a join even if only the `hardware_environment` table is needed.
 
 
 #### Note 

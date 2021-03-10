@@ -290,20 +290,40 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return None
 
-def getHardwareEnvironmentId(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanicalDisk):
+def getHid(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanical_disk):
 
-    return programmaticRequest(getColumn="hid")
+    conditions = [f"architecture = \"{architecture}\"",
+                  f"cpu_brand_name = \"{cpu_brand_name}\"",
+                  f"number_cpu_core = \"{number_cpu_core}\"",
+                  f"cpu_max_frequency = \"{cpu_max_frequency}\"",
+                  f"ram_size = \"{ram_size}\"",
+                  f"mechanical_disk = \"{mechanical_disk}\""]
 
-def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp' ,isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False):
+    result = programmaticRequest(getColumn="hid",withConditions=conditions,execute=True)
+
+    return result if isinstance(result,int) else None
+
+def getSid(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, gcc_version, libc_version, tuxml_version):
+
+    conditions = [f"system_kernel = \"{system_kernel}\"",
+                  f"system_kernel_version = \"{system_kernel_version}\"",
+                  f"linux_distribution = \"{linux_distribution}\"",
+                  f"linux_distribution_version = \"{linux_distribution_version}\"",
+                  f"gcc_version = \"{gcc_version}\"",
+                  f"libc_version = \"{libc_version}\"",
+                  f"tuxml_version = \"{tuxml_version}\""]
+
+    result = programmaticRequest(getColumn="sid",withConditions=conditions,execute=True)
+
+    return result if isinstance(result,int) else None
+
+def programmaticRequest(getColumn="*", withConditions="", ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp' ,isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False):
     options = ''
     programmaticTable = ''
 
     softenv = False
     hardenv = False
     comptab = False
-
-    if getColumn is None:
-        getColumn = "*"
 
     if getColumn == "*":
         softenv = True
@@ -313,14 +333,26 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
     for col in getColumnsForSoftwareEnvTable():
         if col in getColumn or col in withConditions:
             softenv = True
+        if not isinstance(withConditions,str) and len(withConditions)>0:
+            for cond in withConditions:
+                if col in cond :
+                    softenv = True
     
     for col in getColumnsForHardwareEnvTable():
         if col in getColumn or col in withConditions:
             hardenv = True
+        if not isinstance(withConditions,str) and len(withConditions)>0 :
+            for cond in withConditions:
+                if col in cond :
+                    hardenv = True
 
     for col in getColumnsForCompilationsTable(includeBlobs=True)[:-2]:
         if col in getColumn or col in withConditions:
             comptab = True
+        if not isinstance(withConditions,str) and len(withConditions)>0:
+            for cond in withConditions:
+                if col in cond :
+                    comptab = True
 
     if comptab:
         programmaticTable = 'compilations comp'
@@ -372,3 +404,4 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
     else:
         return query
 
+print(getHid("x86_64","Intel Xeon E3-12xx v2 (Ivy Bridge, IBRS)","1","3192","2041336","0"))

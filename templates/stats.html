@@ -51,19 +51,45 @@
 
 </body>
 <script type="application/javascript">
+    /*
     // Select the node that will be observed for mutations
     const targetNode = document.getElementById('iframenb').contentWindow.document.body;
+
     // Options for the observer (which mutations to observe)
     const config = { attributes: true, characterData: true, childList: true, subtree: true };
+
     const callback = function(mutationsList, observer) {
+        console.log("hehe")
         resizeIframe(document.getElementById('iframenb'))
+        // Use traditional 'for loops' for IE 11
+        for(const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                console.log('A child node has been added or removed.');
+            }
+            else if (mutation.type === 'attributes') {
+                console.log('The ' + mutation.attributeName + ' attribute was modified.');
+            }
+        }
     };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
+
+    console.log(targetNode)
+
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
+
+    */ //Rip poor code that never worked
+
     function resizeIframe(iframe) {
         iframe.height = (iframe.contentWindow.document.body.scrollHeight +10) + "px";
     }
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
+
+    frame = document.getElementById('iframenb')
+
+    window.addEventListener('load', function () {
+        setInterval(function (){resizeIframe(frame)}, 500); //Not pretty, but it actually works better than the mutationObserver way for this case
+    })
 </script>
 </html>

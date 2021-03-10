@@ -71,7 +71,7 @@ ok = '''⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀
 ⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀
 ⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀⠀⣄⢸⠀⠀⠀⠀⠀⠀
-⣿⣿⣧⣀⣿.........⣀⣰⣏⣘⣆⣀⠀⠀'''.replace("\n","<br>")
+⣿⣿⣧⣀⣿.........⣀⣰⣏⣘⣆⣀⠀⠀'''
 
 @app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/', methods = ['GET', 'POST'])
 def laFin():
@@ -285,6 +285,7 @@ def getData(id, request):
 def stats():
     return render_template('stats.html')
 
+
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
 
@@ -386,14 +387,20 @@ def api_filter():
 
     return jsonify(d)
 
-@app.route('/upload',methods=["POST"])
+@app.route('/api/v1/uploadResults',methods=["POST"])
 def upload():
+    if(not request.is_json):
+        return "Error : The request don't contain any json"
+
+    content = request.get_json()
+
+
+
     tuxmlDB = mysql.connector.connect(
         host='148.60.11.195',
         user='script2',
         password='ud6cw3xNRKnrOz6H',
         database='IrmaDB_dev')
-
     curs = tuxmlDB.cursor(buffered=True)
     curs.execute("INSERT INTO Compilations")
     return request.form["hello"]

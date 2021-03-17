@@ -395,7 +395,7 @@ def upload():
         return "Error : The request don't contain any json"
 
     content = request.get_json()
-    print(content["hello"])
+
     #tuxmlDB = mysql.connector.connect(
     #    host='148.60.11.195',
     #    user='script2',

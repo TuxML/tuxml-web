@@ -371,7 +371,9 @@ def api_filter():
         for sel in select_list:
             select_string += sel + ","
         select_string = select_string[:-1]
-    
+    else:
+        select_string = "*"
+        
     query = dbManager.programmaticRequest(getColumn=select_string, withConditions=conditions_string, ordering=ordering, limit=limit, caching=False, execute=False)
     
     #print(query, file=sys.stderr)

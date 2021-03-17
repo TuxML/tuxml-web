@@ -358,16 +358,16 @@ def api_filter():
     
     if (not cid and not compiled_kernel_version and not compiled):
         return abort(404)
-        
-    
+
+
+    conditions_string = ""
     if conditions_list:
-        conditions_string = ""
         for cond in conditions_list:
             conditions_string += cond + " AND "
         conditions_string = conditions_string[:-5]
-    
+
+    select_string = ""
     if select_list:
-        select_string = ""
         for sel in select_list:
             select_string += sel + ","
         select_string = select_string[:-1]

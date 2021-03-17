@@ -394,16 +394,13 @@ def upload():
 
     content = request.get_json()
 
-
-
-    tuxmlDB = mysql.connector.connect(
-        host='148.60.11.195',
-        user='script2',
-        password='ud6cw3xNRKnrOz6H',
-        database='IrmaDB_dev')
-    curs = tuxmlDB.cursor(buffered=True)
-    curs.execute("INSERT INTO Compilations")
-    return request.form["hello"]
+    #tuxmlDB = mysql.connector.connect(
+    #    host='148.60.11.195',
+    #    user='script2',
+    #    password='ud6cw3xNRKnrOz6H',
+    #    database='IrmaDB_dev')
+    #curs = tuxmlDB.cursor(buffered=True)
+    return content
 
 #Formats query results into dictonnaries, making it able to be jsonified
 def dict_factory(cursor, query_list):

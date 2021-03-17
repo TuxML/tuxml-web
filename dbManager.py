@@ -329,7 +329,7 @@ def programmaticRequest(getColumn="*", withConditions="", ordering=None, limit:i
         softenv = True
         hardenv = True
         comptab = True
-
+    
     for col in getColumnsForSoftwareEnvTable():
         if col in getColumn or col in withConditions:
             softenv = True

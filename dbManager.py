@@ -5,6 +5,7 @@ from os import path
 from time import sleep
 import mysql.connector
 import arrow
+import random
 
 class __CacheItem: #Encapsulation has been highly used in this class's methods in order to keep data integrity
     def __init__(self, passiveData = False):
@@ -92,9 +93,9 @@ def __updateCache(query, data, isPassiveData):
     global __queriesCache
     cacheItem = __queriesCache.get(query, __CacheItem(passiveData=isPassiveData))
     cacheItem.update(data)
-    __cacheLocker.acquire()
+    #__cacheLocker.acquire()
     __queriesCache[query] = cacheItem
-    __cacheLocker.release()
+    #__cacheLocker.release()
 
 '''
 
@@ -107,10 +108,10 @@ def __refreshCacheRoutine(): # Works as a thread
 
     #Parameters
 
-    waitingTimeBetweenRefreshes = 300
+    waitingTimeBetweenRefreshes = 300 #300
 
-    timeToLive = 86400 #Cache items older than x seconds will be deleted during the next purge
-    refreshCountForPurge = 188 #Each x refreshes, a purge will happen
+    timeToLive = 86400 #86400 #Cache items older than x seconds will be deleted during the next purge
+    refreshCountForPurge = 188 #188 #Each x refreshes, a purge will happen
 
     timeToLivePassiveItems = 86400 #Passive cache items older than x seconds will be deleted during the next purge
     refreshCountForPassiveItemsPurge = 752 #Each x refreshes, a purge of passive cache items will happen
@@ -404,4 +405,3 @@ def programmaticRequest(getColumn="*", withConditions="", ordering=None, limit:i
     else:
         return query
 
-print(getHid("x86_64","Intel Xeon E3-12xx v2 (Ivy Bridge, IBRS)","1","3192","2041336","0"))

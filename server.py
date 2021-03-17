@@ -80,7 +80,7 @@ def laFin():
     return (ok)
 
 @app.route('/data/')
-@cache.cached(timeout=360, query_string=True)
+@cache.cached(timeout=10, query_string=True)
 def data():
     connection = getConnection()
     cursor = connection.cursor()
@@ -393,7 +393,7 @@ def upload():
         return "Error : The request don't contain any json"
 
     content = request.get_json()
-
+    print(content["hello"])
     #tuxmlDB = mysql.connector.connect(
     #    host='148.60.11.195',
     #    user='script2',

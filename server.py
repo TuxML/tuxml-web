@@ -286,6 +286,24 @@ def stats():
     return render_template('stats.html')
 
 
+
+
+app.config["UPLOADS"] = "uploads"
+
+@app.route('/prediction/', methods=["GET", "POST"])
+def prediction():
+
+    if request.method == "POST":
+        
+        if request.files:
+
+            file = request.files["config"]
+            file.save(os.path.join(app.config["UPLOADS"], file.filename))
+            return redirect(request.url)
+
+    return render_template('prediction.html')
+
+
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
 

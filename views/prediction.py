@@ -9,12 +9,13 @@ from werkzeug.utils import secure_filename
 ALLOWED_EXTENSIONS = {'config'}
 UPLOADS_DIRECTORY_PATH = "../uploads" 
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def prediction():
+def prediction_view():
 
     if request.method == "POST":
         

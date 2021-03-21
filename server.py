@@ -14,13 +14,14 @@ import sys
 from os import path
 import waitress
 import dbManager
-from werkzeug.utils import secure_filename
 
 
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 app.config['SECRET_KEY'] = '71794b6f6130464a494b6e62634b7167594b5850'
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+app.config["UPLOADS"] = "../uploads"
+
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 @app.context_processor
@@ -290,37 +291,8 @@ def stats():
 
 
 
-app.config["UPLOADS"] = "../uploads"
-ALLOWED_EXTENSIONS = {'config'}
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/prediction/', methods=["GET", "POST"])
-def prediction():
-
-    if request.method == "POST":
-        
-        if request.files:
-
-            file = request.files["config"]
-
-            if file.filename == "":
-                print("File must have a filename")
-                return redirect(request.url)
-
-            if not allowed_file(file.filename):
-                print("That file extension is not allowed")
-                return redirect(request.url)
-
-            else:
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config["UPLOADS"], filename))
-            return redirect(request.url)
-
-    return render_template('prediction.html')
+import routes.prediction #do not move
 
 
 @app.route('/api/v1/resources/compilations', methods=['GET'])

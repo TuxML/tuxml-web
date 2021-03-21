@@ -290,7 +290,7 @@ def stats():
 
 
 
-app.config["UPLOADS"] = "uploads"
+app.config["UPLOADS"] = "../uploads"
 ALLOWED_EXTENSIONS = {'config'}
 
 def allowed_file(filename):

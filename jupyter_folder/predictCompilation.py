@@ -92,7 +92,7 @@ def prediction(_directory, _version, _numberOfFiles, _targetConfigFile):
     model.score(X,y)
 
 
-    #get the posidition of the param from the target config_file and fill x with    
+    #get the position of the param from the target config_file and fill x with    
     
     cwd = os.getcwd()  # Get the current working directory (cwd)
     

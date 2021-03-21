@@ -75,18 +75,3 @@ def getPos(fname, paramTrue):
 
 
 
-def toPredict(fname, fparams):
-    len_params = file_len(fparams)
-    row = np.zeros(len_params,dtype=np.int64)
-
-
-    f = open(fname, "r")
-    for line in f:
-        paramTrue = getParamTrue(line)
-        if paramTrue != "" :
-            index = getPos(fparams,paramTrue)
-            if index != -1:
-                row[index] = 1
-
-    f.close()
-    return row.reshape(1,len_params)

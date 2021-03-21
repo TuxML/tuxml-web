@@ -1,7 +1,3 @@
-if __name__ == '__main__':
-	from __main__ import app
-else:
-	from server import app
 
 import os
 
@@ -11,13 +7,13 @@ from werkzeug.utils import secure_filename
 
 
 ALLOWED_EXTENSIONS = {'config'}
+UPLOADS_DIRECTORY_PATH = "../uploads" 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/prediction/', methods=["GET", "POST"])
 def prediction():
 
     if request.method == "POST":
@@ -36,7 +32,7 @@ def prediction():
 
             else:
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config["UPLOADS"], filename))
+                file.save(os.path.join(UPLOADS_DIRECTORY_PATH, filename))
             return redirect(request.url)
 
     return render_template('prediction.html')

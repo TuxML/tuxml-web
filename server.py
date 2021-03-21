@@ -15,12 +15,14 @@ from os import path
 import waitress
 import dbManager
 
+import routes.prediction as pdt
+
+
 
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 app.config['SECRET_KEY'] = '71794b6f6130464a494b6e62634b7167594b5850'
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
-app.config["UPLOADS"] = "../uploads"
 
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
@@ -81,6 +83,11 @@ def laFin():
     x = threading.Thread(target=stayAliveThenDie)
     x.start()
     return (ok)
+
+
+
+app.add_url_rule('/prediction/', view_func=pdt.prediction, methods=["GET", "POST"])
+
 
 @app.route('/data/')
 @cache.cached(timeout=10, query_string=True)
@@ -292,7 +299,6 @@ def stats():
 
 
 
-import routes.prediction #do not move
 
 
 @app.route('/api/v1/resources/compilations', methods=['GET'])

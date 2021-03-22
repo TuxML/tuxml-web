@@ -1,9 +1,10 @@
 
 import os
+import numpy as np
 
 from flask import request, render_template, redirect
 from werkzeug.utils import secure_filename
-from ..ML.growML import get_x 
+from ..ML.growML import get_x, useKNC 
 
 
 

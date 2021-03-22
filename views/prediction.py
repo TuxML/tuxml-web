@@ -37,15 +37,15 @@ def prediction_view():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(UPLOADS_DIRECTORY_PATH, filename))
                 file_path = UPLOADS_DIRECTORY_PATH + "/" + filename
-                fparams_path =  DOWNLOADS_DIRECTORY_PATH  + "/" + '4.15' + "/" + params 
+                fparams_path =  DOWNLOADS_DIRECTORY_PATH  + "/" + "4.15" + "/params" 
                 x = get_x(file_path,fparams_path)
 
-                X = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + '5.4' + "/X.npy")
-                y = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + '5.4' + "/y.npy")
+                X = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/X.npy")
+                y = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/y.npy")
 
                 prediction = useKNC(X,y,x)
 
-                print(prediction)
+                #print(prediction)
 
             return redirect(request.url)
 

@@ -3,12 +3,13 @@ import os
 
 from flask import request, render_template, redirect
 from werkzeug.utils import secure_filename
+from ..ML.growML import get_x 
 
 
 
 ALLOWED_EXTENSIONS = {'config'}
 UPLOADS_DIRECTORY_PATH = "../uploads" 
-
+DOWNLOADS_DIRECTORY_PATH = "../downloads"
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -34,6 +35,17 @@ def prediction_view():
             else:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(UPLOADS_DIRECTORY_PATH, filename))
+                file_path = UPLOADS_DIRECTORY_PATH + "/" + filename
+                fparams_path =  DOWNLOADS_DIRECTORY_PATH  + "/" + '4.15' + "/" + params 
+                x = get_x(file_path,fparams_path)
+
+                X = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + '5.4' + "/X.npy")
+                y = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + '5.4' + "/y.npy")
+
+                prediction = useKNC(X,y,x)
+
+                print(prediction)
+
             return redirect(request.url)
 
     return render_template('prediction.html')

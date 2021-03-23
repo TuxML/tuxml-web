@@ -15,7 +15,7 @@ from os import path
 import waitress
 import dbManager
 
-import views.prediction
+#import views.prediction
 
 
 
@@ -86,7 +86,7 @@ def laFin():
 
 
 
-app.add_url_rule('/prediction/', view_func=views.prediction.prediction_view, methods=["GET", "POST"])
+#app.add_url_rule('/prediction/', view_func=views.prediction.prediction_view, methods=["GET", "POST"])
 
 
 @app.route('/data/')

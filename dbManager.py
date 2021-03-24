@@ -6,6 +6,7 @@ from time import sleep
 import mysql.connector
 import arrow
 import random
+from typing import Optional
 
 class __CacheItem: #Encapsulation has been highly used in this class's methods in order to keep data integrity
     def __init__(self, passiveData = False):
@@ -37,19 +38,24 @@ Handles queries, and unfolds them (up to two times).
 
 '''
 def __fetchData(query):
+
+    dbname = 'IrmaDB_result'
+    uname = 'web'
+    pwd = 'df54ZR459'
+
     if (path.exists("tunnel")): # If we're connected throuh a SSH tunnel
         tuxmlDB = mysql.connector.connect(
         host='localhost',
         port=20000,
-        user='web',
-        password='df54ZR459',
-        database='IrmaDB_result')
-    else: # If we're connected through ISTIC VPN or via ISTIC Wifi network.
+        user=uname,
+        password=pwd,
+        database=dbname)
+    else: # If we're connected through ISTIC's SSL VPN or via ISTIC Wifi network.
         tuxmlDB = mysql.connector.connect(
         host='148.60.11.195',
-        user='web',
-        password='df54ZR459',
-        database='IrmaDB_result')
+        user=uname,
+        password=pwd,
+        database=dbname)
 
     curs = tuxmlDB.cursor(buffered=True)
     curs.execute(query)
@@ -68,6 +74,7 @@ __queriesCache = {}
 __totalFetchCount = 0 # <-- Deprecated
 __incrementLocker = threading.Lock() # <-- Deprecated
 __cacheLocker = threading.Lock()
+__uploadLocker = threading.Lock()
 __currentCompilationCount = 0
 
 '''
@@ -298,7 +305,7 @@ def getHid(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram
                   f"number_cpu_core = \"{number_cpu_core}\"",
                   f"cpu_max_frequency = \"{cpu_max_frequency}\"",
                   f"ram_size = \"{ram_size}\"",
-                  f"mechanical_disk = \"{mechanical_disk}\""]
+                  f"mechanical_disk = \"{int(mechanical_disk)}\""]
 
     result = programmaticRequest(getColumn="hid",withConditions=conditions,caching=False,execute=True)
 
@@ -318,25 +325,112 @@ def getSid(system_kernel, system_kernel_version, linux_distribution, linux_distr
 
     return result if isinstance(result,int) else None
 
-def getCid(compilation_date, compilation_time, config_file, stdout_log_file, stderr_log_file, user_output_file, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,comîled_kernel_version,sid,hid):
-
+def getCid(compilation_date, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,compiled_kernel_version,sid,hid):
+    ''' compilation_time,config_file, stdout_log_file, stderr_log_file, user_output_file,'''
     conditions = [f"compilation_date = \"{compilation_date}\"",
-                  f"compilation_time = \"{compilation_time}\"",
-                  f"config_file = \"{config_file}\"",
-                  f"stdout_log_file = \"{stdout_log_file}\"",
-                  f"stderr_log_file = \"{stderr_log_file}\"",
-                  f"user_output_file = \"{user_output_file}\"",
-                  f"compiled_kernel_size = \"{compiled_kernel_size}\"",
+                  #f"compilation_time = \"{compilation_time}\"",
+                  #f"config_file = \"{config_file}\"",
+                  #f"stdout_log_file = \"{stdout_log_file}\"",
+                  #f"stderr_log_file = \"{stderr_log_file}\"",
+                  #f"user_output_file = \"{user_output_file}\"",
+                  f"compiled_kernel_size = {compiled_kernel_size}",
                   f"compressed_compiled_kernel_size = \"{compressed_compiled_kernel_size}\"",
                   f"dependencies = \"{dependencies}\"",
-                  f"number_cpu_core_used = \"{number_cpu_core_used}\"",
-                  f"comîled_kernel_version = \"{comîled_kernel_version}\"",
-                  f"sid = \"{sid}\"",
-                  f"hid = \"{hid}\""]
-
+                  f"number_cpu_core_used = {number_cpu_core_used}",
+                  f"compiled_kernel_version = \"{compiled_kernel_version}\"",
+                  f"comp.sid = {sid}",
+                  f"comp.hid = {hid}"]
     result = programmaticRequest(getColumn="cid",withConditions=conditions,caching=False,execute=True)
 
     return result if isinstance(result,int) else None
+
+def insertIntoHardwareTable(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanical_disk:int):
+    locBackup = locals()
+    keys = locBackup.keys()
+    values = locBackup.values()
+    return insertInTable("hardware_environment",keys,values)
+
+def insertIntoSoftwareTable(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, gcc_version, libc_version, tuxml_version):
+    locBackup = locals()
+    keys = locBackup.keys()
+    values = locBackup.values()
+    return insertInTable("software_environment",keys,values)
+
+def insertIntoCompilationsTable(compilation_date, compilation_time, config_file, stdout_log_file, stderr_log_file, user_output_file, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,compiled_kernel_version,sid,hid):
+    locBackup = locals()
+    keys = locBackup.keys()
+    values = locBackup.values()
+    return insertInTable("compilations",keys,values)
+
+def insertInTable(tableName, keys, values):
+    tuxmlDBupl = mysql.connector.connect(
+        host='148.60.11.195',
+        user='script2',
+        password='ud6cw3xNRKnrOz6H',
+        database='IrmaDB_result')
+    curs = tuxmlDBupl.cursor()
+
+    query_insert = "INSERT INTO {}({}) VALUES({})".format(
+        tableName,
+        ','.join(keys),
+        ','.join(["%s"] * len(values))
+    )
+
+    __uploadLocker.acquire()
+    curs.execute(query_insert,list(values))
+    tuxmlDBupl.commit()
+    ci = curs.lastrowid
+    __uploadLocker.release()
+    return ci
+
+
+def __blobizer(data:str):
+    return (bz2.compress(bytes(data, encoding="ascii")))
+
+def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
+    blob_conf = __blobizer(content["config_file"])
+    blob_stdout = __blobizer(content["stdout_log_file"])
+    blob_stderr = __blobizer(content["stderr_log_file"])
+    blob_out = __blobizer(content["user_output_file"])
+
+    if(maybeHid == None):
+        hid = insertIntoHardwareTable(content["architecture"],
+                                      content["cpu_brand_name"],
+                                      content["number_cpu_core_used"],
+                                      content["cpu_max_frequency"],
+                                      content["ram_size"],
+                                      content["mechanical_disk"])
+    else:
+        hid = maybeHid
+
+    if(maybeSid == None):
+        sid = insertIntoSoftwareTable(content["system_kernel"],
+                                      content["system_kernel_version"],
+                                      content["linux_distribution"],
+                                      content["linux_distribution_version"],
+                                      content["gcc_version"],
+                                      content["libc_version"],
+                                      content["tuxml_version"])
+    else:
+        sid = maybeSid
+
+    return insertIntoCompilationsTable(content["compilation_date"],
+                                       content["compilation_time"],
+                                       blob_conf,
+                                       blob_stdout,
+                                       blob_stderr,
+                                       blob_out,
+                                       content["compiled_kernel_size"],
+                                       content["compressed_compiled_kernel_size"],
+                                       content["dependencies"],
+                                       content["number_cpu_core_used"],
+                                       content["compiled_kernel_version"],
+                                       maybeSid,
+                                       maybeHid)
+
+
+
+
 
 def programmaticRequest(getColumn="*", withConditions="", ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp' ,isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False):
     options = ''

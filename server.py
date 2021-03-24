@@ -13,6 +13,7 @@ import socket
 import sys
 from os import path
 import waitress
+from typing import Optional
 
 
 import dbManager
@@ -409,45 +410,51 @@ def api_filter():
 def blobizer(data:str):
     return (bz2.compress(bytes(data, encoding="ascii")))
 
-@app.route('/api/v1/uploadResults',methods=["POST"])
+def checkIntegrity(data) :
+    pass
+
+@app.route('/api/v0/hfdshuGKJFKpoajfrpakjvbmsdpioiygIUZERBJLqskljfqkjsfouFUeikfv/uploadResults',methods=["POST"])
 def upload():
     if(not request.is_json):
         return "Error : The request don't contain any json"
 
     content = request.get_json()
-    print(dbManager.getHid(content["architecture"],
-                           content["cpu_brand_name"],
-                           content["number_cpu_core_used"],
-                           content["cpu_max_frequency"],
-                           content["ram_size"],
-                           content["mechanical_disk"]))
-    print(dbManager.getSid(content["system_kernel"],
-                           content["system_kernel_version"],
-                           content["linux_distribution"],
-                           content["linux_distribution_version"],
-                           content["gcc_version"],
-                           content["libc_version"],
-                           content["tuxml_version"]))
-    print(dbManager.getCid(content["compilation_date"],
-                           content["compilation_time"],
-                           content["config_file"],
-                           content["stdout_log_file"],
-                           content["stderr_log_file"],
-                           content["user_output_file"],
-                           content["compiled_kernel_size"],
-                           content["compressed_compiled_kernel_size"],
-                           content["dependencies"],
-                           content["number_cpu_core_used"],
-                           content["compiled_kernel_version"],
-                           content["sid"],
-                           content["hid"]))
-    #tuxmlDB = mysql.connector.connect(
-    #    host='148.60.11.195',
-    #    user='script2',
-    #    password='ud6cw3xNRKnrOz6H',
-    #    database='IrmaDB_dev')
-    #curs = tuxmlDB.cursor(buffered=True)
-    return content
+    try:
+        maybeHid = dbManager.getHid(content["architecture"],
+                                    content["cpu_brand_name"],
+                                    content["number_cpu_core_used"],
+                                    content["cpu_max_frequency"],
+                                    content["ram_size"],
+                                    content["mechanical_disk"])
+
+        maybeSid = dbManager.getSid(content["system_kernel"],
+                                    content["system_kernel_version"],
+                                    content["linux_distribution"],
+                                    content["linux_distribution_version"],
+                                    content["gcc_version"],
+                                    content["libc_version"],
+                                    content["tuxml_version"])
+
+        maybeCid = dbManager.getCid(content["compilation_date"],
+                                    #content["compilation_time"],
+                                    content["compiled_kernel_size"],
+                                    content["compressed_compiled_kernel_size"],
+                                    content["dependencies"],
+                                    content["number_cpu_core_used"],
+                                    content["compiled_kernel_version"],
+                                    maybeSid,
+                                    maybeHid)
+    except:
+        return 'Error : The json isn\'t complete' # Must be replaced by a more robust solution
+
+    if maybeCid == None :
+        try:
+            return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}'
+        except Exception as e :
+            return 'The upload has failed miserably'
+    else:
+        return 'Error : This compilation has already been uploaded in the database'
+
 
 #Formats query results into dictonnaries, making it able to be jsonified
 def dict_factory(cursor, query_list):

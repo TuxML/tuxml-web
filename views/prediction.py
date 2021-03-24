@@ -7,7 +7,7 @@ from flask import request, render_template, redirect
 from werkzeug.utils import secure_filename
 
 
-from ML.growML import get_x, useKNC
+from views.ML.growML import get_x, useKNC
 
 
 ALLOWED_EXTENSIONS = {'config'}

@@ -6,8 +6,8 @@ import shutil
 from sklearn.neighbors import KNeighborsClassifier
 
 
-from tuxmlweb.views.ML.params import getParam, file_len, getParamTrue, getPos, existParam
-import tuxmlweb.views.ML.dbRequest as dbRequest
+from .params import getParam, file_len, getParamTrue, getPos, existParam
+from . import dbRequest
 
 
 def growX(_version, files):

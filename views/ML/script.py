@@ -1,14 +1,22 @@
 #!/usr/bin/python3
-from getConfigFile import getConfig
-from growML import grow
+
+
 import os
 import sys
 import numpy as np
 
+from tuxmlweb.views.ML.getConfigFile import getConfig
+from tuxmlweb.views.ML.growML import grow
 
 version = '4.15'
 number = 1
 path = "/home/zprojet/tuxml-web/ML"
+
+if os.path.exists(path):
+	pass
+else:
+	path = "."
+
 
 try:
     os.chdir(path)

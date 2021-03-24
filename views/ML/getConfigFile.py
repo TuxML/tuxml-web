@@ -2,10 +2,10 @@
 import os
 import sys
 import shutil
-from dbRequest import *
 
+import tuxmlweb.views.ML.dbRequest as dbRequest
 
-PATH = "../../downloads/"
+PATH = "downloads/"
 
 #If foldername don t exist create the directory and change the working directory to foldername
 def checkDirectory(foldername):
@@ -47,7 +47,7 @@ def checkDirectory(foldername):
 
 #Check if the selected version exists
 def checkVersion(version):
-    _versionQuery = read_query("SELECT DISTINCT compiled_kernel_version FROM compilations;")
+    _versionQuery = dbRequest.read_query("SELECT DISTINCT compiled_kernel_version FROM compilations;")
     _allVersion = [ver[0] for ver in _versionQuery]
     
     if version not in _allVersion:
@@ -89,7 +89,7 @@ def getConfig(version):
         _finalQuery = f"SELECT cid FROM compilations WHERE cid > {_lastCid} ORDER BY cid LIMIT 1;"
     else :
         _finalQuery = f"SELECT cid FROM compilations {_versionSelect} AND cid > {_lastCid}  ORDER BY cid LIMIT 1;"
-    _CompilIDs = read_query(_finalQuery)
+    _CompilIDs = dbRequest.read_query(_finalQuery)
 
 
     
@@ -119,7 +119,7 @@ def getConfig(version):
                 if not os.path.exists(filename):
                     #on récupère le fichier dans la base de données
                     print(f"Downloading {filename} compilation {cplID}")
-                    file = get_file(cplID,filename)
+                    file = dbRequest.get_file(cplID,filename)
                     #si le fichier est vide on ne l'enregistre pas
                     if file != "" and file is not None:
                         f = open(f"{filename}","w+")

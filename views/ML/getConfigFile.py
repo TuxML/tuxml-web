@@ -3,7 +3,7 @@ import os
 import sys
 import shutil
 
-import tuxmlweb.views.ML.dbRequest as dbRequest
+import dbRequest as dbRequest
 
 PATH = "downloads/"
 

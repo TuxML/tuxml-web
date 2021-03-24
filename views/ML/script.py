@@ -5,8 +5,8 @@ import os
 import sys
 import numpy as np
 
-from tuxmlweb.views.ML.getConfigFile import getConfig
-from tuxmlweb.views.ML.growML import grow
+from getConfigFile import getConfig
+from growML import grow
 
 version = '4.15'
 number = 1

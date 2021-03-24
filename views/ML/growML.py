@@ -24,16 +24,14 @@ def growX(_version, files):
         path = cid_repo + "/config_file"
 
 
-        params = open("../params", "a+")
-        f = open(path, "r")
+        with open("../params", "a+") as params:
+            with open(path, "r") as f:
+                for line in f:
+                    config_param = getParam(line)
 
-        for line in f:
-            config_param = getParam(line)
-
-            if config_param != "":
-                if existParam("../params",config_param) == 0:
-                    params.write(config_param + "\r\n")
-        f.close()                     
+                    if config_param != "":
+                        if existParam("../params",config_param) == 0:
+                            params.write(config_param + "\n")                  
 
 
     """
@@ -86,6 +84,7 @@ def growX(_version, files):
     
     
     np.save("../X.npy", data)
+    
     
     
     

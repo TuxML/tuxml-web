@@ -7,7 +7,7 @@ import numpy as np
 from .getConfigFile import getConfig
 from .growML import grow
 
-version = '4.15'
+version = "4.15"
 number = 1
 path = "/home/zprojet/tuxml-web/ML"
 

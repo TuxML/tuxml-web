@@ -5,7 +5,7 @@ import shutil
 
 from . import dbRequest
 
-PATH = "downloads/"
+PATH = "../downloads/"
 
 #If foldername don t exist create the directory and change the working directory to foldername
 def checkDirectory(foldername):

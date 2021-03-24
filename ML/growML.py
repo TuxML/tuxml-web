@@ -3,11 +3,11 @@ import numpy as np
 import sys
 import shutil
 
+from getConfigFile import getConfig
+from params import *
+from dbRequest import *
 from sklearn.neighbors import KNeighborsClassifier
 
-
-from tuxmlweb.views.ML.params import getParam, file_len, getParamTrue, getPos, existParam
-import tuxmlweb.views.ML.dbRequest as dbRequest
 
 
 def growX(_version, files):
@@ -108,7 +108,7 @@ def growY(_version,files):
 
     for i, cid_repo in enumerate(files):
         query = "SELECT compiled_kernel_size FROM compilations WHERE cid = " + cid_repo + ";"
-        size = dbRequest.read_query(query)
+        size = read_query(query)
         size = size[0]
         size = size[0]
         if size != -1:

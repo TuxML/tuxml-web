@@ -13,11 +13,9 @@ import socket
 import sys
 from os import path
 import waitress
+import dbManager
 
-
-import tuxmlweb.dbManager as dbManager
-
-from tuxmlweb.views.prediction import prediction_view
+#import views.prediction
 
 
 
@@ -88,7 +86,7 @@ def laFin():
 
 
 
-app.add_url_rule('/prediction/', view_func=prediction_view, methods=["GET", "POST"])
+#app.add_url_rule('/prediction/', view_func=views.prediction.prediction_view, methods=["GET", "POST"])
 
 
 @app.route('/data/')

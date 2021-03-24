@@ -1,13 +1,11 @@
 
 import os
 import numpy as np
-import sys
 
 from flask import request, render_template, redirect
 from werkzeug.utils import secure_filename
+from ..ML.growML import get_x, useKNC 
 
-
-from tuxmlweb.views.ML.growML import get_x, useKNC
 
 
 ALLOWED_EXTENSIONS = {'config'}

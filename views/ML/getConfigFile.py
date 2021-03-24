@@ -3,7 +3,7 @@ import os
 import sys
 import shutil
 
-import dbRequest as dbRequest
+from . import dbRequest
 
 PATH = "downloads/"
 

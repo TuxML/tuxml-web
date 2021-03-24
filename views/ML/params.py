@@ -50,6 +50,7 @@ def file_len(fname):
     return i + 1
 
 
+#if config_param exist in fname, return 1, else return 0
 def existParam(fname, config_param):
     f = open(fname, "r")
     for l in f:

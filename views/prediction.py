@@ -39,16 +39,27 @@ def prediction_view():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(UPLOADS_DIRECTORY_PATH, filename))
                 file_path = UPLOADS_DIRECTORY_PATH + "/" + filename
-                fparams_path =  DOWNLOADS_DIRECTORY_PATH  + "/" + "4.15" + "/params" 
-                x = get_x(file_path,fparams_path)
+                fparams_path =  DOWNLOADS_DIRECTORY_PATH  + "/" + "4.15" + "/params"
 
-                X = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/X.npy")
-                y = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/y.npy")
+                if os.path.exists(fparams_path) and os.path.exists(file_path) :
+                    
 
-                prediction = useKNC(X,y,x)
+                    X = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/X.npy")
+                    y = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/y.npy")
 
-                #print(prediction)
+                    x = get_x(file_path,fparams_path)
 
-            return redirect(request.url)
+                    print("X.shape :" , X.shape)
+                    print("y.shape :" , y.shape)
+
+                    print("x.shape :" , x.shape)
+
+                    useKNC(X,y,x)
+
+
+                    return redirect(request.url)
+
+                else:
+                	print("Missing :" + fparams_path + "  or  " + file_path )
 
     return render_template('prediction.html')

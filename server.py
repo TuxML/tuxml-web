@@ -15,9 +15,9 @@ from os import path
 import waitress
 
 
-import tuxmlweb.dbManager as dbManager
+import dbManager
 
-from tuxmlweb.views.prediction import prediction_view
+from views.prediction import prediction_view
 
 
 
@@ -406,13 +406,41 @@ def api_filter():
 
     return jsonify(d)
 
+def blobizer(data:str):
+    return (bz2.compress(bytes(data, encoding="ascii")))
+
 @app.route('/api/v1/uploadResults',methods=["POST"])
 def upload():
     if(not request.is_json):
         return "Error : The request don't contain any json"
 
     content = request.get_json()
-
+    print(dbManager.getHid(content["architecture"],
+                           content["cpu_brand_name"],
+                           content["number_cpu_core_used"],
+                           content["cpu_max_frequency"],
+                           content["ram_size"],
+                           content["mechanical_disk"]))
+    print(dbManager.getSid(content["system_kernel"],
+                           content["system_kernel_version"],
+                           content["linux_distribution"],
+                           content["linux_distribution_version"],
+                           content["gcc_version"],
+                           content["libc_version"],
+                           content["tuxml_version"]))
+    print(dbManager.getCid(content["compilation_date"],
+                           content["compilation_time"],
+                           content["config_file"],
+                           content["stdout_log_file"],
+                           content["stderr_log_file"],
+                           content["user_output_file"],
+                           content["compiled_kernel_size"],
+                           content["compressed_compiled_kernel_size"],
+                           content["dependencies"],
+                           content["number_cpu_core_used"],
+                           content["compiled_kernel_version"],
+                           content["sid"],
+                           content["hid"]))
     #tuxmlDB = mysql.connector.connect(
     #    host='148.60.11.195',
     #    user='script2',

@@ -300,7 +300,7 @@ def getHid(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram
                   f"ram_size = \"{ram_size}\"",
                   f"mechanical_disk = \"{mechanical_disk}\""]
 
-    result = programmaticRequest(getColumn="hid",withConditions=conditions,execute=True)
+    result = programmaticRequest(getColumn="hid",withConditions=conditions,caching=False,execute=True)
 
     return result if isinstance(result,int) else None
 
@@ -314,7 +314,27 @@ def getSid(system_kernel, system_kernel_version, linux_distribution, linux_distr
                   f"libc_version = \"{libc_version}\"",
                   f"tuxml_version = \"{tuxml_version}\""]
 
-    result = programmaticRequest(getColumn="sid",withConditions=conditions,execute=True)
+    result = programmaticRequest(getColumn="sid",withConditions=conditions,caching=False,execute=True)
+
+    return result if isinstance(result,int) else None
+
+def getCid(compilation_date, compilation_time, config_file, stdout_log_file, stderr_log_file, user_output_file, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,comîled_kernel_version,sid,hid):
+
+    conditions = [f"compilation_date = \"{compilation_date}\"",
+                  f"compilation_time = \"{compilation_time}\"",
+                  f"config_file = \"{config_file}\"",
+                  f"stdout_log_file = \"{stdout_log_file}\"",
+                  f"stderr_log_file = \"{stderr_log_file}\"",
+                  f"user_output_file = \"{user_output_file}\"",
+                  f"compiled_kernel_size = \"{compiled_kernel_size}\"",
+                  f"compressed_compiled_kernel_size = \"{compressed_compiled_kernel_size}\"",
+                  f"dependencies = \"{dependencies}\"",
+                  f"number_cpu_core_used = \"{number_cpu_core_used}\"",
+                  f"comîled_kernel_version = \"{comîled_kernel_version}\"",
+                  f"sid = \"{sid}\"",
+                  f"hid = \"{hid}\""]
+
+    result = programmaticRequest(getColumn="cid",withConditions=conditions,caching=False,execute=True)
 
     return result if isinstance(result,int) else None
 

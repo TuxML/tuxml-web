@@ -38,27 +38,61 @@
 
 
 
+
+
 			<!--
 				Table	
 			-->
+
 			<div class="my-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
 
+				<!--
+					Form	
+				-->
+				<div class="my-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
 
-				<form method="POST" enctype="multipart/form-data">
-					<input type="file" name ="config" >
-					<button class="btn m-2 px-3 mt-0 btn-primary" type="submit">Apply</button><br>
 
-				</form>
+					<form method="POST" enctype="multipart/form-data">
+						<input type="file" name ="config" >
+						<button class="btn m-2 px-3 mt-0 btn-primary" type="submit">Apply</button><br>
 
+					</form>
+
+				</div>
+
+
+
+				<table class="table" style="text-align:center;}">
+					<thead>
+						<tr>
+							<th scope="col"> Classifiers</th>
+
+
+							<th scope="col"> Compile ?</th>
+
+
+
+							
+						</tr>
+					</thead>
+
+
+					<tbody>
+						<tr>
+							<td> KNeighborsClassifier </td>
+							<td> {{KNC_prediction}} </td>
+						</tr>
+
+					</tbody>
+				</table>
 			</div>
 
 
 
-		</div>
-	</div>
-
 
 </body>
+
+
 <script type="application/javascript">
 
 

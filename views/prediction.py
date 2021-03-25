@@ -7,7 +7,8 @@ from flask import request, render_template, redirect
 from werkzeug.utils import secure_filename
 
 
-from .ML.growML import get_x, useKNC
+from .ML.growML import get_x
+from .ML.classifiers import useKNC
 
 
 ALLOWED_EXTENSIONS = {'config'}
@@ -48,16 +49,17 @@ def prediction_view():
                     y = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/y.npy")
 
                     x = get_x(file_path,fparams_path)
+                    os.remove(file_path)
 
                     print("X.shape :" , X.shape)
                     print("y.shape :" , y.shape)
 
                     print("x.shape :" , x.shape)
 
-                    useKNC(X,y,x)
+                    KNC_prediction = useKNC(X,y,x)
 
 
-                    return redirect(request.url)
+                    return render_template('prediction.html', KNC_prediction=KNC_prediction)
 
                 else:
                 	print("Missing :" + fparams_path + "  or  " + file_path )

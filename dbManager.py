@@ -325,7 +325,8 @@ def getSid(system_kernel, system_kernel_version, linux_distribution, linux_distr
 
     return result if isinstance(result,int) else None
 
-def getCid(compilation_date, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,compiled_kernel_version,sid,hid):
+def getCid(compilation_date, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,compiled_kernel_version,sid = 0,hid = 0):
+
     ''' compilation_time,config_file, stdout_log_file, stderr_log_file, user_output_file,'''
     conditions = [f"compilation_date = \"{compilation_date}\"",
                   #f"compilation_time = \"{compilation_time}\"",
@@ -425,8 +426,8 @@ def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
                                        content["dependencies"],
                                        content["number_cpu_core_used"],
                                        content["compiled_kernel_version"],
-                                       maybeSid,
-                                       maybeHid)
+                                       sid,
+                                       hid)
 
 
 

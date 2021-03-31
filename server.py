@@ -441,19 +441,17 @@ def upload():
                                     content["compressed_compiled_kernel_size"],
                                     content["dependencies"],
                                     content["number_cpu_core_used"],
-                                    content["compiled_kernel_version"],
-                                    maybeSid,
-                                    maybeHid)
+                                    content["compiled_kernel_version"])
     except:
-        return 'Error : The json isn\'t complete' # Must be replaced by a more robust solution
+        return 'Error : The json isn\'t complete',400 # Must be replaced by a more robust solution
 
     if maybeCid == None :
         try:
-            return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}'
+            return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}',201
         except Exception as e :
-            return 'The upload has failed miserably'
+            return 'The upload has failed miserably',500
     else:
-        return 'Error : This compilation has already been uploaded in the database'
+        return maybeCid,409
 
 
 #Formats query results into dictonnaries, making it able to be jsonified

@@ -434,7 +434,7 @@ def upload():
                                     content["gcc_version"],
                                     content["libc_version"],
                                     content["tuxml_version"])
-
+        content["compilation_time"] #Statement without real effects, but throws an error when the requested content is missing, so it is useful in our case
         maybeCid = dbManager.getCid(content["compilation_date"],
                                     #content["compilation_time"],
                                     content["compiled_kernel_size"],
@@ -443,13 +443,12 @@ def upload():
                                     content["number_cpu_core_used"],
                                     content["compiled_kernel_version"])
     except:
-        return 'Error : The json isn\'t complete',400 # Must be replaced by a more robust solution
-
+        return 'The json isn\'t complete',400 # Must be replaced by a more robust solution
     if maybeCid == None :
         try:
             return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}',201
         except Exception as e :
-            return 'The upload has failed miserably',500
+            return 'The upload has failed but keep calm, it\'s our fault',500
     else:
         return maybeCid,409
 

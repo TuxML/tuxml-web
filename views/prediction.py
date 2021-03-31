@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 
 
 from .ML.growML import get_x
-from .ML.classifiers import useKNC
+from .ML.classifiers import useKNC, useDTC
 
 
 ALLOWED_EXTENSIONS = {'config'}
@@ -57,9 +57,10 @@ def prediction_view():
                     print("x.shape :" , x.shape)
 
                     KNC_prediction = useKNC(X,y,x)
+                    DTC_prediction = useDTC(X,y,x)
 
 
-                    return render_template('prediction.html', KNC_prediction=KNC_prediction)
+                    return render_template('prediction.html', KNC_prediction=KNC_prediction, DTC_prediction=DTC_prediction)
 
                 else:
                 	print("Missing :" + fparams_path + "  or  " + file_path )

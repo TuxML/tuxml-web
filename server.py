@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import bz2
 from  distutils import util
 import signal
@@ -11,6 +10,7 @@ import os
 import mysql.connector
 import socket
 import sys
+import hashlib
 from os import path
 import waitress
 from typing import Optional
@@ -27,7 +27,7 @@ app = Flask(__name__, template_folder=os.path.abspath('templates'))
 app.config['SECRET_KEY'] = '71794b6f6130464a494b6e62634b7167594b5850'
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})                  
 
 @app.context_processor
 def time_formatter():
@@ -298,12 +298,6 @@ def getData(id, request):
 def stats():
     return render_template('stats.html')
 
-
-
-
-
-
-
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
 
@@ -329,7 +323,7 @@ def api_filter():
     ordering = None
     
     if limit:
-        if limit.isnumeric():
+        if limit.isnumeric(): #sanitization
             limit = int(limit)
         elif limit == "none":
             limit = None
@@ -339,11 +333,18 @@ def api_filter():
         limit = 100
         
     if cid:
+        #sanitization
+        if not cid.isnumeric():
+            return abort(404)
         if not dbManager.compilationExists(cid):
             return abort(404)
         conditions_list.append(f"cid = {cid}")
     
     if compiled_kernel_version:
+        #sanitization
+        for char in compiled_kernel_version:
+            if(not (char.isnumeric() or char == '.')):
+                return abort(404)
         compiled_kernel_version = api_argument_formatting(compiled_kernel_version)
         if not dbManager.compilationExistsAdvanced("compilations", "compiled_kernel_version", compiled_kernel_version):
             return abort(404)
@@ -352,6 +353,8 @@ def api_filter():
         
     if gcc_version:
         gcc_version = gcc_version.replace(" ", "+")
+        if(gcc_version.count('-') > 1 or gcc_version.count('+') > 1):
+            return abort(404)
         gcc_version = api_argument_formatting(gcc_version)
         if not dbManager.compilationExistsAdvanced("software_environment", "gcc_version", gcc_version):
             return abort(404)
@@ -413,8 +416,28 @@ def blobizer(data:str):
 def checkIntegrity(data) :
     pass
 
-@app.route('/api/v0/hfdshuGKJFKpoajfrpakjvbmsdpioiygIUZERBJLqskljfqkjsfouFUeikfv/uploadResults',methods=["POST"])
-def upload():
+@app.route('/api/v0/<string:ident_token>/uploadResults', methods=['POST'])
+def upload(ident_token):
+
+    is_token_verified = False
+    
+    #hashing
+    hasheur = hashlib.sha256()
+    temp = ident_token
+    ident_token = ident_token.encode('utf-8')
+    hasheur.update(ident_token)
+    table_token = hasheur.hexdigest()
+    
+    #token verification
+    connection = getConnection()
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT write_access FROM tokens WHERE value = '{table_token}';")
+    result = cursor.fetchone()
+    if result and result[0]:
+        is_token_verified = True
+   
+    if(not is_token_verified):
+        return "Error : You do not have the rights to do this"
     if(not request.is_json):
         return "Error : The request don't contain any json"
 

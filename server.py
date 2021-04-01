@@ -21,13 +21,14 @@ import dbManager
 from views.prediction import prediction_view
 
 
-
+if not os.path.exists('err'):
+    os.makedirs('err')
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 app.config['SECRET_KEY'] = '71794b6f6130464a494b6e62634b7167594b5850'
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})                  
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 @app.context_processor
 def time_formatter():
@@ -35,7 +36,7 @@ def time_formatter():
         m, s = divmod(amount, 60)
         return '{:02d} min {:02d} sec'.format(int(m), int(s))
     return dict(format_time=format_time)
-    
+
 @app.context_processor
 def size_formatter():
     def format_size(amount, unit):
@@ -302,9 +303,9 @@ def stats():
 def api_filter():
 
     accepted_display_arguments = ["architecture", "cid", "compilation_date", "compilation_time", "compiled_kernel_size", "compiled_kernel_version", "compressed_compiled_kernel_size", "config_file,", "cpu_brand_name", "cpu_max_frequency", "dependencies", "gcc_version", "libc_version", "linux_distribution", "linux_distribution_version", "mechanical_disk", "number_cpu_core", "number_cpu_core_used", "ram_size", "stderr_log_file", "stdout_log_file", "system_kernel", "system_kernel_version", "tuxml_version", "user_output_file"]
-    
+
     query_parameters = request.args
-        
+
     #WHERE clauses
     cid = query_parameters.get('cid')
     compiled_kernel_version = query_parameters.get('compiled_kernel_version')
@@ -314,14 +315,14 @@ def api_filter():
     display = query_parameters.get('display')
     #LIMIT
     limit = query_parameters.get('limit')
-    
-    
+
+
     conditions_list = []
     conditions_string = None
     select_list = []
     select_string = None
     ordering = None
-    
+
     if limit:
         if limit.isnumeric(): #sanitization
             limit = int(limit)
@@ -331,7 +332,7 @@ def api_filter():
             return abort(404)
     else:
         limit = 100
-        
+
     if cid:
         #sanitization
         if not cid.isnumeric():
@@ -339,7 +340,7 @@ def api_filter():
         if not dbManager.compilationExists(cid):
             return abort(404)
         conditions_list.append(f"cid = {cid}")
-    
+
     if compiled_kernel_version:
         #sanitization
         for char in compiled_kernel_version:
@@ -350,7 +351,7 @@ def api_filter():
             return abort(404)
         conditions_list.append(f"compiled_kernel_version = {compiled_kernel_version}")
         ordering="cid desc"
-        
+
     if gcc_version:
         gcc_version = gcc_version.replace(" ", "+")
         if(gcc_version.count('-') > 1 or gcc_version.count('+') > 1):
@@ -360,7 +361,7 @@ def api_filter():
             return abort(404)
         conditions_list.append(f"gcc_version = {gcc_version}")
         ordering="cid desc"
-    
+
     if compiled:
         if compiled == "true":
             conditions_list.append("compiled_kernel_size > 0")
@@ -368,7 +369,7 @@ def api_filter():
             conditions_list.append("compiled_kernel_size = \"-1\"")
         else:
             return abort(404)
-    
+
     if display:
         display = display.replace(" ", "")
         display_args = display.split(",")
@@ -376,7 +377,7 @@ def api_filter():
             if not arg in accepted_display_arguments:
                 return abort(404)
             select_list.append(arg)
-    
+
     if (not cid and not compiled_kernel_version and not compiled):
         return abort(404)
 
@@ -394,24 +395,24 @@ def api_filter():
         select_string = select_string[:-1]
     else:
         select_string = "*"
-        
+
     query = dbManager.programmaticRequest(getColumn=select_string, withConditions=conditions_string, ordering=ordering, limit=limit, caching=False, execute=False)
-    
+
     #print(query, file=sys.stderr)
-    
+
     connection = getConnection()
     cursor = connection.cursor()
     cursor.execute(query)
     query_result = cursor.fetchall()
-    
+
     #print(query_result, file=sys.stderr)
-    
+
     d = dict_factory(cursor, query_result)
 
     return jsonify(d)
 
 def blobizer(data:str):
-    return (bz2.compress(bytes(data, encoding="ascii")))
+    return (bz2.compress(bytes(data, encoding="utf-8")))
 
 def checkIntegrity(data) :
     pass
@@ -420,14 +421,14 @@ def checkIntegrity(data) :
 def upload(ident_token):
 
     is_token_verified = False
-    
+
     #hashing
     hasheur = hashlib.sha256()
     temp = ident_token
     ident_token = ident_token.encode('utf-8')
     hasheur.update(ident_token)
     table_token = hasheur.hexdigest()
-    
+
     #token verification
     connection = getConnection()
     cursor = connection.cursor()
@@ -435,7 +436,7 @@ def upload(ident_token):
     result = cursor.fetchone()
     if result and result[0]:
         is_token_verified = True
-   
+
     if(not is_token_verified):
         return "Error : You do not have the rights to do this"
     if(not request.is_json):
@@ -457,7 +458,8 @@ def upload(ident_token):
                                     content["gcc_version"],
                                     content["libc_version"],
                                     content["tuxml_version"])
-        content["compilation_time"] #Statement without real effects, but throws an error when the requested content is missing, so it is useful in our case
+        content["compilation_time"] #Statement without real effects, but throws an error when the requested content is missing, so it is useful in our case (Integtity checkings)
+                                    #However this should be taken into account in the future to improve duplicate detection
         maybeCid = dbManager.getCid(content["compilation_date"],
                                     #content["compilation_time"],
                                     content["compiled_kernel_size"],
@@ -470,7 +472,16 @@ def upload(ident_token):
     if maybeCid == None :
         try:
             return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}',201
-        except Exception as e :
+        except Exception as failure :
+            timestamp = time.time()
+            with open(f"err/{timestamp}.json", "w") as fjson:
+                try:
+                    fjson.write(str(content))
+                except Exception as e:
+                    fjson.write("Couldn't save the json.\n" + str(e))
+            with open(f"err/{timestamp}.log", "w") as flog:
+                flog.write(str(failure))
+                pass
             return 'The upload has failed but keep calm, it\'s our fault',500
     else:
         return maybeCid,409
@@ -491,7 +502,7 @@ def dict_factory(cursor, query_list):
 #in case the database architecture changes
 def get_cid_from_query(query):
     return query[0]
-    
+
 #Makes sure the format is "value" when needed. Useful for compilationExistsAdvanced verification
 def api_argument_formatting(arg):
     arg = arg.replace("\"", "")
@@ -523,4 +534,4 @@ if __name__ == "__main__":
         app.debug = True
 
     waitress.serve(app, host="127.0.0.1", port=arg, threads=9)
-    
+

@@ -386,7 +386,7 @@ def insertInTable(tableName, keys, values):
 
 
 def __blobizer(data:str):
-    return (bz2.compress(bytes(data, encoding="ascii")))
+    return (bz2.compress(bytes(data, encoding="utf-8")))
 
 def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
     blob_conf = __blobizer(content["config_file"])

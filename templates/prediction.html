@@ -29,6 +29,9 @@
 					<a href=".."><img  src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
 					<h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/prediction</h2>
 
+					{% include 'menu.html' %}
+
+
 
 
 				</div>
@@ -54,6 +57,15 @@
 
 					<form method="POST" enctype="multipart/form-data">
 						<input type="file" name ="config" >
+						<select name="version">
+					    	<option hidden disabled selected value> -- select version -- </option>
+
+							{% for d in list_version %}
+								<option  value={{d}}> {{ d }} </option>
+							{% endfor %}
+
+						</select>
+
 						<button class="btn m-2 px-3 mt-0 btn-primary" type="submit">Apply</button><br>
 
 					</form>

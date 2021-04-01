@@ -22,7 +22,12 @@ def allowed_file(filename):
 
 def prediction_view():
 
-    if request.method == "POST":
+    list_version = os.listdir(DOWNLOADS_DIRECTORY_PATH)  # Get all the files in that directory
+
+
+    version = request.form.get('version')
+
+    if request.method == "POST" and version is not None:
         
         if request.files:
 
@@ -40,29 +45,24 @@ def prediction_view():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(UPLOADS_DIRECTORY_PATH, filename))
                 file_path = UPLOADS_DIRECTORY_PATH + "/" + filename
-                fparams_path =  DOWNLOADS_DIRECTORY_PATH  + "/" + "4.15" + "/params"
+                fparams_path =  DOWNLOADS_DIRECTORY_PATH  + "/" + version + "/params"
 
                 if os.path.exists(fparams_path) and os.path.exists(file_path) :
                     
 
-                    X = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/X.npy")
-                    y = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + "4.15" + "/y.npy")
+                    X = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + version + "/X.npy")
+                    y = np.load( DOWNLOADS_DIRECTORY_PATH + "/" + version + "/y.npy")
 
                     x = get_x(file_path,fparams_path)
                     os.remove(file_path)
-
-                    print("X.shape :" , X.shape)
-                    print("y.shape :" , y.shape)
-
-                    print("x.shape :" , x.shape)
 
                     KNC_prediction = useKNC(X,y,x)
                     DTC_prediction = useDTC(X,y,x)
 
 
-                    return render_template('prediction.html', KNC_prediction=KNC_prediction, DTC_prediction=DTC_prediction)
+                    return render_template('prediction.html', list_version=list_version, version=version, KNC_prediction=KNC_prediction, DTC_prediction=DTC_prediction)
 
                 else:
                 	print("Missing :" + fparams_path + "  or  " + file_path )
 
-    return render_template('prediction.html')
+    return render_template('prediction.html', list_version=list_version)

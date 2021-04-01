@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>TuxML</title>
+	<link rel="icon" type="image/png" href="https://avatars0.githubusercontent.com/u/32133780?s=100" />
+	<!-- Bootstrap Core CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+	<!-- Custom CSS -->
+	<link href="{{ url_for('static', filename='css/portf.css') }}" rel="stylesheet">
+
+</head>
+
+
+<body id="page-top" class="static-bg">
+	<div class="masthead d-flex">
+		<div class="card w-75 m-auto shadow-lg align-content-start flex-row align-middle">
+			<div class="m-4 bd-highlight">
+				<div class="mx-auto text-center">
+					<a href=".."><img  src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
+					<h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/evaluation</h2>
+
+
+
+				</div>
+			</div>
+
+			
+
+
+
+
+
+			<!--
+				Table	
+			-->
+
+			<div class="my-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
+
+				<!--
+					Form	
+				-->
+				<p>Train set : {{train_set}}</p>
+				<p>Test set : {{test_set}}</p>
+
+
+
+
+				<table class="table" style="text-align:center;}">
+					<thead>
+						<tr>
+							<th scope="col"> Classifiers</th>
+							<th scope="col"> Train score</th>
+							<th scope="col"> Test score</th>
+
+
+
+
+							
+						</tr>
+					</thead>
+
+
+					<tbody>
+						<tr>
+							<td> KNeighborsClassifier </td>
+							<td> {{KNC_train_score}} </td>
+							<td> {{KNC_test_score}} </td>
+
+						</tr>
+
+						<tr>
+							<td> DecisionTreeClassifier </td>
+							<td> {{DTC_train_score}} </td>
+							<td> {{DTC_test_score}} </td>
+
+						</tr>
+
+					</tbody>
+				</table>
+			</div>
+
+
+
+
+</body>
+
+
+<script type="application/javascript">
+
+
+
+   
+</script>
+</html>

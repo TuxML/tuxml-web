@@ -19,6 +19,8 @@ from typing import Optional
 import dbManager
 
 from views.prediction import prediction_view
+from views.evaluation import evaluation_view
+
 
 
 
@@ -90,6 +92,7 @@ def laFin():
 
 
 app.add_url_rule('/prediction/', view_func=prediction_view, methods=["GET", "POST"])
+app.add_url_rule('/evalution/', view_func=evaluation_view)
 
 
 @app.route('/data/')

@@ -1,3 +1,4 @@
+.token_table
 !*.py
 !*.md
 !static/*

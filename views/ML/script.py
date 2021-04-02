@@ -8,7 +8,7 @@ from .getConfigFile import getConfig
 from .growML import grow
 
 version = "4.15"
-number = 1
+number = 1000
 
 
 for i in range(number):

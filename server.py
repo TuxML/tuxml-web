@@ -97,7 +97,7 @@ app.add_url_rule('/evaluation/', view_func=evaluation_view)
 
 
 @app.route('/data/')
-@cache.cached(timeout=10, query_string=True)
+#@cache.cached(timeout=10, query_string=True)
 def data():
     connection = getConnection()
     cursor = connection.cursor()

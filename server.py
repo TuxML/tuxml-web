@@ -471,7 +471,7 @@ def upload(ident_token):
                                     content["number_cpu_core_used"],
                                     content["compiled_kernel_version"])
     except:
-        return 'The json isn\'t complete',400 # Must be replaced by a more robust solution
+        return 'The json isn\'t complete',400 # Must be replaced by a more robust solution, for exemple one that shows the missing columns
     if maybeCid == None :
         try:
             return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}',201

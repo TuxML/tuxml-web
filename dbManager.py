@@ -378,7 +378,7 @@ def insertInTable(tableName, keys, values):
     )
 
     __uploadLocker.acquire()
-    curs.execute(query_insert,list(values))
+    curs.execute(query_insert,list(values)) # In our case the request is not risky : The keys name are controlled by us so there is no risk of sql injection-based vulnerability
     tuxmlDBupl.commit()
     ci = curs.lastrowid
     __uploadLocker.release()

@@ -428,11 +428,11 @@ def upload():
     
     #token recuperation
     auth_header = request.headers.get('Authorization')
-        if auth_header:
-            try:
-                ident_token = auth_header.split(" ")[1]
-            except IndexError:
-                return "Error : The header is not correctly formatted."
+    if auth_header:
+        try:
+            ident_token = auth_header.split(" ")[1]
+        except IndexError:
+            return "Error : The header is not correctly formatted."
         
     #hashing
     hasheur = hashlib.sha256()

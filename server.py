@@ -420,14 +420,20 @@ def blobizer(data:str):
 def checkIntegrity(data) :
     pass
 
-@app.route('/api/v0/<string:ident_token>/uploadResults', methods=['POST'])
-def upload(ident_token):
+@app.route('/api/v0/uploadResults', methods=['POST'])
+def upload():
 
     is_token_verified = False
-
+    ident_token = "placeholder"
+    
+    #token recuperation
+    auth_header = request.headers.get('Authorization')
+        if auth_header:
+            try:
+                ident_token = auth_header.split(" ")[1]
+        
     #hashing
     hasheur = hashlib.sha256()
-    temp = ident_token
     ident_token = ident_token.encode('utf-8')
     hasheur.update(ident_token)
     table_token = hasheur.hexdigest()

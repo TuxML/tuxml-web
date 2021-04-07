@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 import os
 import sys
-from dbRequest import *
+from views import *
+#from dbRequest import *
 
 
 _bootFail = "WHERE"

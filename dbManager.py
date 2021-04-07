@@ -133,6 +133,13 @@ def __refreshCacheRoutine(): # Works as a thread
     while True:
         refreshCount +=1
         __cacheLocker.acquire()
+        newCount = makeRequest("SELECT COUNT(cid) FROM compilations", caching=False)
+        if newCount > __currentCompilationCount:
+            __currentCompilationCount = newCount
+            for request,cachedData in __queriesCache.items():
+                if not cachedData.isPassiveData:
+                    cachedData.update(__fetchData(request),impact=False)
+
 
         if refreshCount % refreshCountForPurge == 0: #Purge of unused cache items
             purgedQueriesCache = {}
@@ -143,6 +150,7 @@ def __refreshCacheRoutine(): # Works as a thread
                     purgedFetchCount += cachedData.useCount # <-- Deprecated
             __queriesCache = purgedQueriesCache
             __totalFetchCount = purgedFetchCount
+
 
         if refreshCount % refreshCountForPassiveItemsPurge == 0: #Purge of unused cache passive items
             purgedQueriesCache = {}
@@ -157,18 +165,6 @@ def __refreshCacheRoutine(): # Works as a thread
         __cacheLocker.release()
         sleep(waitingTimeBetweenRefreshes)
 
-
-'''
-
-
-
-'''
-def refreshCache():
-    __cacheLocker.acquire()
-    for request,cachedData in __queriesCache.items():
-        if not cachedData.isPassiveData:
-            cachedData.update(__fetchData(request),impact=False)
-    __cacheLocker.release()
 
 '''
 

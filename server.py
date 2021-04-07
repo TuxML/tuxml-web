@@ -422,7 +422,6 @@ def checkIntegrity(data) :
 
 @app.route('/api/v0/uploadResults', methods=['POST'])
 def upload():
-
     is_token_verified = False
     ident_token = "placeholder"
     
@@ -433,7 +432,6 @@ def upload():
             ident_token = auth_header.split(" ")[1]
         except IndexError:
             return "Error : The header is not correctly formatted."
-        
     #hashing
     hasheur = hashlib.sha256()
     ident_token = ident_token.encode('utf-8')
@@ -447,7 +445,6 @@ def upload():
     result = cursor.fetchone()
     if result and result[0]:
         is_token_verified = True
-
     if(not is_token_verified):
         return "Error : You do not have the rights to do this"
     if(not request.is_json):
@@ -495,6 +492,7 @@ def upload():
                 pass
             return 'The upload has failed but keep calm, it\'s our fault',500
     else:
+        dbManager.refreshCache()
         return maybeCid,409
 
 

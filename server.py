@@ -366,9 +366,9 @@ def api_filter():
         ordering="cid desc"
 
     if compiled:
-        if compiled == "true":
+        if compiled.lower() == "true":
             conditions_list.append("compiled_kernel_size > 0")
-        elif compiled == "false":
+        elif compiled.lower() == "false":
             conditions_list.append("compiled_kernel_size = \"-1\"")
         else:
             return abort(404)
@@ -420,8 +420,9 @@ def blobizer(data:str):
 def checkIntegrity(data) :
     pass
 
-@app.route('/api/v0/uploadResults', methods=['POST'])
+@app.route('/api/v1/uploadResults', methods=['POST'])
 def upload():
+
     is_token_verified = False
     ident_token = "placeholder"
     
@@ -432,6 +433,7 @@ def upload():
             ident_token = auth_header.split(" ")[1]
         except IndexError:
             return "Error : The header is not correctly formatted."
+
     #hashing
     hasheur = hashlib.sha256()
     ident_token = ident_token.encode('utf-8')
@@ -445,6 +447,7 @@ def upload():
     result = cursor.fetchone()
     if result and result[0]:
         is_token_verified = True
+        
     if(not is_token_verified):
         return "Error : You do not have the rights to do this"
     if(not request.is_json):
@@ -492,7 +495,6 @@ def upload():
                 pass
             return 'The upload has failed but keep calm, it\'s our fault',500
     else:
-
         return maybeCid,409
 
 

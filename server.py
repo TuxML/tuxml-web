@@ -155,17 +155,9 @@ def data():
     if interest_software is not None :
         str_interest_software_left_join = " LEFT JOIN software_environment ON compilations.sid = software_environment.sid "
 
-
-
-
-
     versions = ["All"] + dbManager.getExistingKernelVersions()
     temp = dbManager.makeRequest("SELECT b.* FROM (SELECT a.* FROM (SELECT compilations.cid " + str_interest + str_interest_software + " FROM compilations " + str_interest_software_left_join + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
     count = dbManager.getCompilationCount(laversion)
-
-
-
-
 
     #modify the values contained in the query to adapt the reading to a human
     ten=[]
@@ -332,36 +324,36 @@ def api_filter():
         elif limit == "none":
             limit = None
         else:
-            return abort(404)
+            return 'ERROR 400 : limit is not an integer', 400
     else:
         limit = 100
 
     if cid:
         #sanitization
         if not cid.isnumeric():
-            return abort(404)
+            return 'ERROR 400 : cid is not an integer', 400
         if not dbManager.compilationExists(cid):
-            return abort(404)
+            return f'ERROR 404 : No compilation exists with a cid of {cid}', 404
         conditions_list.append(f"cid = {cid}")
 
     if compiled_kernel_version:
         #sanitization
         for char in compiled_kernel_version:
             if(not (char.isnumeric() or char == '.')):
-                return abort(404)
+                return 'ERROR 400 : compiled_kernel_version is not formatted as expected', 400
         compiled_kernel_version = api_argument_formatting(compiled_kernel_version)
         if not dbManager.compilationExistsAdvanced("compilations", "compiled_kernel_version", compiled_kernel_version):
-            return abort(404)
+            return f'ERROR 404 : No compilation exists with a compiled_kernel_version of {compiled_kernel_version}', 404
         conditions_list.append(f"compiled_kernel_version = {compiled_kernel_version}")
         ordering="cid desc"
 
     if gcc_version:
         gcc_version = gcc_version.replace(" ", "+")
         if(gcc_version.count('-') > 1 or gcc_version.count('+') > 1):
-            return abort(404)
+            return 'ERROR 400 : compiled_kernel_version is not formatted as expected', 400
         gcc_version = api_argument_formatting(gcc_version)
         if not dbManager.compilationExistsAdvanced("software_environment", "gcc_version", gcc_version):
-            return abort(404)
+            return f'ERROR 404 : No compilation exists with a gcc_version of {gcc_version}', 404
         conditions_list.append(f"gcc_version = {gcc_version}")
         ordering="cid desc"
 
@@ -371,20 +363,20 @@ def api_filter():
         elif compiled.lower() == "false":
             conditions_list.append("compiled_kernel_size = \"-1\"")
         else:
-            return abort(404)
+            return 'ERROR 400 : compiled is not formatted as expected (\'true\' or \'false\'', 400
 
     if display:
         display = display.replace(" ", "")
         display_args = display.split(",")
         for arg in display_args:
             if not arg in accepted_display_arguments:
-                return abort(404)
+                return f'ERROR 400 : display has a unauthorized argument : {arg}', 400
             select_list.append(arg)
 
-    if (not cid and not compiled_kernel_version and not compiled):
-        return abort(404)
+    if (not cid and not compiled_kernel_version and not compiled and not gcc_version):
+        return f'ERROR 400 : Not enough arguments for a request', 400
 
-
+    
     conditions_string = ""
     if conditions_list:
         for cond in conditions_list:
@@ -401,7 +393,7 @@ def api_filter():
 
     query = dbManager.programmaticRequest(getColumn=select_string, withConditions=conditions_string, ordering=ordering, limit=limit, caching=False, execute=False)
 
-    #print(query, file=sys.stderr)
+    print(query, file=sys.stderr)
 
     connection = getConnection()
     cursor = connection.cursor()
@@ -412,7 +404,7 @@ def api_filter():
 
     d = dict_factory(cursor, query_result)
 
-    return jsonify(d)
+    return jsonify(d), 200
 
 def blobizer(data:str):
     return (bz2.compress(bytes(data, encoding="utf-8")))
@@ -479,7 +471,7 @@ def upload():
                                     content["number_cpu_core_used"],
                                     content["compiled_kernel_version"])
     except:
-        return 'The json isn\'t complete',400 # Must be replaced by a more robust solution, for exemple one that shows the missing columns
+        return 'ERROR 400 : The json isn\'t complete',400 # Must be replaced by a more robust solution, for exemple one that shows the missing columns
     if maybeCid == None :
         try:
             return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}',201
@@ -493,7 +485,7 @@ def upload():
             with open(f"err/{timestamp}.log", "w") as flog:
                 flog.write(str(failure))
                 pass
-            return 'The upload has failed but keep calm, it\'s our fault',500
+            return 'ERROR 500: The upload has failed but keep calm, it\'s our fault',500
     else:
         return maybeCid,409
 

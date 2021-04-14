@@ -167,17 +167,40 @@ def liste_de_moyenne():
         i += 1
     return l  
 
-#return la liste des moyennes de toutes les versions            
-def liste_de_toutes_les_moyennes():
+#return la liste des moyennes de toutes les versions        
+#pour prendre en concideration que les versions 4.* entrez 4 comme argument, pareil pour 5, et entrez n'importe quel autre chiffre pour 
+#prendre en conciderartion toutes les versions    
+def liste_de_toutes_les_moyennes(x):
     #v_liste = [4.13, 4.15, 4.16, 4.17, 4.18, 4.20, 5.0, 5.1, 5.10, 5.4, 5.7, 5.8, 5.9] 
-    v_liste = [4.15,4.16,4.17,4.18,5.1,5.10,5.9,5.7]
+    v_liste_4 = [4.15,4.16,4.17,4.18]
+    v_liste_5 = [5.1,5.9,5.10]
+    v_liste = [4.15,4.16,4.17,4.18,5.0,5.1,5.10,5.9,5.7]
+    length_4 = len(v_liste_4)    
+    length_5 = len(v_liste_5)    
     length = len(v_liste)    
     l = []
-    i=0
-    while i < length:
-        x = get_all_list_of_cid_for_version(v_liste[i])
-        y = options2("C:/Users/zbouk/OneDrive/Bureau/Study/Second semester/Tuxml/Files-config/"+ str(v_liste[i]) ,v_liste[i])
-        #print(y)
-        l.append(moyenne(y))
-        i += 1
+    if x == 4 :
+        i=0
+        while i < length_4:
+            x = get_all_list_of_cid_for_version(v_liste_4[i])
+            y = options2("C:/Users/zbouk/OneDrive/Bureau/Study/Second semester/Tuxml/Files-config/"+ str(v_liste_4[i]) ,v_liste_4[i])
+            #print(y)
+            l.append(moyenne(y))
+            i += 1
+    elif x == 5 :
+        i=0
+        while i < length_5:
+            x = get_all_list_of_cid_for_version(v_liste_5[i])
+            y = options2("C:/Users/zbouk/OneDrive/Bureau/Study/Second semester/Tuxml/Files-config/"+ str(v_liste_5[i]) ,v_liste_5[i])
+            #print(y)
+            l.append(moyenne(y))
+            i += 1
+    else :
+        i=0
+        while i < length:
+            x = get_all_list_of_cid_for_version(v_liste[i])
+            y = options2("C:/Users/zbouk/OneDrive/Bureau/Study/Second semester/Tuxml/Files-config/"+ str(v_liste[i]) ,v_liste[i])
+            #print(y)
+            l.append(moyenne(y))
+            i += 1
     return l     

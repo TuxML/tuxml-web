@@ -86,7 +86,7 @@ ok = '''⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 
 @app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/', methods = ['GET', 'POST'])
 def laFin():
-    x = threading.Thread(target=stayAliveThenDie)
+    x = threading.Thread(target=stayAliveThenDie)#We start a subprocess in charge to kill the server a few (5) seconds later, so we can return some sort of acquittal in the meantime
     x.start()
     return (ok)
 
@@ -461,7 +461,7 @@ def upload():
                                     content["gcc_version"],
                                     content["libc_version"],
                                     content["tuxml_version"])
-        content["compilation_time"] #Statement without real effects, but throws an error when the requested content is missing, so it is useful in our case (Integtity checkings)
+        content["compilation_time"] #Statement without real effects, but throws an error when the requested content is missing, so it is useful in our case (Integrity checkings)
                                     #However this should be taken into account in the future to improve duplicate detection
         maybeCid = dbManager.getCid(content["compilation_date"],
                                     #content["compilation_time"],
@@ -471,7 +471,7 @@ def upload():
                                     content["number_cpu_core_used"],
                                     content["compiled_kernel_version"])
     except:
-        return 'ERROR 400 : The json isn\'t complete',400 # Must be replaced by a more robust solution, for exemple one that shows the missing columns
+        return 'ERROR 400 : The json isn\'t complete',400 # Must be replaced by a more precise solution, for exemple one that returns the missing columns
     if maybeCid == None :
         try:
             return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}',201

@@ -232,9 +232,10 @@ def getCompilationInfo(compilationId, basic = False):
             self.hardwareInfo = hardwareInfo
     try:
         comp = makeRequest("SELECT * FROM compilations WHERE cid = " + str(compilationId), isPassiveData=True)
+        compDict = dict(zip(getColumnsForCompilationsTable(includeBlobs=True),comp))
         if not basic :
-            soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(comp[12]), isPassiveData=True)
-            hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(comp[13]), isPassiveData=True)
+            soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(compDict['sid']), isPassiveData=True)
+            hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(compDict['hid']), isPassiveData=True)
         return compilationInfo(comp,soft,hard)
     except:
         return None

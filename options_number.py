@@ -141,8 +141,8 @@ def options(x):
             return l 
 
 
-#return a list of number of options pour tous les fichiers configs d'une version donnée
-# le parametre x correspond à un chemin d'une version donnée : exemple folder_path_4_18 pour designer la version 4.18 
+#retourne la list du nombre d'options pour tous les fichiers configs d'une version donnée
+# le parametre pv correspond à un chemin d'une version donnée : exemple folder_path_4_18 pour designer la version 4.18 
 def options2(pv,v):
             l = []
             s = list_of_config_files (pv,v)
@@ -172,9 +172,9 @@ def liste_de_moyenne():
 #prendre en conciderartion toutes les versions    
 def liste_de_toutes_les_moyennes(x):
     #v_liste = [4.13, 4.15, 4.16, 4.17, 4.18, 4.20, 5.0, 5.1, 5.10, 5.4, 5.7, 5.8, 5.9] 
-    v_liste_4 = [4.15,4.16,4.17,4.18]
-    v_liste_5 = [5.1,5.9,5.10]
-    v_liste = [4.15,4.16,4.17,4.18,5.0,5.1,5.10,5.9,5.7]
+    v_liste_4 = [4.2,4.15,4.16,4.17,4.18]
+    v_liste_5 = [5.0,5.1,5.4,5.7,5.8,5.9,5.10]
+    v_liste = [4.15,4.16,4.17,4.18,4.20,5.0,5.1,5.4,5.8,5.10,5.9,5.7]
     length_4 = len(v_liste_4)    
     length_5 = len(v_liste_5)    
     length = len(v_liste)    
@@ -184,7 +184,6 @@ def liste_de_toutes_les_moyennes(x):
         while i < length_4:
             x = get_all_list_of_cid_for_version(v_liste_4[i])
             y = options2("C:/Users/zbouk/OneDrive/Bureau/Study/Second semester/Tuxml/Files-config/"+ str(v_liste_4[i]) ,v_liste_4[i])
-            #print(y)
             l.append(moyenne(y))
             i += 1
     elif x == 5 :

@@ -1,16 +1,16 @@
-#API RETRIEVE JSON
+# API RETRIEVE JSON
   
   Allows to fetch compilations information with the use of multiple arguments.
 
-##URL:
+## URL:
 
 	api/v1/resources/compilations
 
-##Method:
+## Method:
   
 	`GET`
   
-##URL Parameters:
+## URL Parameters:
 
 	**Optional:**
 
@@ -26,12 +26,12 @@
 	Seperate each parameter with a '&'.
 	Separate each display paramter with a comma ','.	
 
-##Success Response:
+## Success Response:
   
   * **Code:** 200 <br />
     **Content:** `cid=[integer]`
  
-##Error Response:
+## Error Response:
 
   * **Code:** 400  <br />
     **Content:** `ERROR 400 : [argument] is not formatted as expected`
@@ -39,23 +39,23 @@
   * **Code:** 404 NOT FOUND <br />
     **Content:** `ERROR 404 : No compilation exists with a [argument] of [argument_value]`
 
-##Sample Call:
+## Sample Call:
 
 	api/v1/resources/compilations?compiled_kernel_version=5.8&limit=50&compiled=false&display=cid,compilation_date
   
-##Notes:
+## Notes:
 
 	The default limit is 100.
 	
-#API RETRIEVE JSON:
+# API RETRIEVE JSON:
 	
 	Allows the user to upload a compilation's information to the database. Needs the use of an authorization token.
 
-##URL:
+## URL:
 	
 	api/v1/uploadResults
 
-##METHOD
+## METHOD
 
 	`POST`
 	
@@ -63,12 +63,12 @@
 
 	`--header 'Authorization: Bearer [authorization_token]'`
 
-##Success Response:
+## Success Response:
   
   * **Code:** 201 <br />
     **Content:** à compléter
 	
-##Error Response:
+## Error Response:
 
   * **Code:** 400  <br />
     **Content:** `ERROR 400 : The json isn't complete`
@@ -79,7 +79,7 @@
   * **Code:** 500 NOT FOUND <br />
     **Content:** `ERROR 500: The upload has failed but keep calm, it's our fault`
 
-##Sample Call:
+## Sample Call:
 
 	```curl --location --request POST [url] \
 	--header 'Authorization: Bearer [auth_token]' \
@@ -114,6 +114,6 @@
 		"stderr_log_file": ""
 	}'```
 	
-##Notes:
+## Notes:
 
 	

@@ -129,7 +129,7 @@ h6 {
   font-size: 0.8rem;
 }
 
-.masthead img {
+.shadow-wow{
   filter: drop-shadow(0px 20px 30px rgba(0, 0, 0, 0.5));
   );
 }

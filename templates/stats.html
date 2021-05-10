@@ -24,13 +24,22 @@
 		<div class="card w-75 m-auto shadow-lg align-content-start flex-row align-middle">
 			<div class="m-4 bd-highlight">
 				<div class="mx-auto text-center">
-					<a href=".."><img  src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
-					<h2 class="mt-2"><a class ="tux" href ="..">TuxML</a>/stats</h2>
+					<a href=".."><img class="shadow-wow" src="https://avatars0.githubusercontent.com/u/32133780?s=150&v=4" alt="" ></a>
+					<h2 class="mt-1"><a class ="tux" href ="..">TuxML</a>/stats</h2>
 
-                    Technical preview
 
 
                     {% include 'menu.html' %}
+
+                <hr>
+                    <b>Notebooks</b>
+                <p class="align-left">
+                    {% for b in notebooks %}
+                        <div class=" m-2 align-left card shadow-sm p-1" >
+                        <a href="#{{ b[1] }}">{{ b[1] }}</a>
+                        </div>
+                    {% endfor %}
+                </p>
 
 
 				</div>
@@ -41,10 +50,18 @@
 
 
 			<!--
-				Table	
+				Table
+				<iframe width="100%" id="iframenb" scrolling="no" frameborder="0" src="../voila/voila/render/stats.ipynb"></iframe>
 			-->
 			<div class="my-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
-				<iframe width="100%" id="iframenb" scrolling="no" frameborder="0" src="../voila/voila/render/stats.ipynb"></iframe>
+                {% for b in notebooks %}
+                    <a id="{{ b[1] }}"></a>
+                    <div class="mt-3 ml-4"> <b> {{ 'Notebook : ' +b[1]}}</b> <br/>{{'Last update : ' + b[2] }}</div>
+                    <div class="mt-3 mb-4 mr-4 w-100 card shadow-lg" style="display: flex; overflow-x: auto;">
+                        {% include 'statsData/' + b[0]  %}
+                    </div>
+                    <a href="#" class="m-2 card shadow-sm align-center p-1 w-10 button" style="text-align:center">⬆ Jump to top ⬆</a>
+                {% endfor %}
 			</div>
 
 
@@ -54,46 +71,4 @@
 
 
 </body>
-<script type="application/javascript">
-    /*
-    // Select the node that will be observed for mutations
-    const targetNode = document.getElementById('iframenb').contentWindow.document.body;
-
-    // Options for the observer (which mutations to observe)
-    const config = { attributes: true, characterData: true, childList: true, subtree: true };
-
-    const callback = function(mutationsList, observer) {
-        console.log("hehe")
-        resizeIframe(document.getElementById('iframenb'))
-        // Use traditional 'for loops' for IE 11
-        for(const mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                console.log('A child node has been added or removed.');
-            }
-            else if (mutation.type === 'attributes') {
-                console.log('The ' + mutation.attributeName + ' attribute was modified.');
-            }
-        }
-    };
-
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-
-    console.log(targetNode)
-
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
-
-    */ //Rip poor code that never worked
-
-    function resizeIframe(iframe) {
-        iframe.height = (iframe.contentWindow.document.body.scrollHeight +10) + "px";
-    }
-
-    frame = document.getElementById('iframenb')
-
-    window.addEventListener('load', function () {
-        setInterval(function (){resizeIframe(frame)}, 500); //Not pretty, but it actually works better than the mutationObserver way for this case
-    })
-</script>
 </html>

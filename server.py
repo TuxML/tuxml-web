@@ -13,6 +13,7 @@ import sys
 import hashlib
 from os import path
 import waitress
+import arrow
 from typing import Optional
 
 
@@ -291,8 +292,15 @@ def getData(id, request):
 
 
 @app.route('/stats/')
+#@cache.cached(timeout=20)
 def stats():
-    return render_template('stats.html')
+    nb = []
+    for root, dirs, files in os.walk("templates/statsData"):
+        for file in files:
+            if file.endswith(".html"):
+                time = os.path.getmtime(os.path.join(root, file))
+                nb.append([file,file.replace(".html",""),arrow.get(time).humanize()])
+    return render_template('stats.html',notebooks = nb)
 
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():

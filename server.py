@@ -302,6 +302,7 @@ def stats():
                 nb.append([file,file.replace(".html",""),arrow.get(time).humanize()])
     return render_template('stats.html',notebooks = nb)
 
+
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
 
@@ -413,6 +414,10 @@ def api_filter():
     d = dict_factory(cursor, query_result)
 
     return jsonify(d), 200
+
+@app.route('/api/v1/data/latestCid', methods=['GET'])
+def latestCid():
+    return jsonify({'cid':str(dbManager.programmaticRequest("MAX(cid)",execute=True))})
 
 def blobizer(data:str):
     return (bz2.compress(bytes(data, encoding="utf-8")))

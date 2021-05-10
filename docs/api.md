@@ -47,7 +47,7 @@
 
 	The default limit is 100.
 	
-# API RETRIEVE JSON:
+# API UPLOAD JSON:
 	
 	Allows the user to upload a compilation's information to the database. Needs the use of an authorization token.
 
@@ -113,7 +113,19 @@
 		"architecture": "x86_64",
 		"stderr_log_file": ""
 	}'```
-	
+
+# DATA AND STATISTICS
+## URL :
+    /api/v1/data/latestCid    
+
+## METHOD : 
+    GET (No parameters)
+
+## SAMPLE ANSWER :
+```{
+  "cid": "194490"
+}```
+
 ## Notes:
 
 	

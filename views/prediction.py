@@ -56,13 +56,18 @@ def prediction_view():
                     x = get_x(file_path,fparams_path)
                     os.remove(file_path)
 
-                    KNC_prediction = useKNC(X,y,x)
-                    DTC_prediction = useDTC(X,y,x)
-
+                    shape = X.shape
+                    #we check if there is enough data
+                    if shape[0] > 5:
+                        KNC_prediction = useKNC(X,y,x)
+                        DTC_prediction = useDTC(X,y,x)
+                    else :
+                        KNC_prediction = "not enough data"
+                        DTC_prediction = "not enough data"
 
                     return render_template('prediction.html', list_version=list_version, version=version, KNC_prediction=KNC_prediction, DTC_prediction=DTC_prediction)
 
                 else:
-                	print("Missing :" + fparams_path + "  or  " + file_path )
+                    print("Missing :" + fparams_path + "  or  " + file_path )
 
     return render_template('prediction.html', list_version=list_version)

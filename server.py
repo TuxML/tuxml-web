@@ -410,5 +410,5 @@ if __name__ == "__main__":
     if(socket.gethostname() != 'tuxmlweb'):
         app.debug = True
 
-    waitress.serve(app, host="127.0.0.1", port=arg, threads=9)
+    waitress.serve(app, host="0.0.0.0", port=arg, threads=9)
     

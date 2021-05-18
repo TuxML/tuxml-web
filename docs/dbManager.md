@@ -101,13 +101,23 @@ Set `desc` to true to invert the order of the list (From increasing ordre to dec
 ```python
 getNumberOfActiveOptions(compilationId)
 ```
-
 Returns the number of active options for a specific `compilationId`.
 
-
-## programmaticRequest - To be updated (Optimisation and functionality)
+## getSid
 ```python
-programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp',isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False))
+getSid(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, gcc_version, libc_version, tuxml_version)
+```
+Get the existing sid for the specified software characteristics, returns `None` if there is no sid associated with this combination.
+
+## getHid
+```python
+getHid(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanical_disk)
+```
+Get the existing hid for the specified hardware characteristics, returns `None` if there is no hid associated with this combination.
+
+## programmaticRequest
+```python
+programmaticRequest(getColumn="*", withConditions="", ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp' ,isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False)
 ```
 
 Generates an SQL command from given parameters. Makes database requests far easier to write.
@@ -126,9 +136,10 @@ The `caching` parameter is directly piped to the call to `makeRequest()`, same w
 Just put the column you want to get in the `getColumn`, the method automatically does the needed joining.
 
 #### Example
+##### Basic example
 Calling the method with the following parameters
 ```python
-getColumn=['cid','architecture'], withConditions=['cid > 100000','cid < 100010']
+programmaticRequest getColumn=['cid','architecture'], withConditions=['cid > 100000','cid < 100010'])
 ```
 
 generates this command
@@ -136,5 +147,19 @@ generates this command
 SELECT cid, architecture FROM compilations comp JOIN hardware_environment hardenv ON comp.hid = hardenv.hid WHERE cid > 100000 AND cid <100010;
 ```
 
-#### Future updates
-- [ ] Only select the needed table when asking for only one column absent from the `compilations` table. Eg : Asking for the `architecture` column will make a join even if only the `hardware_environment` table is needed.
+##### Highlighting the automatic selection of the needed table
+
+Calling the method this way
+```python
+programmaticRequest(getColumn="architecture", withConditions="hid = 1")
+```
+
+generates this command
+```sql
+SELECT architecture FROM hardware_environment hardenv WHERE hid = 1;
+```
+
+
+
+#### Note 
+The `mainTable` parameter is now considered as deprecated and will be removed in the future.

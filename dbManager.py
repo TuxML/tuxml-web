@@ -5,6 +5,8 @@ from os import path
 from time import sleep
 import mysql.connector
 import arrow
+import random
+from typing import Optional
 
 class __CacheItem: #Encapsulation has been highly used in this class's methods in order to keep data integrity
     def __init__(self, passiveData = False):
@@ -36,19 +38,24 @@ Handles queries, and unfolds them (up to two times).
 
 '''
 def __fetchData(query):
+
+    dbname = 'IrmaDB_result'
+    uname = 'web'
+    pwd = 'df54ZR459'
+
     if (path.exists("tunnel")): # If we're connected throuh a SSH tunnel
         tuxmlDB = mysql.connector.connect(
         host='localhost',
         port=20000,
-        user='web',
-        password='df54ZR459',
-        database='IrmaDB_result')
-    else: # If we're connected through ISTIC VPN or via ISTIC Wifi network.
+        user=uname,
+        password=pwd,
+        database=dbname)
+    else: # If we're connected through ISTIC's SSL VPN or via ISTIC Wifi network.
         tuxmlDB = mysql.connector.connect(
         host='148.60.11.195',
-        user='web',
-        password='df54ZR459',
-        database='IrmaDB_result')
+        user=uname,
+        password=pwd,
+        database=dbname)
 
     curs = tuxmlDB.cursor(buffered=True)
     curs.execute(query)
@@ -67,6 +74,7 @@ __queriesCache = {}
 __totalFetchCount = 0 # <-- Deprecated
 __incrementLocker = threading.Lock() # <-- Deprecated
 __cacheLocker = threading.Lock()
+__uploadLocker = threading.Lock()
 __currentCompilationCount = 0
 
 '''
@@ -92,9 +100,9 @@ def __updateCache(query, data, isPassiveData):
     global __queriesCache
     cacheItem = __queriesCache.get(query, __CacheItem(passiveData=isPassiveData))
     cacheItem.update(data)
-    __cacheLocker.acquire()
+    #__cacheLocker.acquire()
     __queriesCache[query] = cacheItem
-    __cacheLocker.release()
+    #__cacheLocker.release()
 
 '''
 
@@ -107,10 +115,10 @@ def __refreshCacheRoutine(): # Works as a thread
 
     #Parameters
 
-    waitingTimeBetweenRefreshes = 300
+    waitingTimeBetweenRefreshes = 300 #300
 
-    timeToLive = 86400 #Cache items older than x seconds will be deleted during the next purge
-    refreshCountForPurge = 188 #Each x refreshes, a purge will happen
+    timeToLive = 86400 #86400 #Cache items older than x seconds will be deleted during the next purge
+    refreshCountForPurge = 188 #188 #Each x refreshes, a purge will happen
 
     timeToLivePassiveItems = 86400 #Passive cache items older than x seconds will be deleted during the next purge
     refreshCountForPassiveItemsPurge = 752 #Each x refreshes, a purge of passive cache items will happen
@@ -132,6 +140,7 @@ def __refreshCacheRoutine(): # Works as a thread
                 if not cachedData.isPassiveData:
                     cachedData.update(__fetchData(request),impact=False)
 
+
         if refreshCount % refreshCountForPurge == 0: #Purge of unused cache items
             purgedQueriesCache = {}
             purgedFetchCount = 0 # <-- Deprecated
@@ -141,6 +150,7 @@ def __refreshCacheRoutine(): # Works as a thread
                     purgedFetchCount += cachedData.useCount # <-- Deprecated
             __queriesCache = purgedQueriesCache
             __totalFetchCount = purgedFetchCount
+
 
         if refreshCount % refreshCountForPassiveItemsPurge == 0: #Purge of unused cache passive items
             purgedQueriesCache = {}
@@ -222,9 +232,10 @@ def getCompilationInfo(compilationId, basic = False):
             self.hardwareInfo = hardwareInfo
     try:
         comp = makeRequest("SELECT * FROM compilations WHERE cid = " + str(compilationId), isPassiveData=True)
+        compDict = dict(zip(getColumnsForCompilationsTable(includeBlobs=True),comp))
         if not basic :
-            soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(comp[12]), isPassiveData=True)
-            hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(comp[13]), isPassiveData=True)
+            soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(compDict['sid']), isPassiveData=True)
+            hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(compDict['hid']), isPassiveData=True)
         return compilationInfo(comp,soft,hard)
     except:
         return None
@@ -269,7 +280,14 @@ def getColumnsForSoftwareEnvTable():
     return result
 
 def getExistingKernelVersions(desc = False):
-    return makeRequest("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version " + ("DESC" if desc else "ASC"), isPassiveData=True)
+    kernelVersions = makeRequest("SELECT DISTINCT compiled_kernel_version FROM compilations ORDER BY compiled_kernel_version ", isPassiveData=True)
+    sortedKerVer = []
+    for kVer in kernelVersions:
+        sortedKerVer.append(kVer[0])
+    sortedKerVer.sort(key=lambda s: [int(u) for u in s.split('.')])
+    if desc :
+        sortedKerVer.reverse()
+    return sortedKerVer
 
 def getNumberOfActiveOptions(compilationId):
     try:
@@ -283,29 +301,195 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return None
 
-def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp',isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False):
+def getHid(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanical_disk):
+
+    conditions = [f"architecture = \"{architecture}\"",
+                  f"cpu_brand_name = \"{cpu_brand_name}\"",
+                  f"number_cpu_core = \"{number_cpu_core}\"",
+                  f"cpu_max_frequency = \"{cpu_max_frequency}\"",
+                  f"ram_size = \"{ram_size}\"",
+                  f"mechanical_disk = \"{int(mechanical_disk)}\""]
+
+    result = programmaticRequest(getColumn="hid",withConditions=conditions,caching=False,execute=True)
+
+    return result if isinstance(result,int) else None
+
+def getSid(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, gcc_version, libc_version, tuxml_version):
+
+    conditions = [f"system_kernel = \"{system_kernel}\"",
+                  f"system_kernel_version = \"{system_kernel_version}\"",
+                  f"linux_distribution = \"{linux_distribution}\"",
+                  f"linux_distribution_version = \"{linux_distribution_version}\"",
+                  f"gcc_version = \"{gcc_version}\"",
+                  f"libc_version = \"{libc_version}\"",
+                  f"tuxml_version = \"{tuxml_version}\""]
+
+    result = programmaticRequest(getColumn="sid",withConditions=conditions,caching=False,execute=True)
+
+    return result if isinstance(result,int) else None
+
+def getCid(compilation_date, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,compiled_kernel_version,sid = 0,hid = 0):
+
+    ''' compilation_time,config_file, stdout_log_file, stderr_log_file, user_output_file,'''
+    conditions = [f"compilation_date = \"{compilation_date}\"",
+                  #f"compilation_time = \"{compilation_time}\"",
+                  #f"config_file = \"{config_file}\"",
+                  #f"stdout_log_file = \"{stdout_log_file}\"",
+                  #f"stderr_log_file = \"{stderr_log_file}\"",
+                  #f"user_output_file = \"{user_output_file}\"",
+                  f"compiled_kernel_size = {compiled_kernel_size}",
+                  f"compressed_compiled_kernel_size = \"{compressed_compiled_kernel_size}\"",
+                  f"dependencies = \"{dependencies}\"",
+                  f"number_cpu_core_used = {number_cpu_core_used}",
+                  f"compiled_kernel_version = \"{compiled_kernel_version}\"",
+                  f"comp.sid = {sid}",
+                  f"comp.hid = {hid}"]
+    result = programmaticRequest(getColumn="cid",withConditions=conditions,caching=False,execute=True)
+
+    return result if isinstance(result,int) else None
+
+def insertIntoHardwareTable(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanical_disk:int):
+    locBackup = locals()
+    keys = locBackup.keys()
+    values = locBackup.values()
+    return insertInTable("hardware_environment",keys,values)
+
+def insertIntoSoftwareTable(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, gcc_version, libc_version, tuxml_version):
+    locBackup = locals()
+    keys = locBackup.keys()
+    values = locBackup.values()
+    return insertInTable("software_environment",keys,values)
+
+def insertIntoCompilationsTable(compilation_date, compilation_time, config_file, stdout_log_file, stderr_log_file, user_output_file, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,compiled_kernel_version,sid,hid):
+    locBackup = locals()
+    keys = locBackup.keys()
+    values = locBackup.values()
+    return insertInTable("compilations",keys,values)
+
+def insertInTable(tableName, keys, values):
+    tuxmlDBupl = mysql.connector.connect(
+        host='148.60.11.195',
+        user='script2',
+        password='ud6cw3xNRKnrOz6H',
+        database='IrmaDB_result')
+    curs = tuxmlDBupl.cursor()
+
+    query_insert = "INSERT INTO {}({}) VALUES({})".format(
+        tableName,
+        ','.join(keys),
+        ','.join(["%s"] * len(values))
+    )
+
+    __uploadLocker.acquire()
+    curs.execute(query_insert,list(values)) # In our case the request is not risky : The keys name are controlled by us so there is no risk of sql injection-based vulnerability
+    tuxmlDBupl.commit()
+    ci = curs.lastrowid
+    __uploadLocker.release()
+    return ci
+
+
+def __blobizer(data:str):
+    return (bz2.compress(bytes(data, encoding="utf-8")))
+
+def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
+    blob_conf = __blobizer(content["config_file"])
+    blob_stdout = __blobizer(content["stdout_log_file"])
+    blob_stderr = __blobizer(content["stderr_log_file"])
+    blob_out = __blobizer(content["user_output_file"])
+
+    if(maybeHid == None):
+        hid = insertIntoHardwareTable(content["architecture"],
+                                      content["cpu_brand_name"],
+                                      content["number_cpu_core_used"],
+                                      content["cpu_max_frequency"],
+                                      content["ram_size"],
+                                      content["mechanical_disk"])
+    else:
+        hid = maybeHid
+
+    if(maybeSid == None):
+        sid = insertIntoSoftwareTable(content["system_kernel"],
+                                      content["system_kernel_version"],
+                                      content["linux_distribution"],
+                                      content["linux_distribution_version"],
+                                      content["gcc_version"],
+                                      content["libc_version"],
+                                      content["tuxml_version"])
+    else:
+        sid = maybeSid
+
+    return insertIntoCompilationsTable(content["compilation_date"],
+                                       content["compilation_time"],
+                                       blob_conf,
+                                       blob_stdout,
+                                       blob_stderr,
+                                       blob_out,
+                                       content["compiled_kernel_size"],
+                                       content["compressed_compiled_kernel_size"],
+                                       content["dependencies"],
+                                       content["number_cpu_core_used"],
+                                       content["compiled_kernel_version"],
+                                       sid,
+                                       hid)
+
+
+
+
+
+def programmaticRequest(getColumn="*", withConditions="", ordering=None, limit:int=None, offset:int=None, mainTable='compilations comp' ,isPassiveData = False, useORConditionalOperator = False, caching=True, execute=False):
     options = ''
+    programmaticTable = ''
 
     softenv = False
     hardenv = False
+    comptab = False
 
-    if getColumn is None:
+    if getColumn == "*":
         softenv = True
         hardenv = True
-        getColumn = "*"
-
+        comptab = True
+    
     for col in getColumnsForSoftwareEnvTable():
         if col in getColumn or col in withConditions:
             softenv = True
+        if not isinstance(withConditions,str) and len(withConditions)>0:
+            for cond in withConditions:
+                if col in cond :
+                    softenv = True
     
     for col in getColumnsForHardwareEnvTable():
         if col in getColumn or col in withConditions:
             hardenv = True
+        if not isinstance(withConditions,str) and len(withConditions)>0 :
+            for cond in withConditions:
+                if col in cond :
+                    hardenv = True
+
+    for col in getColumnsForCompilationsTable(includeBlobs=True)[:-2]:
+        if col in getColumn or col in withConditions:
+            comptab = True
+        if not isinstance(withConditions,str) and len(withConditions)>0:
+            for cond in withConditions:
+                if col in cond :
+                    comptab = True
+
+    if comptab:
+        programmaticTable = 'compilations comp'
+
 
     if hardenv:
-        mainTable += " JOIN hardware_environment hardenv ON comp.hid = hardenv.hid"
+        if comptab :
+            programmaticTable += " JOIN hardware_environment hardenv ON comp.hid = hardenv.hid"
+        else:
+            programmaticTable = 'hardware_environment hardenv'
+
+
     if softenv:
-        mainTable += " JOIN software_environment softenv ON comp.sid = softenv.sid"
+        if comptab :
+            programmaticTable += " JOIN software_environment softenv ON comp.sid = softenv.sid"
+        else:
+            programmaticTable = 'software_environment softenv'
+
 
     if not isinstance(getColumn, str): #If necessary, we reformat the columns input
         getColumn = ", ".join(getColumn)
@@ -332,9 +516,10 @@ def programmaticRequest(getColumn=None, withConditions=None, ordering=None, limi
     if offset is not None:
         options += f" OFFSET {offset}"
 
-    query = f"SELECT {getColumn} FROM {mainTable}{options};"
+    query = f"SELECT {getColumn} FROM {programmaticTable}{options};"
 
     if execute:
         return makeRequest(query, isPassiveData=isPassiveData, caching=caching)
     else:
         return query
+

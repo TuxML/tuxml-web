@@ -1,9 +1,8 @@
-#!/usr/bin/python3
 import bz2
 from  distutils import util
 import signal
 from io import BytesIO
-from time import sleep
+import time
 import threading
 from flask_caching import Cache
 from flask import Flask, render_template, url_for, request, send_file, redirect, abort, session, jsonify
@@ -11,14 +10,27 @@ import os
 import mysql.connector
 import socket
 import sys
+import hashlib
 from os import path
 import waitress
+import arrow
+from typing import Optional
+
+
 import dbManager
 
+from views.prediction import prediction_view
+from views.evaluation import evaluation_view
+
+
+
+if not os.path.exists('err'):
+    os.makedirs('err')
 
 app = Flask(__name__, template_folder=os.path.abspath('templates'))
 app.config['SECRET_KEY'] = '71794b6f6130464a494b6e62634b7167594b5850'
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 @app.context_processor
@@ -27,7 +39,7 @@ def time_formatter():
         m, s = divmod(amount, 60)
         return '{:02d} min {:02d} sec'.format(int(m), int(s))
     return dict(format_time=format_time)
-    
+
 @app.context_processor
 def size_formatter():
     def format_size(amount, unit):
@@ -55,13 +67,38 @@ def getConnection():
 def hello_world():
     return render_template('base.html', count=dbManager.getCompilationCount())
 
+def stayAliveThenDie():
+    time.sleep(5)
+    print(os._exit(0))
+
+ok = '''⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣶⡾⠏⠉⠙⠳⢦⡀⠀⠀⠀⢠⠞⠉⠙⠲⡀⠀
+⠀⠀⠀⣴⠿⠏⠀⠀⠀⠀⠀⠀⢳⡀⠀⡏⠀⠀⠀⠀⠀⢷
+⠀⠀⢠⣟⣋⡀⢀⣀⣀⡀⠀⣀⡀⣧⠀⢸⠀⠀⠀⠀⠀ ⡇
+⠀⠀⢸⣯⡭⠁⠸⣛⣟⠆⡴⣻⡲⣿⠀⣸⠀⠀OK⠀ ⡇
+⠀⠀⣟⣿⡭⠀⠀⠀⠀⠀⢱⠀⠀⣿⠀⢹⠀⠀⠀⠀⠀ ⡇
+⠀⠀⠙⢿⣯⠄⠀⠀⠀⢀⡀⠀⠀⡿⠀⠀⡇⠀⠀⠀⠀⡼
+⠀⠀⠀⠀⠹⣶⠆⠀⠀⠀⠀⠀⡴⠃⠀⠀⠘⠤⣄⣠⠞⠀
+⠀⠀⠀⠀⠀⢸⣷⡦⢤⡤⢤⣞⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀
+⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀
+⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀⠀⣄⢸⠀⠀⠀⠀⠀⠀
+⣿⣿⣧⣀⣿.........⣀⣰⣏⣘⣆⣀⠀⠀'''
+
 @app.route('/wherdigkjghkdjfhgqpozeumiopqnwlopxsihbeoglkh/', methods = ['GET', 'POST'])
 def laFin():
-    print(os._exit(0)) #On ferme le serveur, systemd s'occupe de faire un git pull et de le relancer
-    return ("¯\_(ツ)_/¯")
+    x = threading.Thread(target=stayAliveThenDie)#We start a subprocess in charge to kill the server a few (5) seconds later, so we can return some sort of acquittal in the meantime
+    x.start()
+    return (ok)
+
+
+
+app.add_url_rule('/prediction/', view_func=prediction_view, methods=["GET", "POST"])
+app.add_url_rule('/evaluation/', view_func=evaluation_view)
+
 
 @app.route('/data/')
-@cache.cached(timeout=360, query_string=True)
+@cache.cached(timeout=10, query_string=True)
 def data():
     connection = getConnection()
     cursor = connection.cursor()
@@ -88,7 +125,7 @@ def data():
         laversion.replace(";", "").replace("\\","")
 
     if numberOfNuplet is None :
-        numberOfNuplet = 10
+        numberOfNuplet = 20
     else:
         numberOfNuplet.replace(";", "").replace("\\","")
 
@@ -119,17 +156,9 @@ def data():
     if interest_software is not None :
         str_interest_software_left_join = " LEFT JOIN software_environment ON compilations.sid = software_environment.sid "
 
-
-
-
-
-    versions = [["All"]] + dbManager.getExistingKernelVersions()
+    versions = ["All"] + dbManager.getExistingKernelVersions()
     temp = dbManager.makeRequest("SELECT b.* FROM (SELECT a.* FROM (SELECT compilations.cid " + str_interest + str_interest_software + " FROM compilations " + str_interest_software_left_join + ("" if laversion == "All" else f"WHERE compiled_kernel_version = '{laversion}'")+ f" ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} LIMIT " + str(numberOfNupletTemp) + f")a ORDER BY {sortBy} {'DESC' if ascend else 'ASC'} LIMIT  " +  str(numberOfNuplet) + f")b ORDER BY {sortBy} {'ASC' if ascend else 'DESC'} ;")
     count = dbManager.getCompilationCount(laversion)
-
-
-
-
 
     #modify the values contained in the query to adapt the reading to a human
     ten=[]
@@ -235,7 +264,10 @@ def data():
 
     return render_template('data.html', laversion=laversion, numberOfNuplet=numberOfNuplet, page=page, versions=versions, ten=ten, sortBy=sortBy, ascend=ascend, count=count, interest=interest, url_interest=url_interest, interest_software=interest_software, url_interest_software=url_interest_software, query_compare_compilation=query_compare_compilation, compare=compare, compare_cid_list=compare_cid_list, url_compare_cid_list=url_compare_cid_list)
 
-
+@app.route('/search/')
+@cache.cached(timeout=360, query_string=True)
+def search():
+    return render_template("search.html")
 
 @app.route('/data/configuration/<int:id>/')
 @cache.cached(timeout=10000000, query_string=True)
@@ -260,16 +292,24 @@ def getData(id, request):
 
 
 @app.route('/stats/')
+#@cache.cached(timeout=20)
 def stats():
-    return render_template('stats.html')
+    nb = []
+    for root, dirs, files in os.walk("templates/statsData"):
+        for file in files:
+            if file.endswith(".html"):
+                time = os.path.getmtime(os.path.join(root, file))
+                nb.append([file,file.replace(".html",""),arrow.get(time).humanize()])
+    return render_template('stats.html',notebooks = nb)
+
 
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
 
     accepted_display_arguments = ["architecture", "cid", "compilation_date", "compilation_time", "compiled_kernel_size", "compiled_kernel_version", "compressed_compiled_kernel_size", "config_file,", "cpu_brand_name", "cpu_max_frequency", "dependencies", "gcc_version", "libc_version", "linux_distribution", "linux_distribution_version", "mechanical_disk", "number_cpu_core", "number_cpu_core_used", "ram_size", "stderr_log_file", "stdout_log_file", "system_kernel", "system_kernel_version", "tuxml_version", "user_output_file"]
-    
+
     query_parameters = request.args
-        
+
     #WHERE clauses
     cid = query_parameters.get('cid')
     compiled_kernel_version = query_parameters.get('compiled_kernel_version')
@@ -279,90 +319,189 @@ def api_filter():
     display = query_parameters.get('display')
     #LIMIT
     limit = query_parameters.get('limit')
-    
-    
+
+
     conditions_list = []
     conditions_string = None
     select_list = []
     select_string = None
     ordering = None
-    
+
     if limit:
-        if limit.isnumeric():
+        if limit.isnumeric(): #sanitization
             limit = int(limit)
         elif limit == "none":
             limit = None
         else:
-            return abort(404)
+            return 'ERROR 400 : limit is not an integer', 400
     else:
         limit = 100
-        
+
     if cid:
+        #sanitization
+        if not cid.isnumeric():
+            return 'ERROR 400 : cid is not an integer', 400
         if not dbManager.compilationExists(cid):
-            return abort(404)
+            return f'ERROR 404 : No compilation exists with a cid of {cid}', 404
         conditions_list.append(f"cid = {cid}")
-    
+
     if compiled_kernel_version:
+        #sanitization
+        for char in compiled_kernel_version:
+            if(not (char.isnumeric() or char == '.')):
+                return 'ERROR 400 : compiled_kernel_version is not formatted as expected', 400
         compiled_kernel_version = api_argument_formatting(compiled_kernel_version)
         if not dbManager.compilationExistsAdvanced("compilations", "compiled_kernel_version", compiled_kernel_version):
-            return abort(404)
+            return f'ERROR 404 : No compilation exists with a compiled_kernel_version of {compiled_kernel_version}', 404
         conditions_list.append(f"compiled_kernel_version = {compiled_kernel_version}")
         ordering="cid desc"
-        
+
     if gcc_version:
         gcc_version = gcc_version.replace(" ", "+")
+        if(gcc_version.count('-') > 1 or gcc_version.count('+') > 1):
+            return 'ERROR 400 : compiled_kernel_version is not formatted as expected', 400
         gcc_version = api_argument_formatting(gcc_version)
         if not dbManager.compilationExistsAdvanced("software_environment", "gcc_version", gcc_version):
-            return abort(404)
+            return f'ERROR 404 : No compilation exists with a gcc_version of {gcc_version}', 404
         conditions_list.append(f"gcc_version = {gcc_version}")
         ordering="cid desc"
-    
+
     if compiled:
-        if compiled == "true":
+        if compiled.lower() == "true":
             conditions_list.append("compiled_kernel_size > 0")
-        elif compiled == "false":
+        elif compiled.lower() == "false":
             conditions_list.append("compiled_kernel_size = \"-1\"")
         else:
-            return abort(404)
-    
+            return 'ERROR 400 : compiled is not formatted as expected (\'true\' or \'false\'', 400
+
     if display:
         display = display.replace(" ", "")
         display_args = display.split(",")
         for arg in display_args:
             if not arg in accepted_display_arguments:
-                return abort(404)
+                return f'ERROR 400 : display has a unauthorized argument : {arg}', 400
             select_list.append(arg)
+
+    if (not cid and not compiled_kernel_version and not compiled and not gcc_version):
+        return f'ERROR 400 : Not enough arguments for a request', 400
+
     
-    if (not cid and not compiled_kernel_version and not compiled):
-        return abort(404)
-        
-    
+    conditions_string = ""
     if conditions_list:
-        conditions_string = ""
         for cond in conditions_list:
             conditions_string += cond + " AND "
         conditions_string = conditions_string[:-5]
-    
+
+    select_string = ""
     if select_list:
-        select_string = ""
         for sel in select_list:
             select_string += sel + ","
         select_string = select_string[:-1]
-    
+    else:
+        select_string = "*"
+
     query = dbManager.programmaticRequest(getColumn=select_string, withConditions=conditions_string, ordering=ordering, limit=limit, caching=False, execute=False)
-    
-    #print(query, file=sys.stderr)
-    
+
+    print(query, file=sys.stderr)
+
     connection = getConnection()
     cursor = connection.cursor()
     cursor.execute(query)
     query_result = cursor.fetchall()
-    
+
     #print(query_result, file=sys.stderr)
-    
+
     d = dict_factory(cursor, query_result)
 
-    return jsonify(d)
+    return jsonify(d), 200
+
+@app.route('/api/v1/data/latestCid', methods=['GET'])
+def latestCid():
+    return jsonify({'cid':str(dbManager.programmaticRequest("MAX(cid)",execute=True))})
+
+def blobizer(data:str):
+    return (bz2.compress(bytes(data, encoding="utf-8")))
+
+def checkIntegrity(data) :
+    pass
+
+@app.route('/api/v1/uploadResults', methods=['POST'])
+def upload():
+
+    is_token_verified = False
+    ident_token = "placeholder"
+    
+    #token recuperation
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        try:
+            ident_token = auth_header.split(" ")[1]
+        except IndexError:
+            return "Error : The header is not correctly formatted."
+
+    #hashing
+    hasheur = hashlib.sha256()
+    ident_token = ident_token.encode('utf-8')
+    hasheur.update(ident_token)
+    table_token = hasheur.hexdigest()
+
+    #token verification
+    connection = getConnection()
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT write_access FROM tokens WHERE value = '{table_token}';")
+    result = cursor.fetchone()
+    if result and result[0]:
+        is_token_verified = True
+        
+    if(not is_token_verified):
+        return "Error : You do not have the rights to do this"
+    if(not request.is_json):
+        return "Error : The request don't contain any json"
+
+    content = request.get_json()
+    try:
+        maybeHid = dbManager.getHid(content["architecture"],
+                                    content["cpu_brand_name"],
+                                    content["number_cpu_core_used"],
+                                    content["cpu_max_frequency"],
+                                    content["ram_size"],
+                                    content["mechanical_disk"])
+
+        maybeSid = dbManager.getSid(content["system_kernel"],
+                                    content["system_kernel_version"],
+                                    content["linux_distribution"],
+                                    content["linux_distribution_version"],
+                                    content["gcc_version"],
+                                    content["libc_version"],
+                                    content["tuxml_version"])
+        content["compilation_time"] #Statement without real effects, but throws an error when the requested content is missing, so it is useful in our case (Integrity checkings)
+                                    #However this should be taken into account in the future to improve duplicate detection
+        maybeCid = dbManager.getCid(content["compilation_date"],
+                                    #content["compilation_time"],
+                                    content["compiled_kernel_size"],
+                                    content["compressed_compiled_kernel_size"],
+                                    content["dependencies"],
+                                    content["number_cpu_core_used"],
+                                    content["compiled_kernel_version"])
+    except:
+        return 'ERROR 400 : The json isn\'t complete',400 # Must be replaced by a more precise solution, for exemple one that returns the missing columns
+    if maybeCid == None :
+        try:
+            return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}',201
+        except Exception as failure :
+            timestamp = time.time()
+            with open(f"err/{timestamp}.json", "w") as fjson:
+                try:
+                    fjson.write(str(content))
+                except Exception as e:
+                    fjson.write("Couldn't save the json.\n" + str(e))
+            with open(f"err/{timestamp}.log", "w") as flog:
+                flog.write(str(failure))
+                pass
+            return 'ERROR 500: The upload has failed but keep calm, it\'s our fault',500
+    else:
+        return maybeCid,409
+
 
 #Formats query results into dictonnaries, making it able to be jsonified
 def dict_factory(cursor, query_list):
@@ -379,7 +518,7 @@ def dict_factory(cursor, query_list):
 #in case the database architecture changes
 def get_cid_from_query(query):
     return query[0]
-    
+
 #Makes sure the format is "value" when needed. Useful for compilationExistsAdvanced verification
 def api_argument_formatting(arg):
     arg = arg.replace("\"", "")
@@ -411,4 +550,4 @@ if __name__ == "__main__":
         app.debug = True
 
     waitress.serve(app, host="0.0.0.0", port=arg, threads=9)
-    
+

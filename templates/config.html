@@ -30,26 +30,27 @@
   <header class="masthead d-flex">
 	  <div class = "card w-75 mx-auto my-auto ">
 		  <div class ="m-4">
-		  <h2><a class = "tux" href = "../../..">TuxML</a>/<a style="color:#212529;" href = "../..?interest=compilation_date&interest=compilation_time&interest=compiled_kernel_size&interest=compiled_kernel_version">data</a>/<b><a style="color: grey;">Configuration N°{{config['id']}}</a></b></h2>
+		  <h2><a class = "tux" href = "../../..">TuxML</a>/<a style="color:#212529;" href = "../..?interest=compilation_date&interest=compilation_time&interest=compiled_kernel_size&interest=compiled_kernel_version">data</a>/<b><a style="color: grey;">Configuration {{config['cid']}}</a></b></h2>
 		  </div>
 		<div class="card mx-100 my-auto shadow-lg align-content-start flex-row align-middle">
 			<div class="m-4 x-8 w-60 bd-highlight">
-				<h2>Compilation info</h2>
+				<h2>Compilation information</h2>
 				<b>Date: </b> {{config['compilation_date']}} <br>
 				<b>Duration of the build: </b> {{format_time(config['compilation_time'])}}<br>
-				<b>Kernel version: </b> <a href ="../../../data?laversion={{config['compiled_kernel_version']}}&interest=compilation_date&interest=compilation_time&interest=compiled_kernel_size&interest=compiled_kernel_version"> {{config['compiled_kernel_version']}}</a><br><br>
+				<b>Kernel version: </b> <a href ="../../../data?laversion={{config['compiled_kernel_version']}}&interest=compilation_date&interest=compilation_time&interest=compiled_kernel_size&interest=compiled_kernel_version"> {{config['compiled_kernel_version']}}</a><br />
 				<b>Compiled kernel size: </b> {% if config['compiled_kernel_size'] == -1  %} 0 (Compilation failed) {% else %} {{format_size(config['compiled_kernel_size'], "Mb")}} {% endif %} <br>
-				<b>Compressed compiled kernel size: </b><div class="card p-2"> {{config['compressed_compiled_kernel_size']}} </div><br><br>
+				<b>Compressed compiled kernel size: </b><div class="card p-2"> {{config['compressed_compiled_kernel_size']}} </div><br />
 				<b>Downloads: </b> 
 				<a href ="config" class="btn m-2 btn-primary">Config</a>
 				<a href ="stdout" class="btn m-2 btn-primary">Log</a>
 				<a href ="stderr" class="btn m-2 btn-primary">Error log</a>
 				<a href ="userOutput" class="btn m-2 btn-primary">User output</a>
 				<br><br>
-				<b>Dependencies: </b><div class="card p-2"> {{config['dependencies']}} </div><br><br>
+				<b>Dependencies: </b><div class="card p-2"> {{config['dependencies']}} </div><br />
+				<b>Tag/comment: </b> {{tagconfig}} <br />
 				</div>
 		<div class="m-4 p-4 w-40 card ml-auto shadow-lg"style="flex-shrink: 0;">
-			<h2>Build environment information</h2><br>
+			<h2>Build environment</h2><br>
 			<h5>Software</h5>
 			<b>System: </b> {{sconfig['system_kernel']}} {{sconfig['system_kernel_version']}} <br>
 			<b>Distribution: </b> {{sconfig['linux_distribution']}} {{sconfig['linux_distribution_version']}} <br>
@@ -63,7 +64,7 @@
 			<b>CPU cores: </b> {{hconfig['number_cpu_core']}} <br>
 			<b>CPU Max Frequency: </b> {{hconfig['cpu_max_frequency']}} MHz <br>
 			<b>RAM: </b> {{format_size(hconfig['ram_size'], "Gb")}}<br>
-			<b>Mechanical hard drive: </b> {% if hconfig['mechanical_disk'] == 1  %} Yes {% else %} No {% endif %} <br>
+			<b>Mechanical hard drive: </b> {% if hconfig['mechanical_disk'] == 1  %} Yes {% else %} No {% endif %} <br />
 			</div>
 		</div>
 	  </div>

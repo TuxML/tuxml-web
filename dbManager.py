@@ -219,10 +219,11 @@ def compilationExistsAdvanced(table, column, value):
 
 def getCompilationInfo(compilationId, basic = False):
     class compilationInfo:
-        def __init__ (self,compilationInfo,softwareInfo, hardwareInfo) :
+        def __init__ (self,compilationInfo,softwareInfo, hardwareInfo, tagInfo) :
             self.compilationInfo = compilationInfo
             self.softwareInfo = softwareInfo
             self.hardwareInfo = hardwareInfo
+            self.tagInfo = tag_id
     try:
         comp = makeRequest("SELECT * FROM compilations WHERE cid = " + str(compilationId), isPassiveData=True)
         compDict = dict(zip(getColumnsForCompilationsTable(includeBlobs=True),comp))
@@ -231,7 +232,10 @@ def getCompilationInfo(compilationId, basic = False):
             softDict = dict(zip(getColumnsForSoftwareEnvTable(), soft))
             hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(compDict['hid']), isPassiveData=True)
             hardDict = dict(zip(getColumnsForHardwareEnvTable(), hard))
-        return compilationInfo(compDict,softDict,hardDict)
+            tag_id = compDict['tag_id']
+            if not tag_id == -1:
+                tag_id = makeRequest("SELECT `tag` FROM `tags` WHERE `id` = " + str(tag_id))
+        return compilationInfo(compDict,softDict,hardDict, tag_id)
     except:
         return None
 

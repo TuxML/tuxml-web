@@ -268,7 +268,7 @@ def user_view(id):
     confData = dbManager.getCompilationInfo(id)
     if confData is None:
         return abort(404)
-    return render_template('config.html', config=confData.compilationInfo, sconfig=confData.softwareInfo, hconfig=confData.hardwareInfo)
+    return render_template('config.html', config=confData.compilationInfo, sconfig=confData.softwareInfo, hconfig=confData.hardwareInfo, tagconfig=confData.tagInfo)
 
 @app.route('/data/configuration/<int:id>/<string:request>')
 def getData(id, request):

@@ -1,6 +1,7 @@
 import bz2
 import sys
 import threading
+import os
 from os import path
 from time import sleep
 import mysql.connector
@@ -32,6 +33,13 @@ class __CacheItem: #Encapsulation has been highly used in this class's methods i
         self.__lock.release()
         return data
 
+def __mkCredentials():
+    lhost = os.environ.get('TUXML_HOST')
+    dbname = os.environ.get('TUXML_DBNAME')
+    uname = os.environ.get('TUXML_UNAME')
+    pwd = os.environ.get('TUXML_PWD') 
+    return lhost, dbname, uname, pwd
+
 '''
 
 Handles queries, and unfolds them (up to two times).
@@ -39,11 +47,9 @@ Handles queries, and unfolds them (up to two times).
 '''
 def __fetchData(query):
 
-    dbname = 'IrmaDB_result'
-    uname = 'web'
-    pwd = 'df54ZR459'
-
-    if (path.exists("tunnel")): # If we're connected throuh a SSH tunnel
+    lhost, dbname, uname, pwd = __mkCredentials()
+    
+    if (path.exists("tunnel")): # If we're connected throuh a SSH tunnel (TODO: deprecated)
         tuxmlDB = mysql.connector.connect(
         host='localhost',
         port=20000,
@@ -52,7 +58,7 @@ def __fetchData(query):
         database=dbname)
     else: # If we're connected through ISTIC's SSL VPN or via ISTIC Wifi network.
         tuxmlDB = mysql.connector.connect(
-        host='148.60.11.195',
+        host=lhost,
         user=uname,
         password=pwd,
         database=dbname)
@@ -301,6 +307,8 @@ def getNumberOfActiveOptions(compilationId):
         print(str(e), "\n" + "Unable to decompress... ", file=sys.stderr)
         return None
 
+
+    
 def getHid(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanical_disk):
 
     conditions = [f"architecture = \"{architecture}\"",
@@ -367,11 +375,12 @@ def insertIntoCompilationsTable(compilation_date, compilation_time, config_file,
     return insertInTable("compilations",keys,values)
 
 def insertInTable(tableName, keys, values):
+    lhost, dbname, uname, pwd = __mkCredentials()
     tuxmlDBupl = mysql.connector.connect(
-        host='148.60.11.195',
-        user='script2',
-        password='ud6cw3xNRKnrOz6H',
-        database='IrmaDB_result')
+        host=lhost,
+        user=uname,
+        password=pwd,
+        database=dbname)
     curs = tuxmlDBupl.cursor()
 
     query_insert = "INSERT INTO {}({}) VALUES({})".format(
@@ -390,6 +399,20 @@ def insertInTable(tableName, keys, values):
 
 def __blobizer(data:str):
     return (bz2.compress(bytes(data, encoding="utf-8")))
+
+# store sizes information (size_report_builtin, size_report_builtin_coarse, size_vmlinux)
+# this function is quite fresh and may evolve (eg new size computation, refactoring of DB)
+# we simply insert size information with the cid (no foreign key)
+def insertSizesInformation(cid, data):
+    rdata = {}
+    # it might be the case no size information is communicated (hence we check preconditions
+    if 'size_vmlinux' in data and 'size_report_builtin' in data and 'size_report_builtin_coarse' in data:
+        rdata['cid'] = int(cid)
+        rdata['size_vmlinux'] = data['size_vmlinux']
+        rdata['size_report_builtin'] = data['size_report_builtin']
+        rdata['size_report_builtin_coarse'] = data['size_report_builtin_coarse']
+        return insertInTable("sizes_report", rdata.keys(), rdata.values())
+    return None
 
 def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
     blob_conf = __blobizer(content["config_file"])
@@ -418,7 +441,7 @@ def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
     else:
         sid = maybeSid
 
-    return insertIntoCompilationsTable(content["compilation_date"],
+    rcid = insertIntoCompilationsTable(content["compilation_date"],
                                        content["compilation_time"],
                                        blob_conf,
                                        blob_stdout,
@@ -432,6 +455,10 @@ def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
                                        sid,
                                        hid)
 
+    size_id = insertSizesInformation(rcid, content)
+    if size_id is None:
+        print("Issues with size information")
+    return rcid
 
 
 

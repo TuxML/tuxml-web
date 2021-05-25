@@ -16,6 +16,7 @@ import waitress
 import arrow
 from typing import Optional
 
+from dbUtility import mkCredentials
 
 import dbManager
 
@@ -47,20 +48,12 @@ def size_formatter():
     return dict(format_size=format_size)
 
 def getConnection():
-    if (path.exists("tunnel")):
-        tuxmlDB = mysql.connector.connect(
-        host='localhost',
-        port=20000,
-        user='web',
-        password='df54ZR459',
-        database='IrmaDB_result')
-    else:
-        tuxmlDB = mysql.connector.connect(
-        host='148.60.11.195',
-        user='web',
-        password='df54ZR459',
-        database='IrmaDB_result')
-
+    lhost, dbname, uname, pwd = mkCredentials()
+    tuxmlDB = mysql.connector.connect(
+        host=lhost,
+        user=uname,
+        password=pwd,
+        database=dbname)
     return tuxmlDB
 
 @app.route('/')
@@ -306,14 +299,14 @@ def stats():
 @app.route('/api/v1/resources/compilations', methods=['GET'])
 def api_filter():
 
-    accepted_display_arguments = ["architecture", "cid", "compilation_date", "compilation_time", "compiled_kernel_size", "compiled_kernel_version", "compressed_compiled_kernel_size", "config_file,", "cpu_brand_name", "cpu_max_frequency", "dependencies", "gcc_version", "libc_version", "linux_distribution", "linux_distribution_version", "mechanical_disk", "number_cpu_core", "number_cpu_core_used", "ram_size", "stderr_log_file", "stdout_log_file", "system_kernel", "system_kernel_version", "tuxml_version", "user_output_file"]
+    accepted_display_arguments = ["architecture", "cid", "compilation_date", "compilation_time", "compiled_kernel_size", "compiled_kernel_version", "compressed_compiled_kernel_size", "config_file,", "cpu_brand_name", "cpu_max_frequency", "dependencies", "compiler_version", "libc_version", "linux_distribution", "linux_distribution_version", "mechanical_disk", "number_cpu_core", "number_cpu_core_used", "ram_size", "stderr_log_file", "stdout_log_file", "system_kernel", "system_kernel_version", "tuxml_version", "user_output_file"]
 
     query_parameters = request.args
 
     #WHERE clauses
     cid = query_parameters.get('cid')
     compiled_kernel_version = query_parameters.get('compiled_kernel_version')
-    gcc_version = query_parameters.get('gcc_version')
+    compiler_version = query_parameters.get('compiler_version')
     compiled = query_parameters.get('compiled')
     #SELECT
     display = query_parameters.get('display')
@@ -356,14 +349,14 @@ def api_filter():
         conditions_list.append(f"compiled_kernel_version = {compiled_kernel_version}")
         ordering="cid desc"
 
-    if gcc_version:
-        gcc_version = gcc_version.replace(" ", "+")
-        if(gcc_version.count('-') > 1 or gcc_version.count('+') > 1):
-            return 'ERROR 400 : compiled_kernel_version is not formatted as expected', 400
-        gcc_version = api_argument_formatting(gcc_version)
-        if not dbManager.compilationExistsAdvanced("software_environment", "gcc_version", gcc_version):
-            return f'ERROR 404 : No compilation exists with a gcc_version of {gcc_version}', 404
-        conditions_list.append(f"gcc_version = {gcc_version}")
+    if compiler_version:
+        compiler_version = compiler_version.replace(" ", "+")
+        if(compiler_version.count('-') > 1 or compiler_version.count('+') > 1):
+            return 'Error 400: compiler version is not formatted as expected', 400
+        compiler_version = api_argument_formatting(compiler_version)
+        if not dbManager.compilationExistsAdvanced("software_environment", "compiler_version", compiler_version):
+            return f'Error 404: No compilation exists with a compiler_version of {compiler_version}', 404
+        conditions_list.append(f"compiler_version = {compiler_version}")
         ordering="cid desc"
 
     if compiled:
@@ -382,7 +375,7 @@ def api_filter():
                 return f'ERROR 400 : display has a unauthorized argument : {arg}', 400
             select_list.append(arg)
 
-    if (not cid and not compiled_kernel_version and not compiled and not gcc_version):
+    if (not cid and not compiled_kernel_version and not compiled and not compiler_version):
         return f'ERROR 400 : Not enough arguments for a request', 400
 
     
@@ -454,11 +447,12 @@ def upload():
         is_token_verified = True
         
     if(not is_token_verified):
-        return "Error : You do not have the rights to do this"
+        return "Error: You do not have the rights to do this"
     if(not request.is_json):
-        return "Error : The request don't contain any json"
+        return "Error: The request doesn't contain any JSON"
 
     content = request.get_json()
+
     try:
         maybeHid = dbManager.getHid(content["architecture"],
                                     content["cpu_brand_name"],
@@ -471,7 +465,7 @@ def upload():
                                     content["system_kernel_version"],
                                     content["linux_distribution"],
                                     content["linux_distribution_version"],
-                                    content["gcc_version"],
+                                    content["compiler_version"],
                                     content["libc_version"],
                                     content["tuxml_version"])
         content["compilation_time"] #Statement without real effects, but throws an error when the requested content is missing, so it is useful in our case (Integrity checkings)
@@ -484,8 +478,8 @@ def upload():
                                     content["number_cpu_core_used"],
                                     content["compiled_kernel_version"])
     except:
-        return 'ERROR 400 : The json isn\'t complete',400 # Must be replaced by a more precise solution, for exemple one that returns the missing columns
-    if maybeCid == None :
+        return 'Error 400: The JSON is not complete', 400 # Must be replaced by a more precise solution, for exemple one that returns the missing columns
+    if maybeCid == None:
         try:
             return f'{dbManager.uploadCompilationData(content,maybeHid,maybeSid)}',201
         except Exception as failure :
@@ -498,9 +492,9 @@ def upload():
             with open(f"err/{timestamp}.log", "w") as flog:
                 flog.write(str(failure))
                 pass
-            return 'ERROR 500: The upload has failed but keep calm, it\'s our fault',500
+            return 'Error 500: The upload has failed but keep calm, it is our fault', 500
     else:
-        return maybeCid,409
+        return maybeCid, 409
 
 
 #Formats query results into dictonnaries, making it able to be jsonified

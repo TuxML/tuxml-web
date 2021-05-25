@@ -8,6 +8,7 @@ import mysql.connector
 import arrow
 import random
 from typing import Optional
+from dbUtility import mkCredentials
 
 class __CacheItem: #Encapsulation has been highly used in this class's methods in order to keep data integrity
     def __init__(self, passiveData = False):
@@ -33,12 +34,6 @@ class __CacheItem: #Encapsulation has been highly used in this class's methods i
         self.__lock.release()
         return data
 
-def __mkCredentials():
-    lhost = os.environ.get('TUXML_HOST')
-    dbname = os.environ.get('TUXML_DBNAME')
-    uname = os.environ.get('TUXML_UNAME')
-    pwd = os.environ.get('TUXML_PWD') 
-    return lhost, dbname, uname, pwd
 
 '''
 
@@ -47,17 +42,9 @@ Handles queries, and unfolds them (up to two times).
 '''
 def __fetchData(query):
 
-    lhost, dbname, uname, pwd = __mkCredentials()
-    
-    if (path.exists("tunnel")): # If we're connected throuh a SSH tunnel (TODO: deprecated)
-        tuxmlDB = mysql.connector.connect(
-        host='localhost',
-        port=20000,
-        user=uname,
-        password=pwd,
-        database=dbname)
-    else: # If we're connected through ISTIC's SSL VPN or via ISTIC Wifi network.
-        tuxmlDB = mysql.connector.connect(
+    lhost, dbname, uname, pwd = mkCredentials() 
+
+    tuxmlDB = mysql.connector.connect(
         host=lhost,
         user=uname,
         password=pwd,
@@ -241,8 +228,10 @@ def getCompilationInfo(compilationId, basic = False):
         compDict = dict(zip(getColumnsForCompilationsTable(includeBlobs=True),comp))
         if not basic :
             soft = makeRequest("SELECT * FROM software_environment WHERE sid = " + str(compDict['sid']), isPassiveData=True)
+            softDict = dict(zip(getColumnsForSoftwareEnvTable(), soft))
             hard = makeRequest("SELECT * FROM hardware_environment WHERE hid = " + str(compDict['hid']), isPassiveData=True)
-        return compilationInfo(comp,soft,hard)
+            hardDict = dict(zip(getColumnsForHardwareEnvTable(), hard))
+        return compilationInfo(compDict,softDict,hardDict)
     except:
         return None
 
@@ -322,13 +311,13 @@ def getHid(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram
 
     return result if isinstance(result,int) else None
 
-def getSid(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, gcc_version, libc_version, tuxml_version):
+def getSid(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, compiler_version, libc_version, tuxml_version):
 
     conditions = [f"system_kernel = \"{system_kernel}\"",
                   f"system_kernel_version = \"{system_kernel_version}\"",
                   f"linux_distribution = \"{linux_distribution}\"",
                   f"linux_distribution_version = \"{linux_distribution_version}\"",
-                  f"gcc_version = \"{gcc_version}\"",
+                  f"compiler_version = \"{compiler_version}\"",
                   f"libc_version = \"{libc_version}\"",
                   f"tuxml_version = \"{tuxml_version}\""]
 
@@ -356,26 +345,37 @@ def getCid(compilation_date, compiled_kernel_size, compressed_compiled_kernel_si
 
     return result if isinstance(result,int) else None
 
+def insertIntoTagTable(tag):
+    locBackup = locals()
+    keys = locBackup.keys()
+    values = locBackup.values()
+    r = makeRequest("SELECT `id` FROM `tags` WHERE `tag` = '{}'".format(tag))
+    if isinstance(r, int): # already exists
+        return r
+    else:
+        return insertInTable("tags", keys, values)
+
+
 def insertIntoHardwareTable(architecture, cpu_brand_name, number_cpu_core, cpu_max_frequency, ram_size, mechanical_disk:int):
     locBackup = locals()
     keys = locBackup.keys()
     values = locBackup.values()
     return insertInTable("hardware_environment",keys,values)
 
-def insertIntoSoftwareTable(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, gcc_version, libc_version, tuxml_version):
+def insertIntoSoftwareTable(system_kernel, system_kernel_version, linux_distribution, linux_distribution_version, compiler_version, libc_version, tuxml_version):
     locBackup = locals()
     keys = locBackup.keys()
     values = locBackup.values()
     return insertInTable("software_environment",keys,values)
 
-def insertIntoCompilationsTable(compilation_date, compilation_time, config_file, stdout_log_file, stderr_log_file, user_output_file, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,compiled_kernel_version,sid,hid):
+def insertIntoCompilationsTable(compilation_date, compilation_time, config_file, stdout_log_file, stderr_log_file, user_output_file, compiled_kernel_size, compressed_compiled_kernel_size,dependencies,number_cpu_core_used,compiled_kernel_version,sid,hid, tag_id):
     locBackup = locals()
     keys = locBackup.keys()
     values = locBackup.values()
     return insertInTable("compilations",keys,values)
 
 def insertInTable(tableName, keys, values):
-    lhost, dbname, uname, pwd = __mkCredentials()
+    lhost, dbname, uname, pwd = mkCredentials()
     tuxmlDBupl = mysql.connector.connect(
         host=lhost,
         user=uname,
@@ -420,6 +420,11 @@ def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
     blob_stderr = __blobizer(content["stderr_log_file"])
     blob_out = __blobizer(content["user_output_file"])
 
+    if "tagbuild" in content:
+        tag_id = insertIntoTagTable(tag=content["tagbuild"])
+    else:
+        tag_id = -1
+
     if(maybeHid == None):
         hid = insertIntoHardwareTable(content["architecture"],
                                       content["cpu_brand_name"],
@@ -435,7 +440,7 @@ def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
                                       content["system_kernel_version"],
                                       content["linux_distribution"],
                                       content["linux_distribution_version"],
-                                      content["gcc_version"],
+                                      content["compiler_version"],
                                       content["libc_version"],
                                       content["tuxml_version"])
     else:
@@ -453,7 +458,7 @@ def uploadCompilationData(content, maybeHid,maybeSid)->Optional[int]:
                                        content["number_cpu_core_used"],
                                        content["compiled_kernel_version"],
                                        sid,
-                                       hid)
+                                       hid, tag_id)
 
     size_id = insertSizesInformation(rcid, content)
     if size_id is None:
@@ -492,7 +497,8 @@ def programmaticRequest(getColumn="*", withConditions="", ordering=None, limit:i
                 if col in cond :
                     hardenv = True
 
-    for col in getColumnsForCompilationsTable(includeBlobs=True)[:-2]:
+    # SUPER dangerous line (sid, hid, and... tag_id are ignored, hence the -3)
+    for col in getColumnsForCompilationsTable(includeBlobs=True)[:-3]:
         if col in getColumn or col in withConditions:
             comptab = True
         if not isinstance(withConditions,str) and len(withConditions)>0:
